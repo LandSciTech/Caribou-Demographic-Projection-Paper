@@ -43,6 +43,7 @@ scns$uMin = 0; scns$uMax = 0
 scns$qMin = 0; scns$qMax = 0
 message("batch ", cpageId, " started")
 
+str(scns)
 
 if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)

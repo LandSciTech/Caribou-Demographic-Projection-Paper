@@ -18,20 +18,20 @@ scResults = runScenario(scns,survAnalysisMethod = "Exponential")
 KSAll = subset(scResults$ksDists,(Year==2023)&(Parameter=="Adult female survival"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
-makeInterceptPlots(scResults,addBit=addBit,facetVars=c("SigmaMean","sIntSEMod"),loopVars="sSigmaSD",whichPlots=c("Adult female survival"))
+makeInterceptPlots(scResults,addBit=addBit,facetVars=c("sSigmaMean","sIntSEMod"),loopVars="sSigmaSD",whichPlots=c("Adult female survival"))
 
 scns=merge(scnsSInt,scnsApplyAll);scns=merge(scns,scnsLow)
 scResultsLow = runScenario(scns,quants=c(0.025,0.025),Anthro=0,survAnalysisMethod = "KaplanMeier")
 addBit = paste0("InterceptLow")
 KSLow = subset(scResultsLow$ksDists,(Year==2023)&(Parameter=="Adult female survival"))
-makeInterceptPlots(scResultsLow,addBit=addBit,facetVars=c("SigmaMean","sIntSEMod"),loopVars="sSigmaSD",
+makeInterceptPlots(scResultsLow,addBit=addBit,facetVars=c("sSigmaMean","sIntSEMod"),loopVars="sSigmaSD",
                    whichPlots=c("Adult female survival"),useNational=F)
 
 scns=merge(scnsSInt,scnsApplyAll);scns=merge(scns,scnsHigh)
 scResultsHigh = runScenario(scns,quants=c(0.975,0.975),Anthro=0,survAnalysisMethod = "KaplanMeier")
 addBit = paste0("InterceptHigh")
 KSHigh = subset(scResultsHigh$ksDists,(Year==2023)&(Parameter=="Adult female survival"))
-makeInterceptPlots(scResultsHigh,addBit=addBit,facetVars=c("SigmaMean","sIntSEMod"),loopVars="sSigmaSD",
+makeInterceptPlots(scResultsHigh,addBit=addBit,facetVars=c("sSigmaMean","sIntSEMod"),loopVars="sSigmaSD",
                    whichPlots=c("Adult female survival"),survLow=0.8,useNational=F)
 
 KSAll$scn = "All"
@@ -92,20 +92,20 @@ scResults = runScenario(scns,survAnalysisMethod = "Exponential")
 KSAll = subset(scResults$ksDists,(Year==2023)&(Parameter=="Recruitment"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
-makeInterceptPlots(scResults,addBit=addBit,facetVars=c("SigmaMean","rIntSEMod"),loopVars="rSigmaSD",whichPlots=c("Recruitment"))
+makeInterceptPlots(scResults,addBit=addBit,facetVars=c("rSigmaMean","rIntSEMod"),loopVars="rSigmaSD",whichPlots=c("Recruitment"))
 
 scns=merge(scnsRInt,scnsApplyAll);scns=merge(scns,scnsLow)
 scResultsLow = runScenario(scns,quants=c(0.025,0.025),Anthro=0,survAnalysisMethod = "KaplanMeier")
 addBit = paste0("InterceptLow")
 KSLow = subset(scResultsLow$ksDists,(Year==2023)&(Parameter=="Recruitment"))
-makeInterceptPlots(scResultsLow,addBit=addBit,facetVars=c("SigmaMean","rIntSEMod"),loopVars="rSigmaSD",
+makeInterceptPlots(scResultsLow,addBit=addBit,facetVars=c("rSigmaMean","rIntSEMod"),loopVars="rSigmaSD",
                    whichPlots=c("Recruitment"),useNational=F)
 
 scns=merge(scnsRInt,scnsApplyAll);scns=merge(scns,scnsHigh)
 scResultsHigh = runScenario(scns,quants=c(0.975,0.975),Anthro=0,survAnalysisMethod = "KaplanMeier")
 addBit = paste0("InterceptHigh")
 KSHigh = subset(scResultsHigh$ksDists,(Year==2023)&(Parameter=="Recruitment"))
-makeInterceptPlots(scResultsHigh,addBit=addBit,facetVars=c("SigmaMean","rIntSEMod"),loopVars="rSigmaSD",
+makeInterceptPlots(scResultsHigh,addBit=addBit,facetVars=c("rSigmaMean","rIntSEMod"),loopVars="rSigmaSD",
                    whichPlots=c("Recruitment"),useNational=F)
 
 KSAll$scn = "All"

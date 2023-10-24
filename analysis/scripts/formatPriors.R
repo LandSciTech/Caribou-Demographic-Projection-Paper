@@ -12,7 +12,7 @@ nameSet <- gsub(".Prior1","",names(rawPriors)[grepl("Prior1",names(rawPriors))],
 
 start=T
 for(n in nameSet){
-  crow = data.frame(name=n,Mean=rawPriors[[paste0(n,".Prior1")]],SD=rawPriors[[paste0(n,".Prior2")]])
+  crow = data.frame(name=n,Mean=rawPriors[[paste0(n,".Prior1")]],SE=rawPriors[[paste0(n,".Prior2")]])
 
   if(start){
     tbl = crow

@@ -98,6 +98,8 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\dot{J}_t$|animals|New recruits to adult age class.|
 |**True demographic parameters**|
 |$N_0$|animals|Initial adult population size.|
+|$\bar{R}_t$|rate|Expected recruitment (calves per cow).|
+|$\bar{S}_t$|probability|Expected adult female survival.|
 |$\dot{\beta}^R_0$||Recruitment intercept.|
 |$\dot{\beta}^R_a$||Anthropogenic disturbance slope for recruitment.|
 |$\dot{\beta}^R_f$||Fire slope for recruitment.|
@@ -211,16 +213,16 @@ if(doPriorCalibration){
   KS=subset(KS,scn=="All")
   png(here::here("figs/PriorKSDists.png"),
     height = 3, width = fig_widths["two"], units = "in",res=600)
-    base = ggplot(KS,aes(x=sIntSEMod,y=KSDistance,color=SigmaMean))+
-    geom_point()+facet_wrap(~SigmaSD,labeller="label_both")+theme_bw()+ylab("Kolmogorov-Smirnov Distance")+xlab("sIntSEMod: multiplier on SD of survival intercept")
+    base = ggplot(KS,aes(x=sIntSEMod,y=KSDistance,color=sSigmaMean))+
+    geom_point()+facet_wrap(~sSigmaSD,labeller="label_both")+theme_bw()+ylab("Kolmogorov-Smirnov Distance")+xlab("sIntSEMod: multiplier on SD of survival intercept")
     print(base)
   dev.off()
 
   KSRec=subset(KSRec,scn=="All")
   png(here::here("figs/PriorKSDistsRec.png"),
     height = 3, width = fig_widths["two"], units = "in",res=600)
-    base = ggplot(KSRec,aes(x=rIntSEMod,y=KSDistance,color=SigmaMean))+
-    geom_point()+facet_wrap(~SigmaSD,labeller="label_both")+theme_bw()+ylab("Kolmogorov-Smirnov Distance")+xlab("rIntSEMod: multiplier on SD of recruitment intercept")
+    base = ggplot(KSRec,aes(x=rIntSEMod,y=KSDistance,color=rSigmaMean))+
+    geom_point()+facet_wrap(~rSigmaSD,labeller="label_both")+theme_bw()+ylab("Kolmogorov-Smirnov Distance")+xlab("rIntSEMod: multiplier on SD of recruitment intercept")
     print(base)
   dev.off()
 ```
