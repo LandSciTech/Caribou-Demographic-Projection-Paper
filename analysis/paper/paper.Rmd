@@ -113,9 +113,9 @@ doPriorCalibration=F #Note the prior calibration is time consuming.
 
 ## Caribou population monitoring: survival and recruitment metrics
 
-Demographic data for caribou populations, including abundance, vital rates and population growth, are most often obtained through the tracking of caribou cows marked with telemetry collars [e.g. @courtois_aerial_2003; @rettie_dynamics_1998;@hervieux_widespread_2013;@johnson_science_2020]. Caribou cows are typically captured via net-gun from aircraft in late winter, and affixed with collars carrying  Very High Frequency (VHF) and/or Global Positioning Satellite (GPS) transmitters allowing remote detection and data retrieval [see @nbckc_nbckc_2021]. Because these collars send out a mortality signal when no longer active after a predetermined period of time, adult survival can be estimated by tracking the fate of marked individuals. See @kaplan_nonparametric_1958; @pollock_survival_1989 for original approach and @mcloughlin_declines_2003; @hervieux_widespread_2013; @eacker_web-based_2019 for examples of application to caribou. Male caribou are not frequently collared. 
+Demographic data for caribou populations, including abundance, vital rates and population growth, are often obtained through the tracking of caribou cows marked with telemetry collars [e.g. @courtois_aerial_2003; @rettie_dynamics_1998;@hervieux_widespread_2013;@johnson_science_2020]. Caribou cows are typically captured via net-gun from aircraft in late winter, and affixed with collars carrying  Very High Frequency (VHF) and/or Global Positioning Satellite (GPS) transmitters allowing remote detection and data retrieval [see @nbckc_nbckc_2021]. Because these collars send out a mortality signal when no longer active after a predetermined period of time, adult survival can be estimated by tracking the fate of marked individuals (see @kaplan_nonparametric_1958 and @pollock_survival_1989 for original approach, and @mcloughlin_declines_2003,  @hervieux_widespread_2013 and @eacker_web-based_2019 for examples of application to caribou). Male caribou are not frequently collared. 
 
-Collared females are also used in most estimates of recruitment. Recruitment surveys involve locating collared individuals by aircraft and then surveying the entire group of caribou to estimate the ratio of calves to cows in the group [@nbckc_nbckc_2022]. Because this estimate is based on more than just the collared sample of cows, the sample size for recruitment estimates is typically larger than for survival (see multiplier parameter $w$, cowMult below). Note that occasionally young bulls can be misidentified as cows (parameter $u$ below; refs? ), and there is also a possibility that some calves may be missed during aerial composition surveys (parameter $z$ below). We acknowledge additional uncertainty and potential bias due to misidentification of sex or missing calves with a correction term derived from a simple model of the recruitment survey observation process (parameter $c$; see Supplement B and below for details). Telemetry and aerial survey data from these methods can be combined in a simple recruitment-mortality population model [@hatter_moose_1991] that serves as the basis for monitoring population change of many caribou herds [e.g. @decesare_estimating_2012; @serrouya_comparing_2017; @eacker_web-based_2019].
+Collared females are also used in most estimates of recruitment. Recruitment surveys involve locating collared individuals by aircraft and then surveying the entire group of caribou to estimate the ratio of calves to cows in the group [@nbckc_nbckc_2022]. Because this estimate is based on more than just the collared sample of cows, the sample size for recruitment estimates is typically larger than for survival (see multiplier parameter $w$, cowMult below). Note that occasionally young bulls can be misidentified as cows (parameters $\dot{u}$ and $u$ below; refs? ), and there is also a possibility that some calves may be missed during aerial composition surveys (parameters $\dot{z}$ and $z$ below). We acknowledge additional uncertainty and potential bias due to misidentification of sex or missing calves with a correction term derived from a simple model of the recruitment survey observation process (see Supplement B and below for details). Telemetry and aerial survey data from these methods can be combined in a simple recruitment-mortality population model [@hatter_moose_1991] that serves as the basis for monitoring population change of many caribou herds [e.g. @decesare_estimating_2012; @serrouya_comparing_2017; @eacker_web-based_2019].
 
 ## Anthropogenic disturbance and monitoring scenarios
 
@@ -160,7 +160,7 @@ TO DO: run low initial population size scenario, put in appendix of one by one s
 ```
 ## Simulation of local population dynamics and monitoring
 
-To investigate the effectiveness of various monitoring strategies for reducing uncertainty about population viability, and to show how this varies with landscape condition, we begin with a method for simulating local population dynamics and monitoring. This method produces example population trajectories for which the true state is known, allowing us to assess the performance of our proposed method for integrating local demographic observations with national disturbance-demographic relationships in a Bayesian population model.
+To investigate the effectiveness of various monitoring strategies for reducing uncertainty about population viability, and to show how this varies with landscape condition, we begin with a model for simulating example population dynamics and observations of those dynamics. We refer to this as the "national demographic model" because it is informed by national demographic-disturbance relationships. We use simulated trajectories to assess the performance of our proposed method for integrating local demographic observations with national disturbance-demographic relationships in a Bayesian population model. For reference, all variables and parameters are defined in supplemental Table A1.   
 
 ### Population dynamics informed by national disturbance-demographic relationships
 
@@ -180,14 +180,14 @@ potential recruitment rate is adjusted for sex ratio, misidentification
 biases (Supplement B) and (optionally) delayed age at first reproduction
 [@eacker_web-based_2019; @decesare_estimating_2012]:
 \begin{equation}
-  \dot{X}_t=\frac{c\dot{R}_t/2}{1+c\dot{R}_t/2};c=\frac{w(1+qu-u)}{(w+qu-u)(1-z)},
+  \dot{X}_t=\frac{\dot{c}\dot{R}_t/2}{1+\dot{c}\dot{R}_t/2};\dot{c}=\frac{w(1+\dot{q}\dot{u}-\dot{u})}{(w+\dot{q}\dot{u}-\dot{u})(1-\dot{z})},
   (\#eq:dotX)
 \end{equation}
 where $w$ is a multiplier that defines the apparent number of adult
 females in the composition survey as a function of the number of
-collared animals, $q$ is the ratio of young bulls to adult females, $u$
+collared animals, $\dot{q}$ is the ratio of young bulls to adult females, $\dot{u}$
 is the probability of misidentifying young bulls as adult females and
-vice versa, and $z$ is the probability of missing a calf.
+vice versa, and $\dot{z}$ is the probability of missing a calf. We examine sensitivity to these unknown parameters by selecting values for each simulated example population from plausible ranges: $\dot{u}$ and $\dot{v}$ vary uniformly between 0 and 0.2, and $\dot{q}$ varies uniformly between 0 and 0.6.
 
 Realized recruitment rate varies with population density
 [@lacy_vortex_2017], and the number of juveniles recruiting to the
@@ -199,7 +199,7 @@ recruitment rate:
   (\#eq:dotJ)
 \end{equation}
 
-Given the values of parameters $p_0,p_k,a, and b$ used by Johnson et al. (2020) (Table A1), recruitment rate is lowest
+Given the values of parameters $p_0,p_k,a,$ and $b$ used by Johnson et al. (2020) (Table A1), recruitment rate is lowest
 $(0.5\dot{X}_t)$ when $\dot{N}_t=1$, approaches a maximum of $\dot{X}_t$
 at intermediate population sizes, and declines to $0.6\dot{X}_t$ as the
 population reaches carrying capacity of $k=100$ times the initial
@@ -273,42 +273,37 @@ $\dot{R}_t$:
 
 ## Integration of local demographic data and national disturbance-demographic relationships in a Bayesian population model
 
-Following Eacker et al. [-@eacker_web-based_2019], the observed number
-of calves $\hat{J}_t$ is a binomially distributed function of the
-observed number of adult female caribou $\hat{W}_t$ and the estimated
-recruitment rate $R_t$:
+Simulated local demographic and covariate data are provided as inputs to the Bayesian population model, including the observed state (dead or alive) of each collared animal in each month ($\hat{I}_{i,t,m}$), the observed number of adult females and calves in the recruitment surveys ($\hat{W}_t, \hat{J}_t$), the apparent number of adult females per collared female in the composition survey $w$, and the measures of anthropogenic disturbance and fire ($A_t, F_t$). Following Eacker et al. [-@eacker_web-based_2019], recruitment rate $R_t$ is estimated from the observed number of calves $\hat{J}_t$ and adult female caribou $\hat{W}_t$ assuming a binomial distribution:
 \begin{equation}
 \hat{J}_t \sim \text{Binomial}(\hat{W}_t,R_t).
   (\#eq:hatJEst)
 \end{equation}
 
-We model recruitment probability as a function of anthropogenic
+Where appropriate, the Bayesian population model and national demographic model share the same structure, and we have selected notation to highlight the similarities. The difference between equations \@ref(eq:hatJ) and \@ref(eq:hatJEst) is that in the simulation model an unadjusted apparent recruitment rate $\dot{R}_t$ is selected and used to simulate observations. In Bayesian model observations are provided, and used to estimate the unobserved recruitment rate $R_t$. 
+
+In both models recruitment probability is a function of anthropogenic
 disturbance and fire with a log link [@johnson_science_2020;
-@stewart_climate-informed_2023; @dyson_existing_2022] and Gaussian
+@stewart_climate-informed_2023; @dyson_existing_2022]. In the Bayesian model we add a Gaussian
 distributed random year effect [@eacker_web-based_2019]:
 \begin{equation}
 \log(R_t)=\beta^R_0+\beta^R_a A_t+\beta^R_f F_t+\epsilon^R_t; \epsilon^R_t \sim \text{Normal}(0,\sigma^2_{R}).
   (\#eq:R)
 \end{equation}
 
-Estimated recruitment probability is adjusted for sex ratio,
-misidentification biases (Supplement B), and age of first reproduction
-[@eacker_web-based_2019; @decesare_estimating_2012] to get expected
-recruits per female:
+In the simulation model (eq \@ref(eq:barR)), regression coefficient values ($\dot{\beta}^R_0,\dot{\beta}^R_a,\dot{\beta}^R_f$) are selected for each example population and used to calculate recruitment rate. In the Bayesian model (eq \@ref(eq:R)), unobserved regression coefficients ($\beta^R_0,\beta^R_a,\beta^R_f$) are estimated from local recruitment survey and disturbance observations.
+
+To account for bias and additional uncertainty caused by unknown misidentification biases (Supplement B) and delayed age of age of first reproduction
+[@eacker_web-based_2019; @decesare_estimating_2012] the estimated recruitment probability is adjusted to get expected recruits per female:
 \begin{equation}
 X_t=\frac{cR_t/2}{1+cR_t/2}; c=\frac{w(1+qu-u)}{(w+qu-u)(1-z)}.
   (\#eq:X)
 \end{equation}
  
-The composition survey bias correction term $c$ depends on the apparent
-number of adult females per collared animal $w$, the ratio of young
-bulls to adult females $q$, the probability of misidentifying young
-bulls as adult females and vice versa $u$, and the probability of
-missing a calf $z$ (Supplement B). To maintain consistency with Johnson
-et al. [-@johnson_science_2020] we also provide an option to only adjust
-for sex ratio and misidentification biases $X_t=cR_t/2$.
-
-In the Bayesian model, prior uncertainty about the value of the bias
+The composition survey bias correction term $c$ depends on the known apparent
+number of adult females per collared animal $w$, the unknown ratio of young
+bulls to adult females $q$, the unknown probability of misidentifying young
+bulls as adult females and vice versa $u$, and the unknown probability of
+missing a calf $z$ (Supplement B). Prior uncertainty about the value of thebias
 correction term $c$ is approximated with a Log-normal distribution
 (Supplement B). Given the apparent number of adult females per collared
 animal $w$ in each monitoring scenario (Table
@@ -317,9 +312,11 @@ deviation of 10,000 samples of $\log{c}$ assuming the ratio of young
 bulls to adult females $q$ varies uniformly between 0 and 0.6, the adult
 misidentification probability $u$ varies uniformly between 0 and 0.2,
 and the probability of missing a calf $z$ varies uniformly between 0 and
-0.2.
+0.2. To maintain consistency with Johnson
+et al. [-@johnson_science_2020] we also provide an option to only adjust
+for sex ratio and misidentification biases $X_t=cR_t/2$.
 
-Also following Eacker et al. [-@eacker_web-based_2019], Kaplan-Meier
+Following Eacker et al. [-@eacker_web-based_2019], Kaplan-Meier
 estimates of observed adult female survival probability $\hat{S}_t$ and
 associated precisions $\tau_t$ are estimated from known-fate radio
 collar data using the survival R package [@therneau_modeling_2000], with
@@ -331,11 +328,8 @@ distributed function of the true survival probability:
   (\#eq:hatSEst)
 \end{equation}
  
-As in the national demographic model, we model survival probability as an adjusted function
-of buffered anthropogenic disturbance $A_t$ with a log link
-[@johnson_science_2020; @stewart_climate-informed_2023;
-@dyson_existing_2022] and Gaussian distributed random year effect
-[@eacker_web-based_2019]:
+As in the simulations (eq \@ref(eq:barS)), we model survival probability as an adjusted function of buffered anthropogenic disturbance $A_t$ with a log link
+[@johnson_science_2020; @stewart_climate-informed_2023; @dyson_existing_2022]. We add a Gaussian distributed random year effect [@eacker_web-based_2019]:
 \begin{equation}
 S_t=\text{min}(46 \tilde{S_t}-0.5)/45,1); \log(\tilde{S_t})=\beta^S_0+\beta^S_a A_t+\epsilon^S_t; \epsilon^S_t \sim \text{Normal}(0,\sigma^2_{S}).
   (\#eq:S)
@@ -376,7 +370,7 @@ knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.pn
 
 ```
 
-We assume a simple two-class demographic model, with a census in late
+As in the simulations, we assume a simple two-class demographic model, with a census in late
 winter of surviving females and new recruits to the post-juvenile (aged
 1+) class. The number of post-juvenile females that survive from year
 $t$ to the census $W_t$ is binomially distributed with survival
@@ -389,18 +383,12 @@ in the next year includes both survivors and new recruits:
 $N_{t+1}=W_t+J_t$. Annual population growth rate $\lambda_t$ is set to 0
 when $N_t$ is 0, and is otherwise $\lambda_t=N_{t+1}/N_t$. For more
 stable estimates of population status, we report average population
-growth over a period of $y$ years, calculated as
+growth over a period of $y=3$ years, calculated as
 $\bar{\lambda}_{y,t}=\sum_{x=t-y+1}^{x=t}\lambda_x$. The initial
 post-juvenile population size $N_0$ is 1000 animals. For reference, all
-variables and parameters are defined in Table A1.
+variables and parameters are defined in supplemental Table A1.
 
-\begin{equation}
-J_{t} \sim \text{Poisson}(W_tR_t/2)
-  (\#eq:J)
-\end{equation}
-
-<!--
-Annotated equations for poster.
+<!-- Annotated equations for poster.
 $$\underbrace{N_{t+1}}_{\text{Adult females in year t+1}}=\underbrace{W_t}_{\text{Surviving adults}}+\underbrace{J_t}_{\text{New recruits to adult age class}}$$
 $$W_{t} \sim \text{Binomial}(N_t,\underbrace{S_t}_{\text{Adult survival probability}})$$
 $$S_t=\underbrace{\text{min}(46 \tilde{S_t}-0.5)/45,1); \log(\tilde{S_t})}_{\text{Adjustment as in in Johnson et al. 2020}}=\beta^S_0+ \underbrace{\beta^S_aA_t}_{\text{Anthropogenic disturbance effect}}+\underbrace{\epsilon^S_t}_{\text{Random effect of year}}.$$
@@ -409,7 +397,8 @@ $$\log(R_t)=\beta^R_0+\underbrace{\beta^R_a A_t}_{\text{Anthropogenic disturbanc
 $$\underbrace{\hat{C}_t}_{\text{Observed calves}} \sim \text{Binomial}(\underbrace{\hat{W}_t}_{\text{Observed cows}},R_t)$$
 $$\underbrace{\hat{S_t}}_{\text{Observed survival (Kaplan-Meier estimate)}} \sim \text{Normal}(S_t,1/\tau_t).$$ -->
 
-TO DO: \* note distribution of random effect parameters are truncated to
+<!--
+Gritty details for the record: \* note distribution of random effect parameters are truncated to
 ensure R and S remain within reasonable bounds (not guaranteed given log
 link). Not yet documented here. \* note Eacker survival method gives
 biased results in years when \<12 months of survival data is available.
@@ -420,15 +409,14 @@ difference as long as the collar deployment month is set to 1. \*
 consider & comment on alternative choices made in this example
 <https://poissonconsulting.shinyapps.io/bboushiny/>. Follow Eacker
 example in all particulars, change some aspects, or do comparisons? \*
-Ensure notation consistency amongst manuscript, UI, documentaiton and
-code where appropriate.
+-->
 
 ## Probability of correct status assessment
 
 In order to assess whether a monitoring program is likely sufficient to
 inform decisions, it is important to select outcome measures that are
 relevant to decision making [@gregory_structured_2012]. For boreal
-caribou and other endangered species, it is important to know whether a
+caribou and other endangered species, a relevant outcome is whether a
 population is declining or not. If uncertainty about population status
 is low, additional investment in reducing uncertainty about the
 population growth rate may not be necessary or warranted. Thus, in this
@@ -444,27 +432,13 @@ population growth rate are both above or below 1.
 
 ## User interface and open, flexible, reuseable implementation
 
-To make this work more user friendly and accessible to decision makers
-we built a user interface that allows for the exploration of different
-monitoring and anthropogenic disturbance scenarios. We built the user
-interface as an R Shiny app [@chang_shiny_2023], building off and expanding an
-app published by Eacker et al. [-@eacker_web-based_2019]. The app allows
+To make this work more user friendly and accessible we built an R Shiny [@chang_shiny_2023] user interface that allows for exploration of monitoring and anthropogenic disturbance scenarios. Where appropropriate, we borrowed and built on code from an app developed by Eacker et al. [-@eacker_web-based_2019]. Our app allows
 users to provide existing local data or simulate data based on national
 models as shown above, define an anthropogenic disturbance scenario and
 make projections. The results shown are similar to Figure
 \@ref(fig:examplePredictions) and allow for comparisons to the national
-model. Many parameters controlling the Bayesian model, local data
-simulation and antropogenic scenario are exposed in the app with
-sensible defaults set, such that novice users can get reasonable results
-quickly while advanced user can customise the projections to suite their
-needs. We have also made the R code needed to run the app and carry out
-the above analysis available as an R package, caribouMetrics. Making our
-code available as an R package ensures that it is flexible and can be
-re-used or expanded upon in future projects or combined with other tools
-and packages (eg SpaDES or SyncroSym). The caribouMetrics package is
-available on GitHub at <https://github.com/LandSciTech/caribouMetrics>
-and a package website with detailed documentation is also available
-(<https://landscitech.github.io/caribouMetrics/>).
+model. The app allows advanced users to adjust most model parameters (supplemental Table A1). Default parameter values are set to allow novice users to get reasonable results quickly. Most of the code needed to run the app is in an R package, caribouMetrics, that is designed to allow the national demographic simulation model and the Bayesian population model to be re-used in a variety of contexts (e.g. Frances SpaDES paper, Dyson preprint, syncrosim reference). The caribouMetrics package is available on GitHub at <https://github.com/LandSciTech/caribouMetrics>. Find documentation and vignettes on the package website
+<https://landscitech.github.io/caribouMetrics/>. The shiny app is available at <https://landscitech.github.io/BayesianCaribouDemographicProjection/>, and code required to run analyses and produce figures in the paper is available at <https://github.com/LandSciTech/Caribou-Demographic-Projection-Paper>.
 
 # Results
 

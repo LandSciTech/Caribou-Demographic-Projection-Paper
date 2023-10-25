@@ -123,10 +123,14 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$o=1 \text{ or } 4$|years|Years between collar deployments.|
 |$y=3$|years|Assessment period for population growth rate.|
 |$w=3,6,\text{ or } 9$|ratio|The apparent number of adult females per collared animal in composition survey.|
-|$q=\text{uniform}(0,0.6)$|ratio|True ratio of young bulls to adult females in composition survey.|
-|$u=\text{uniform}(0,0.2)$|probability|Probability of misidentifying young bulls as adult females and vice versa in composition survey.|
-|$z=\text{uniform}(0,0.2)$|probability|Probability of missing calves in composition survey.|
-|$c=\frac{w(1+qu-u)}{(w+qu-u)(1-z)}$||Bias correction term (Appendix X).|
+|$\dot{q}=\text{uniform}(0,0.6)$|ratio|True ratio of young bulls to adult females in composition survey.|
+|$\dot{u}=\text{uniform}(0,0.2)$|probability|True probability of misidentifying young bulls as adult females and vice versa in composition survey.|
+|$\dot{z}=\text{uniform}(0,0.2)$|probability|True probability of missing calves in composition survey.|
+|$\dot{c}$||True bias correction term in simulation model (Supplement B).|
+|$q=\text{uniform}(0,0.6)$|ratio|Unknown ratio of young bulls to adult females in composition survey.|
+|$u=\text{uniform}(0,0.2)$|probability|Unknown probability of misidentifying young bulls as adult females and vice versa in composition survey.|
+|$z=\text{uniform}(0,0.2)$|probability|Unknown probability of missing calves in composition survey.|
+|$c$||Unknown bias correction term in Bayesian model (Supplement B).|
 
 # Model of bias in recruitment estimates from calf:cow surveys
 
