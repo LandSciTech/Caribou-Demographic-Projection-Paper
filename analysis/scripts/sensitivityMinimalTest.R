@@ -45,6 +45,8 @@ message("batch ", cpageId, " started")
 
 str(scns)
 
+scns$collarCount = 1100
+
 if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)
 }else{
