@@ -102,7 +102,7 @@ for(i in 1:length(pages)){
   probs = subset(scResults$rr.summary.all,(Parameter=="Population growth rate"))
   probs$projectionTime = probs$Year-2023
   probs$Anthro2023 = pmax(0,probs$tA)#pmax(0,probs$tA-2) #correcting for error - change back in round 4
-  probs$AssessmentYear = probs$Year
+  probs$YearsOfProjection = probs$projectionTime
 
   names(probs)
 
@@ -112,8 +112,8 @@ for(i in 1:length(pages)){
   distScns$grp = paste0(distScns$Anthro2023,distScns$projAnthroSlope)
 
   distScns$Timeline[distScns$Year==2023]="Finish monitoring"
-  distScns$Timeline[distScns$projectionTime==5]="Assessment 2028"
-  distScns$Timeline[distScns$projectionTime==20]="Assessment 2043"
+  distScns$Timeline[distScns$projectionTime==5]="End 5 yr projection (2028)"
+  distScns$Timeline[distScns$projectionTime==20]="End 20 yr projection (2043)"
 
   Ps = unique(distScns$obsYears)
   for(s in Ps){
@@ -166,6 +166,8 @@ for(i in 1:length(pages)){
   probs$wrong = ((probs$Mean<=0.99)|(probs$projSize<=10))&probs$viableTrue
   probs$CorrectStatus[probs$wrong]="no"
   probs$CorrectStatus[!probs$wrong]="yes"
+  probs$LambdaDiff = probs$trueMean-probs$Mean
+  #probs$LambdaDiff[(probs$projSize<=10)]=NA
 
   probs$pageLabB = paste0(batchStrip(probs$pageLab),"st",probs$collarCount,"ri",probs$collarInterval)
   pagesB=unique(probs$pageLabB)
@@ -174,20 +176,41 @@ for(i in 1:length(pages)){
   levels(probs$AnthroScn) = c("low","low-med","med-high","high")
 
   for(pp in pagesB){
-    #pp=pagesB[1]
+    #pp=pagesB[3]
     png(here::here(paste0("figs/",setName,"/bands",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3)+
-      facet_grid(AssessmentYear~AnthroScn,labeller="label_both")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
       theme_bw()+xlab("years of monitoring")+ylab("Estimated mean population growth rate")
+    print(base)
+    dev.off()
+  }
+
+
+  probs$pageLab = batchStrip(probs$pageLab)
+  pagesCa = unique(probs$pageLab)
+  probs$RenewalInterval=as.factor(probs$collarInterval)
+  probs$NumCollars = as.factor(probs$collarCount)
+  probs$grp = paste(probs$obsYears,probs$NumCollars)
+
+  probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
+  for(pp in pagesCa){
+    #pp=pagesCa[1]
+    png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    base=ggplot(subset(probs,(pageLab==pp)&(RenewalInterval==1)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
+      geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars",fill="Number of\n Collars")+
+      theme_bw()+xlab("years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
+      scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
     print(base)
     dev.off()
   }
 
   ################
   #summarize outcome - proportion wrong
-  groupVars = c("Anthro","AnthroScn","AssessmentYear",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
-  probs$pageLab = batchStrip(probs$pageLab)
+  groupVars = c("Anthro","AnthroScn","YearsOfProjection",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
+
   probsSum <- probs %>% group_by(across(groupVars)) %>% summarize(propWrong = mean(wrong))
   probsSum <- subset(probsSum,obsYears>0)
   probsSum$grp = paste(probsSum$collarCount,probsSum$collarInterval)
@@ -205,7 +228,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(AssessmentYear~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
       theme_bw()+xlab("years of monitoring")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -214,7 +237,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
-      facet_grid(AssessmentYear~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
       theme_bw()+xlab("years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)

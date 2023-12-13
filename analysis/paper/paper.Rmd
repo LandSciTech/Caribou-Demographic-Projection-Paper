@@ -9,15 +9,15 @@ author:
     email: sarah.endicott@ec.gc.ca
     institute: [ECCC]
     correspondence: false
-  - name: Cheryl A Johnson
-    email: cheryl-ann.johnson@ec.gc.ca
-    institute: [ECCC]
-    correspondence: false
   - name: Anna M Calvert
     email: anna.calvert@ec.gc.ca
     institute: [ECCC]
     correspondence: false
 institute:
+  - name: Cheryl A Johnson
+    email: cheryl-ann.johnson@ec.gc.ca
+    institute: [ECCC]
+    correspondence: false
   - ECCC: Environment and Climate Change Canada 
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -32,7 +32,7 @@ output:
 bibliography: CaribouDemographicModel.bib
 csl: "../templates/journal-of-forest-ecology-and-management.csl" # Insert path for the bib-style
 abstract: |
-  Across fifty-eight boreal caribou ranges in Canada, both survival and recruitment decrease with the percentage of the range that is disturbed. However, there is also variation in demographic rates among ranges, particularly where anthropogenic disturbance is low, and this variation leads to uncertainty in projections derived from national disturbance-demographic relationships. Demographic projections derived from local range-specific data are also uncertain because few places have enough long-term monitoring data to characterize local demographic-disturbance relationships. We present a simple Bayesian population model that integrates prior information from national analysis of demographic-disturbance relationships with available local demographic data to reduce uncertainty in population viability projections. We combine this model with methods for simulating local population dynamics and monitoring to show how monitoring requirements depend on landscape condition. Where anthropogenic disturbance is very high or very low, reasonably accurate status projections can be made using only national demographic-disturbance relationships. At intermediate disturbance levels where uncertainty is higher, deploying few collars for more years may be a lower cost option for improving the reliability of status projections relative to more intensive short-term monitoring. We provide an R Shiny interface to enable others to explore the implications of alternative monitoring scenarios, disturbance trajectories, priors, and other model parameters for boreal caribou demographic projections. This tool can help users assess monitoring needs and strategies.
+  Across fifty-eight boreal caribou study areas in Canada, both survival and recruitment decrease with the percentage of the study area that is disturbed. Disturbance is the primary driver of caribou population declines. However, there is also variation in demographic rates among study areas, particularly where anthropogenic disturbance is low, and this variation leads to uncertainty in projections derived from national disturbance-demographic relationships. Demographic projections derived from local population-specific data are also uncertain because few places have enough long-term monitoring data to characterize local demographic-disturbance relationships. We present a simple Bayesian population model that integrates prior information from national analysis of demographic-disturbance relationships with available local demographic data to reduce uncertainty in population viability projections. We combine this model with methods for simulating local population dynamics and monitoring to show how monitoring requirements depend on landscape condition. Where anthropogenic disturbance is very high or very low, reasonably accurate status projections can be made using only national demographic-disturbance relationships. At intermediate disturbance levels where uncertainty is higher, deploying few collars for more years may be a lower cost option for improving the reliability of status projections relative to more intensive short-term monitoring. We provide an R Shiny interface to enable others to explore the implications of alternative monitoring scenarios, disturbance trajectories, priors, and other model parameters for boreal caribou demographic projections. This tool can help users assess monitoring needs and strategies.
 keywords: |
   keyword 1; keyword 2; keyword 3
 highlights: |
@@ -113,9 +113,9 @@ doPriorCalibration=F #Note the prior calibration is time consuming.
 
 ## Caribou population monitoring: survival and recruitment metrics
 
-Demographic data for caribou populations, including abundance, vital rates and population growth, are often obtained through the tracking of caribou cows marked with telemetry collars [e.g. @courtois_aerial_2003; @rettie_dynamics_1998;@hervieux_widespread_2013;@johnson_science_2020]. Caribou cows are typically captured via net-gun from aircraft in late winter, and affixed with collars carrying  Very High Frequency (VHF) and/or Global Positioning Satellite (GPS) transmitters allowing remote detection and data retrieval [see @nbckc_nbckc_2021]. Because these collars send out a mortality signal when no longer active after a predetermined period of time, adult survival can be estimated by tracking the fate of marked individuals (see @kaplan_nonparametric_1958 and @pollock_survival_1989 for original approach, and @mcloughlin_declines_2003,  @hervieux_widespread_2013 and @eacker_web-based_2019 for examples of application to caribou). Male caribou are not frequently collared. 
+Demographic data for caribou populations, including abundance, vital rates and population growth, are often obtained through the tracking of caribou cows marked with telemetry collars [e.g. @courtois_aerial_2003; @rettie_dynamics_1998;@hervieux_widespread_2013;@johnson_science_2020]. Although genetic methods are playing an increasingly important role in some caribou monitoring programs [e.g. @hettinga_estimating_2012; @mcfarlane_genetic_2018; @moeller_integrating_2021], there is still heavy reliance on collaring. Caribou cows are typically captured via net-gun from aircraft in late winter, and affixed with collars carrying  Very High Frequency (VHF) and/or Global Positioning Satellite (GPS) transmitters allowing remote detection and data retrieval [see @nbckc_nbckc_2021]. Because these collars send out a mortality signal when no longer active after a predetermined period of time, adult survival can be estimated by tracking the fate of marked individuals (see @kaplan_nonparametric_1958 and @pollock_survival_1989 for original approach, and @mcloughlin_declines_2003,  @hervieux_widespread_2013 and @eacker_web-based_2019 for examples of application to caribou). Male caribou are not frequently collared. 
 
-Collared females are also used in most estimates of recruitment. Recruitment surveys involve locating collared individuals by aircraft and then surveying the entire group of caribou to estimate the ratio of calves to cows in the group [@nbckc_nbckc_2022]. Because this estimate is based on more than just the collared sample of cows, the sample size for recruitment estimates is typically larger than for survival (see multiplier parameter $w$, cowMult below). However, a critical assumption in these surveys is that different demographic groups are equally detectable [@ellington_divergent_2020]. Errors that can bias composition survey results include misidentifying young bulls as cows or vice versa (parameters $\dot{u}$ and $u$ below; refs? ), and failing to detect calves (parameters $\dot{z}$ and $z$ below) [@ellington_divergent_2020]. We acknowledge additional uncertainty and potential bias due to misidentification of sex or missing calves with a correction term derived from a simple model of the recruitment survey observation process (see Supplement B and below for details). Telemetry and aerial survey data from these methods can be combined in a simple recruitment-mortality population model [@hatter_moose_1991] that serves as the basis for monitoring population change of many caribou herds [e.g. @decesare_estimating_2012; @serrouya_comparing_2017; @eacker_web-based_2019].
+Collared females are also used in most estimates of recruitment. Recruitment surveys involve locating collared individuals by aircraft and then surveying the entire group of caribou to estimate the ratio of calves to cows in the group [@nbckc_nbckc_2022]. Because this estimate is based on more than just the collared sample of cows, the sample size for recruitment estimates is typically larger than for survival (see multiplier parameter $w$, cowMult below). However, a critical assumption in these surveys is that different demographic groups are equally detectable [@ellington_divergent_2020]. Errors that can bias composition survey results include misidentifying young bulls as cows or vice versa (parameters $\dot{u}$ and $u$ below; refs? ), and failing to detect calves (parameters $\dot{z}$ and $z$ below) [@ellington_divergent_2020; @decesare_estimating_2012]. We acknowledge additional uncertainty and potential bias due to misidentification of sex or missing calves with a correction term derived from a simple model of the recruitment survey observation process (see Supplement B and below for details). Telemetry and aerial survey data from these methods can be combined in a simple recruitment-mortality population model [@hatter_moose_1991] that serves as the basis for monitoring population change of many caribou herds [e.g. @decesare_estimating_2012; @serrouya_comparing_2017; @eacker_web-based_2019].
 
 ## Anthropogenic disturbance and monitoring scenarios
 
@@ -385,7 +385,7 @@ when $N_t$ is 0, and is otherwise $\lambda_t=N_{t+1}/N_t$. For more
 stable estimates of population status, we report average population
 growth over a period of $y=3$ years, calculated as
 $\bar{\lambda}_{y,t}=\sum_{x=t-y+1}^{x=t}\lambda_x$. The initial
-post-juvenile population size $N_0$ is 1000 animals. For reference, all
+post-juvenile population size $N_0$ is 2000 animals. For reference, all
 variables and parameters are defined in supplemental Table A1.
 
 <!-- Annotated equations for poster.
@@ -477,10 +477,10 @@ Include some commentary on addressing limitations of aspatial
 demographic models with spatial models. Not a panacea. It is possible
 (cite examples) to develop spatially explicit models of movement and
 adult mortality risk - though sample size is a challenge. Recruitment,
-which is more variable among ranges and with anthropogenic disturbance,
+which is more variable among study areas and with anthropogenic disturbance,
 is difficult to characterize at finer spatial scales because it depends
 on the conditions experienced by mothers over years as they move across
-the range, and on spatial variation in calf mortality risk that is not
+the study area, and on spatial variation in calf mortality risk that is not
 measured directly.
 
 We should likely also have a pgph about costs of monitoring - it'll be

@@ -97,7 +97,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\dot{W}_t$|animals|Surviving adult females before recruitment.|
 |$\dot{J}_t$|animals|New recruits to adult age class.|
 |**True demographic parameters**|
-|$N_0$|animals|Initial adult population size.|
+|$N_0=2000$|animals|Initial adult population size.|
 |$\bar{R}_t$|rate|Expected recruitment (calves per cow).|
 |$\bar{S}_t$|probability|Expected adult female survival.|
 |$\dot{\beta}^R_0$||Recruitment intercept.|

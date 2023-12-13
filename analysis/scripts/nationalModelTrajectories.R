@@ -97,7 +97,7 @@ johnsonCompare$c = 1
 pal = colorRampPalette(brewer.pal(7, "Blues"))(35)
 
 # demography
-pars <- data.frame(N0 = 1000)
+pars <- data.frame(N0 = 2000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamplesLarge)
@@ -107,7 +107,7 @@ pars1 <- cbind(pars, caribouPopGrowth(pars$N0,
   S_bar = pars$S_bar, c=pars$c, probOption = "binomial"
 ))
 
-pars <- data.frame(N0 = 1000)
+pars <- data.frame(N0 = 2000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamples)
@@ -137,7 +137,7 @@ plot_lambda <- ggplot(oo,
             alpha = 1) + scale_color_manual(values=pal)+
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Population Growth Rate no delay" * lambda)) +
+  ylab(expression("Population Growth Rate " * lambda)) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 
 str(pars1)
@@ -154,7 +154,7 @@ plot_recruitment3 <- ggplot(data = rateSummaries,
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.4), breaks = c(0, 0.1, 0.2, 0.3, 0.4)) +
   xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Adjusted Recruitment no delay " * dot(X)[t])) +
+  ylab(expression("Adjusted Recruitment " * dot(X)[t])) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 plot(plot_recruitment3)
 
@@ -174,7 +174,7 @@ base1 <- ggplot(data = rateSummaries,
 plot(base1)
 
 # combine ggplots to one figure
-ggpubr::ggarrange(plot_recruitment3,base1,plot_lambda, labels = "",
+ggpubr::ggarrange(plot_lambda, plot_recruitment3,base1, labels = "",
                   ncol = 3, vjust = 1)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 12*0.8, height = 3.6*0.9, units = "in",
@@ -183,7 +183,7 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 12*0
 ##################
 # demography with delayed reproduction
 
-pars <- data.frame(N0 = 1000)
+pars <- data.frame(N0 = 2000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamplesLarge)
@@ -193,7 +193,7 @@ pars1 <- cbind(pars, caribouPopGrowth(pars$N0,
   S_bar = pars$S_bar, c=pars$c, probOption = "binomial",adjustR=T
 ))
 
-pars <- data.frame(N0 = 1000)
+pars <- data.frame(N0 = 2000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamples)
