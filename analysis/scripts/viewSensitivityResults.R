@@ -16,6 +16,8 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 setName = "s6"
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here("tabs/s6.csv"))
+
+nrow(scns)
 pagesa=unique(scns$pageId)
 
 pages = pagesa
