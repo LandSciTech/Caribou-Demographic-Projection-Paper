@@ -27,9 +27,11 @@ do
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job
 done
 
-az batch task show --job-id sendicott_job --task-id caribou-demog_sens_batch1 --query "{state: state, executionInfo: executionInfo}" --output jsonc
+az batch task show --job-id sendicott_job --task-id caribou-demog_sens_batch1 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
-az batch task list --job-id sendicott_job --query "{id: id, state: state}" --output yaml
+
+# See here for making fancy queries https://jmespath.org/tutorial.html
+az batch task list --job-id sendicott_job --query "{tasks: [].[id, state][]}" --output json
 
 
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken --query "[].{name:name}"
