@@ -8,3 +8,5 @@ analysis/paper/.trackdown
 .httr-oauth
 .DS_Store
 *.docx
+results/
+cloud/**/*
