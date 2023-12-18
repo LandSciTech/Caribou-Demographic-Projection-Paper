@@ -48,7 +48,7 @@ str(scns)
 if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)
 }else{
-  scResults = caribouMetrics:::runScnSet(subset(scns,rep<=n_reps),eParsIn,simBig,getKSDists=F,printProgress=F)
+  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
 }
 
 saveRDS(scResults,paste0("results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
