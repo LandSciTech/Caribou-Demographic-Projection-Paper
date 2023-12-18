@@ -5,7 +5,7 @@
 	  {
     "destination": {
       "container": {
-        "containerUrl": "https://ecdcwls.blob.core.windows.net/sendicott/?<sastoken>",
+        "containerUrl": "<SASURL>",
         "path": "logs"
         }
       },

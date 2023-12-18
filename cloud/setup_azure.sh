@@ -19,12 +19,26 @@ nohup Rscript --vanilla "cloud/make_batch_scripts.R"
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
 
 az batch pool create --json-file cloud/pool_json/caribou_add_pool1.json
-az batch job create --pool-id test_pool_json_cli --id "sendicott_job"
+az batch job create --pool-id sendicott_caribouDemo_s7 --id "sendicott_job"
 
-for i in 1 2
+for i in {1..90}
 do
 	echo "setting up task" $i
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job
 done
 
+az batch task show --job-id sendicott_job --task-id caribou-demog_sens_batch1 --query "{state: state, executionInfo: executionInfo}" --output jsonc
 
+az batch task list --job-id sendicott_job --query "{id: id, state: state}" --output yaml
+
+
+az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken --query "[].{name:name}"
+
+
+az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/s7/?$sastoken -d results --recursive
+
+
+az storage remove -c sendicott --account-name ecdcwls --sas-token $sastoken --recursive
+
+az batch job delete --job-id sendicott_job
+az batch pool delete --pool-id sendicott_caribouDemo_s7
