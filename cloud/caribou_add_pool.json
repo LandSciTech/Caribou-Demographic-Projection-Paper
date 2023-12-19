@@ -2,7 +2,7 @@
 	"type": "Microsoft.Batch/batchAccounts/pools",
 	"apiVersion": "2016-12-01",
 	"id": "<id>",
-	"vmSize": "Standard_D8S_v3",
+	"vmSize": "Standard_D16S_v3",
 	"virtualMachineConfiguration": {
 		"imageReference": {
 			"publisher": "microsoft-azure-batch",
@@ -22,7 +22,7 @@
 		}
 	},
 		"targetDedicatedNodes": "<n_nodes>",
-		"taskSlotsPerNode": 4,
+		"taskSlotsPerNode": 8,
 	"networkConfiguration": {
 		"subnetId":"<subnetId>"
 		}

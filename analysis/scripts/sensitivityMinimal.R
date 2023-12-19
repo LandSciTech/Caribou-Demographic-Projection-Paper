@@ -6,7 +6,7 @@ cpageId <- commandArgs(trailingOnly = TRUE)
 #setwd("C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper")
 library(caribouMetrics)
 
-setName = "s7"
+setName = "s8"
 
 #######################
 dir.create(paste0("figs/",setName),recursive=T)
