@@ -43,6 +43,7 @@ outfile <-  file(paste0("cloud/pool_json/caribou_add_pool1.json"), "wb")
 readLines("cloud/caribou_add_pool.json") |>
   stringr::str_replace_all("<subnetId>", keyring::key_get("Azure_subnetId")) |>
   stringr::str_replace_all("<id>", paste0("sendicott_caribouDemo_", setName)) |>
-  stringr::str_replace_all("<n_nodes>", length(scn_nums)|> as.character()) |>
+  # divide by 4 because set 4 slots per node
+  stringr::str_replace_all("<n_nodes>", (length(scn_nums)/4)|> ceiling()|> as.character()) |>
   writeLines(con = outfile)
 close(outfile)
