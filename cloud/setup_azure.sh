@@ -26,12 +26,12 @@ az network vnet subnet list-available-ips --resource-group EcDc-WLS-rg \
 --vnet-name EcDc-WLS-vnet -n EcDc-WLS_compute-cluster-snet
 
 az batch pool create --json-file cloud/pool_json/caribou_add_pool1.json
-az batch job create --pool-id sendicott_caribouDemo_s8 --id "sendicott_job"
+az batch job create --pool-id sendicott_caribouDemo_s7 --id "sendicott_job_2"
 
-for i in {1..30}
+for i in {1..90}
 do
 	echo "setting up task" $i
-	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job
+	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job_2
 done
 
 #### Monitor tasks ############################
@@ -41,12 +41,16 @@ az batch task show --job-id sendicott_job \
 --task-id caribou-demog_sens_batch1 \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
+# download output file for a task
+az batch task file download --task-id caribou-demog_sens_batch1 \
+--job-id sendicott_job_2 --file-path "wd/nohup_1.out" --destination "./nohup_1.out"
+
 # List of all tasks and their state
 # See here for making fancy queries https://jmespath.org/tutorial.html
 az batch task list --job-id sendicott_job --query "{tasks: [].[id, state][]}" --output json
 
 # Summary of task counts by state
-az batch job task-counts show --job-id sendicott_job
+az batch job task-counts show --job-id sendicott_job_2
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
