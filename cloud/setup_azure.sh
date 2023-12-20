@@ -26,37 +26,40 @@ az network vnet subnet list-available-ips --resource-group EcDc-WLS-rg \
 --vnet-name EcDc-WLS-vnet -n EcDc-WLS_compute-cluster-snet
 
 az batch pool create --json-file cloud/pool_json/caribou_add_pool1.json
-az batch job create --pool-id sendicott_caribouDemo_s8 --id "sendicott_job_3"
+az batch job create --pool-id sendicott_caribouDemo_s8 --id "sendicott_job"
 
 for i in {1..30}
 do
 	echo "setting up task" $i
-	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job_3
+	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job
 done
 
 #### Monitor tasks ############################
 
 # details for a single task filtered by query
-az batch task show --job-id sendicott_job_3 \
+az batch task show --job-id sendicott_job \
 --task-id caribou-demog_sens_batch1 \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # List of all tasks and their state
 # See here for making fancy queries https://jmespath.org/tutorial.html
-az batch task list --job-id sendicott_job_3 --query "{tasks: [].[id, state][]}" --output json
+az batch task list --job-id sendicott_job --query "{tasks: [].[id, state][]}" --output json
 
 # Summary of task counts by state
-az batch job task-counts show --job-id sendicott_job_3
+az batch job task-counts show --job-id sendicott_job
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
---query "[].{name:name}" --prefix s7
+--query "[].{name:name}" --prefix s8 --output yaml
 
 #### Download results and remove from storage ################################
-az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/s7/?$sastoken -d results --recursive
+az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/s8/?$sastoken \
+-d results --recursive
 
+# NOTE removes ***everything*** from the storage container
 az storage remove -c sendicott --account-name ecdcwls --sas-token $sastoken --recursive
 
 #### Delete pool and job ##########################
 az batch job delete --job-id sendicott_job
-az batch pool delete --pool-id sendicott_caribouDemo_s7
+az batch pool delete --pool-id sendicott_caribouDemo_s8
+

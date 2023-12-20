@@ -9,7 +9,7 @@
         "path": "logs"
         }
       },
-    "filePattern": "../std*.txt",
+    "filePattern": "*.out",
     "uploadOptions": {
       "uploadCondition": "taskcompletion"
       }
