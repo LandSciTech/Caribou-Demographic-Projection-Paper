@@ -6,7 +6,7 @@ cpageId <- commandArgs(trailingOnly = TRUE)
 #setwd("C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper")
 library(caribouMetrics)
 
-setName = "s7"
+setName = "s9"
 
 #######################
 dir.create(paste0("figs/",setName),recursive=T)
@@ -29,7 +29,7 @@ eParsIn$collarOnTime=1
 eParsIn$collarOffTime=12
 eParsIn$collarNumYears=6
 
-scns = subset(allScns, pageId==cpageId)
+scns = allScns#subset(allScns, pageId==cpageId)
 
 rm(allScns)
 

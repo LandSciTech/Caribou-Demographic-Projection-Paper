@@ -19,14 +19,15 @@ stateScns$rQuantile = runif(nrow(stateScns),min=0.01,max=0.99)
 #monitoringScns=rbind(monitoringScns,minimalScn)
 scns=merge(monitoringScns,stateScns)
 
-scns$iAnthro = scns$tA-(scns$obsYears-1)*scns$obsAnthroSlope
+scns$preYears = max(scns$obsYears)-scns$obsYears
+
+scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
 scns$projYears = 20
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/50)
 table(scns$repBatch)
-scns$N0 = 2000
+scns$N0 = 5000
 scns$adjustR = TRUE
-scns$preYears = max(scns$obsYears)-scns$obsYears
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))
@@ -34,6 +35,12 @@ scns$pageId = as.numeric(as.factor(scns$pageLab))
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)
 
+setName="s9"
+scns = subset(scns,(rep==1)&(collarCount==30)
+              &(cowMult==6)&(collarInterval==1)&(projAnthroSlope==1))
+nrow(scns)
+write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
+pages=unique(scns$pageLab)
 
 setName = "s8"
 stateScns = data.frame(tA=c(0,20,40,60),
@@ -46,14 +53,15 @@ stateScns$rQuantile = runif(nrow(stateScns),min=0.01,max=0.99)
 scns=merge(monitoringScns,stateScns)
 
 scns$qMax = 0;scns$uMax=0;scns$zMax=0
-scns$iAnthro = scns$tA-(scns$obsYears-1)*scns$obsAnthroSlope
+
+scns$preYears = max(scns$obsYears)-scns$obsYears
+scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
 scns$projYears = 20
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/50)
 table(scns$repBatch)
-scns$N0 = 2000
+scns$N0 = 5000
 scns$adjustR = TRUE
-scns$preYears = max(scns$obsYears)-scns$obsYears
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))

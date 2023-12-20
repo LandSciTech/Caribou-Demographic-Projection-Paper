@@ -13,9 +13,9 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s6"
+setName = "s9"
 dir.create(paste0("figs/",setName),recursive=T)
-scns = read.csv(here::here("tabs/s6.csv"))
+scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
 nrow(scns)
 pagesa=unique(scns$pageId)
@@ -26,7 +26,7 @@ for (p in pagesa){
   if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
 }
 
-batchStrip<-function(l,batches=seq(1:4)){
+batchStrip<-function(l,batches=seq(1:10)){
   for(b in batches){
     l=gsub(paste0("repBatch",b),"",l,fixed=T)
   }
@@ -37,7 +37,7 @@ pages=sort(pages)
 
 combine=T
 for(i in 1:length(pages)){
-  #combine=F;i=5
+  #combine=F;i=1
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -72,6 +72,7 @@ for(i in 1:length(pages)){
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
   exResults = subset(scResults$rr.summary.all,(collarCount==30)&(collarInterval==1)&(Parameter=="Population growth rate"))
+  exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
   grpID = subset(exResults,select=c(tA,obsYears,meanQ)) %>% group_by(tA,obsYears) %>%
     summarise(minQ = min(meanQ),maxQ=max(meanQ))
@@ -85,7 +86,9 @@ for(i in 1:length(pages)){
   exResults$grp = paste(exResults$type,exResults$quantile, exResults$tA,exResults$obsYears)
   exResults$Anthro2023 = pmax(0,exResults$tA)#pmax(0,exResults$tA-2) #correcting for error - change back in round 4
 
+
   obs = subset(scResults$obs.all,(collarCount==30)&(collarInterval==1)&(parameter=="Population growth rate"))
+  obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
 
@@ -102,6 +105,7 @@ for(i in 1:length(pages)){
   dev.off()
 
   probs = subset(scResults$rr.summary.all,(Parameter=="Population growth rate"))
+  probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
   probs$Anthro2023 = pmax(0,probs$tA)#pmax(0,probs$tA-2) #correcting for error - change back in round 4
   probs$YearsOfProjection = probs$projectionTime
@@ -129,7 +133,6 @@ for(i in 1:length(pages)){
 
   distScns$DisturbanceScn = distScns$Anthro2023
 
-
   timelineLabs = unique(subset(distScns,(Year==startYear)|(Year>=2023),select=c(Year,Timeline,Anthro,DisturbanceScn,grp)))
   timelineLabs = timelineLabs[order(timelineLabs$Year),]
 
@@ -146,10 +149,12 @@ for(i in 1:length(pages)){
 
   #plot probability of making an error about true population state
   statusTrue = subset(scResults$obs.all,(type=="true")&(parameter=="Population growth rate")&(Year>(startYear+obsYears-1)))
+  statusTrue$startYear=statusTrue$startYear+statusTrue$preYears
   statusTrue$trueMean = statusTrue$Mean
   statusTrue$parameter=NULL;statusTrue$type=NULL;statusTrue$Mean=NULL
 
   sizeTrue = subset(scResults$obs.all,(type=="true")&(parameter=="Female population size")&(Year>(startYear+obsYears-1)))
+  sizeTrue$startYear = sizeTrue$startYear+sizeTrue$preYears
   sizeTrue$trueSize = sizeTrue$Mean
   sizeTrue$parameter=NULL;sizeTrue$type=NULL;sizeTrue$Mean=NULL
   setdiff(names(statusTrue),names(probs))
@@ -195,7 +200,7 @@ for(i in 1:length(pages)){
   probs$NumCollars = as.factor(probs$collarCount)
   probs$grp = paste(probs$obsYears,probs$NumCollars)
 
-  probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
+  probs$CollarYrs = as.numeric(as.character(probs$NumCollars))*probs$obsYears
   for(pp in pagesCa){
     #pp=pagesCa[1]
     png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
