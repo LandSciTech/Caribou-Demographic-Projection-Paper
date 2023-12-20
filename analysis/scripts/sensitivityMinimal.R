@@ -1,12 +1,16 @@
 #!/usr/bin/env Rscript
 
 # Run batches from Rscript that uses parallel backend and new caribouMetrics functions
-cpageId <- commandArgs(trailingOnly = TRUE)
-# cpageId <- 1
-#setwd("C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper")
+args <- commandArgs(trailingOnly = TRUE)
+cpageId <- args[1]
+
+cDir = getwd()
+
 library(caribouMetrics)
 
-setName = "s9"
+# cpageId <- 31;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
+
+setName = args[2]
 
 #######################
 dir.create(paste0("figs/",setName),recursive=T)
