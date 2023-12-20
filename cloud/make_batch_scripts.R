@@ -20,7 +20,9 @@ make_files <- function(batch){
   batch <- as.character(batch)
   # need this to make it have unix line endings
   outfile <-  file(paste0("cloud/task_scripts/run_caribou", batch, ".sh"), "wb")
-  readLines("cloud/run_caribou.sh") |> stringr::str_replace_all("<batch>", batch)|>
+  readLines("cloud/run_caribou.sh") |>
+    stringr::str_replace_all("<batch>", batch)|>
+    stringr::str_replace_all("<setName>", paste0('"', setName, '"'))|>
     stringr::str_replace_all("<PAT>", gh::gh_token()) |>
     writeLines(con = outfile)
   close(outfile)

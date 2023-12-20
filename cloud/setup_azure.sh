@@ -15,7 +15,7 @@ sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
 
 # might need to update the SASURL secret stored in this script first
-nohup Rscript --vanilla "cloud/make_batch_scripts.R"
+Rscript --vanilla "cloud/make_batch_scripts.R"
 
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
 
