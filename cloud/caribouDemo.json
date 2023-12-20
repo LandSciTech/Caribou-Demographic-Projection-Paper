@@ -5,11 +5,11 @@
 	  {
     "destination": {
       "container": {
-        "containerUrl": "https://ecdcwls.blob.core.windows.net/sendicott/?<sastoken>",
+        "containerUrl": "<SASURL>",
         "path": "logs"
         }
       },
-    "filePattern": "../std*.txt",
+    "filePattern": "*.out",
     "uploadOptions": {
       "uploadCondition": "taskcompletion"
       }

@@ -11,7 +11,7 @@ library(caribouMetrics)
 
 # cpageId <- 31;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
 
-setName = "s7"
+setName = "s8"
 
 #######################
 dir.create(paste0(cDir,"/figs/",setName),recursive=T)
