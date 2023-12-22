@@ -33,7 +33,7 @@ eParsIn$collarOnTime=1
 eParsIn$collarOffTime=12
 eParsIn$collarNumYears=6
 
-scns = allScns#subset(allScns, pageId==cpageId)
+scns = subset(allScns, pageId==cpageId)
 
 rm(allScns)
 
