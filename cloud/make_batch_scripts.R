@@ -7,7 +7,7 @@ if(0){
   keyring::key_get("Azure_SASURL")
 }
 
-setName = "s7"
+setName = commandArgs(trailingOnly = TRUE)
 allScns = read.csv(paste0("tabs/",setName,".csv"))
 scn_nums <- unique(allScns$pageId)
 
