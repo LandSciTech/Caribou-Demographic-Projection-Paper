@@ -14,56 +14,64 @@ sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end
 # I actually created the SASURL manually bc it wouldn't let me do more than 7 days through CLI
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
 
+setName="s8"
+
+nBatches=30
+
+jobName="sendicott_job_"$setName
+
+poolName="sendicott_caribouDemo_"$setName
+
+# delete old versions of scripts
+rm -r cloud/task_scripts
+rm -r cloud/task_jsons
+rm -r cloud/pool_json
+
 # might need to update the SASURL secret stored in this script first
-Rscript --vanilla "cloud/make_batch_scripts.R"
+Rscript --vanilla "cloud/make_batch_scripts.R" $setName
 
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
 
 #### Create pool, job, tasks ##########################
-# check the number of available ip addresses for new nodes. If there are none
-# no new nodes can be set up
-az network vnet subnet list-available-ips --resource-group EcDc-WLS-rg \
---vnet-name EcDc-WLS-vnet -n EcDc-WLS_compute-cluster-snet
-
 az batch pool create --json-file cloud/pool_json/caribou_add_pool1.json
-az batch job create --pool-id sendicott_caribouDemo_s7 --id "sendicott_job_2"
+az batch job create --pool-id $poolName --id $jobName
 
-for i in {1..90}
+for ((i=1;i<=nBatches;i++))
 do
 	echo "setting up task" $i
-	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id sendicott_job_2
+	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id $jobName
 done
 
 #### Monitor tasks ############################
 
 # details for a single task filtered by query
-az batch task show --job-id sendicott_job \
+az batch task show --job-id $jobName \
 --task-id caribou-demog_sens_batch1 \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
 az batch task file download --task-id caribou-demog_sens_batch1 \
---job-id sendicott_job_2 --file-path "wd/nohup_1.out" --destination "./nohup_1.out"
+--job-id $jobName --file-path "wd/nohup_1.out" --destination "./nohup_1.out"
 
 # List of all tasks and their state
 # See here for making fancy queries https://jmespath.org/tutorial.html
-az batch task list --job-id sendicott_job --query "{tasks: [].[id, state][]}" --output json
+az batch task list --job-id $jobName --query "{tasks: [].[id, state][]}" --output json
 
 # Summary of task counts by state
-az batch job task-counts show --job-id sendicott_job_2
+az batch job task-counts show --job-id $jobName
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
---query "[].{name:name}" --prefix s8 --output yaml
+--query "[].{name:name}" --prefix $setName --output yaml
 
 #### Download results and remove from storage ################################
-az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/s8/?$sastoken \
+az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/$setName/?$sastoken \
 -d results --recursive
 
 # NOTE removes ***everything*** from the storage container
 az storage remove -c sendicott --account-name ecdcwls --sas-token $sastoken --recursive
 
 #### Delete pool and job ##########################
-az batch job delete --job-id sendicott_job
-az batch pool delete --pool-id sendicott_caribouDemo_s8
+az batch job delete --job-id $jobName
+az batch pool delete --pool-id $poolName
 
