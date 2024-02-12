@@ -97,21 +97,21 @@ johnsonCompare$c = 1
 pal = colorRampPalette(brewer.pal(7, "Blues"))(35)
 
 # demography
-pars <- data.frame(N0 = 2000)
+pars <- data.frame(N0 = 5000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamplesLarge)
-numSteps <- 20
+numSteps <- 1
 pars1 <- cbind(pars, caribouPopGrowth(pars$N0,
   numSteps = numSteps, R_bar = pars$R_bar,
   S_bar = pars$S_bar, c=pars$c, probOption = "binomial"
 ))
 
-pars <- data.frame(N0 = 2000)
+pars <- data.frame(N0 = 5000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamples)
-numSteps <- 20
+numSteps <- 1
 pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
   numSteps = numSteps, R_bar = pars$R_bar,
   S_bar = pars$S_bar,c=pars$c, probOption = "binomial"
@@ -183,21 +183,21 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 12*0
 ##################
 # demography with delayed reproduction
 
-pars <- data.frame(N0 = 2000)
+pars <- data.frame(N0 = 5000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamplesLarge)
-numSteps <- 20
+numSteps <- 1
 pars1 <- cbind(pars, caribouPopGrowth(pars$N0,
   numSteps = numSteps, R_bar = pars$R_bar,
   S_bar = pars$S_bar, c=pars$c, probOption = "binomial",adjustR=T
 ))
 
-pars <- data.frame(N0 = 2000)
+pars <- data.frame(N0 = 5000)
 # increase to get a better sample size, or set interannualVar to NA
 pars <- merge(pars, data.frame(rrp = 1))
 pars <- merge(pars, rateSamples)
-numSteps <- 20
+numSteps <- 1
 pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
   numSteps = numSteps, R_bar = pars$R_bar,
   S_bar = pars$S_bar,c=pars$c, probOption = "binomial",adjustR=T

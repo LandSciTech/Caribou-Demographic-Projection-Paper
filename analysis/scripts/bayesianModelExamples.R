@@ -18,7 +18,7 @@ scns=merge(monitoringScns,stateScns)
 scns$iAnthro = 0
 scns$tA = scns$iAnthro+(scns$obsYears)*scns$obsAnthroSlope
 scns$projYears = 50-scns$obsYears
-scns$N0 = 2000
+scns$N0 = 5000
 scns$adjustR = TRUE
 
 ####################

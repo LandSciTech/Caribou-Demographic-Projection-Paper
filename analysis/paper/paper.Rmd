@@ -107,8 +107,20 @@ pal_nm <- "Redon"
 
 fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 
-runScenarios = F 
+runScenarios = F #To do: set up to run full analysis from within this document.
 doPriorCalibration=F #Note the prior calibration is time consuming. 
+
+resultScenario = "S7"
+resultSet ="cmult6ay3aSf1"
+figSet = c("diffs","distScns","EVSI","power","EVPIall")
+
+for(f in figSet){
+  currentFile = here::here(paste0("figs/",resultScenario,"/",f,resultSet,".png"))
+  newFile = here::here(paste0("figs/forPaper/",f,resultSet,".png"))
+  file.copy(currentFile, newFile,overwrite=T)
+}
+
+
 ```
 
 ## Caribou population monitoring: survival and recruitment metrics
@@ -404,7 +416,7 @@ consider & comment on alternative choices made in this example
 example in all particulars, change some aspects, or do comparisons? \*
 -->
 
-## Probability of correct status assessment
+## Probability of correct status assessment and expected value of sample information
 
 In order to assess whether a monitoring program is likely sufficient to
 inform decisions, it is important to select outcome measures that are
@@ -417,11 +429,25 @@ analysis our outcome of interest is how often the Bayesian posterior
 mean correctly predicts the true population status (increasing or
 decreasing). To calculate this outcome for each disturbance and
 monitoring scenario (Figure \@ref(fig:figDisturbance)) we fit the
-Bayesian model to 200 example population trajectories (e.g. Figure
+Bayesian model to 500 example population trajectories (e.g. Figure
 \@ref(fig:exampleTrajectories)). The probability of correct status
-assessment for that scenario is the percentage of these 200 examples in
+assessment for that scenario is the percentage of these 500 examples in
 which the Bayesian posterior mean population growth rate and the true
-population growth rate are both greater than 0.99, or both less than or equal to 0.99. To aid in interpretation of results and to highlight the advantages of selecting a metric that is directly relevant to the management objective of stable or increasing populations, we also show how integrating local monitoring data alters the distribution of differences between true population growth rates and Bayesian posterior mean estimated growth rates.  
+population growth rate are both greater than 0.99, or both less than or equal to 0.99. 
+
+Following Dunham et al. [-@dunham_strategic_2023] we also calculate the expected value of sample information (EVSI) and the expected value of perfect information (EVPI) [@runge_which_2011;@yokota_value_2004], assigning a value of 1 to correct status assessments, and a value of 0 to incorrect assessments ($\nu_{\alpha,\psi}=1 \text{when} \alpha=\psi, 0 \text{otherwise}$). The expected value with perfect knowledge is $EV_{certainty}=1$. The difference between this and the expected score using knowledge of disturbance the disturbance scenario $\tau$ (Figure \@ref(fig:figDisturbance)) and priors from the national model gives EVPI, a measure of the maximum possible benefit that can be gained from local sampling:
+\begin{equation}
+EVPI_{\tau} = 1-max_{\alpha}\sum_\psi[P(\psi|\tau)\nu_{\alpha,\psi}],
+  (\#eq:EVPI)
+\end{equation}
+P(\psi|\tau) is the prior probability that the true state of the population is $\psi$, and each population is assigned a status $\alpha$ informed by the prior. EVSI measures expected improvement from a particular sampling strategy as the difference between the expected value with and without additional sample information: 
+\begin{equation}
+EVSI_{\tau} = E_x[max_{\alpha}\sum_\psi[P(\psi|x,\tau)\nu_{\alpha,\psi}]] - (1-EVPI_{\tau}),
+  (\#eq:EVSI)
+\end{equation}
+where $x$ is the sample information from a particular example trajectory. Simulated observations from 500 example trajectories for each disturbance & monitoring scenario $\tau$ (Figure \@ref(fig:figDisturbance)) represent the distribution of possible values of $x$. $P(\psi|x,\tau)$ is the posterior probability that the true state of the population is $\psi$, and each population is assigned a status $\alpha$ informed by the sample information.  
+
+To aid in interpretation of results and to highlight the advantages of selecting a metric that is directly relevant to the management objective of stable or increasing populations, we also show how integrating local monitoring data alters the distribution of differences between true population growth rates and Bayesian posterior mean estimated growth rates.  
 
 ## User interface and open, flexible, reuseable implementation
 
@@ -434,115 +460,35 @@ model. The app allows advanced users to adjust many model parameters (supplement
 
 # Results
 
-```{r examplePredictions, fig.cap="Prior (top row) and posterior (bottom row) predictions from the Bayesian model for an example population trajectory. In this example scenario anthropogenic disturbance increases by 2\\% per year from 0 to 100\\%. The population is monitored for 15 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95\\% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5\\% and 97.5\\% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty (bottom row), but when disturbance is very high local data is not required to predict viability (population growth <= 0.99).", cache=TRUE}
+Analysis of simulated example demographic trajectories confirms that our Bayesian model can effectively combine local demographic data with priors from national demographic-disturbance relationships to reduce uncertainty in boreal caribou demographic projections (Figs \@ref(fig:examplePredictions) and \@ref(fig:figDiffs)). As expected, uncertainty about the population growth rate decreases as sampling effort in each year (i.e. number of collars) or the number of years of monitoring (Fig \@ref(fig:figDiffs)) increase. Uncertainty is higher when the forecast horizon is long (compare 5 and 20 year projections in Fig \@ref(fig:figDiffs)). Uncertainty is also higher in our high anthropogenic disturbance scenarios (Fig \@ref(fig:figDiffs)) because stochastic variation in population growth rates increase as populations become very small (as in top right panel of Fig \@ref(fig:examplePredictions)). These results confirm the Bayesian population model is working as it should, and none of them are surprising. 
+
+Our analysis becomes more interesting and informative when we examine the probability of correctly assessing population status (Fig \@ref(fig:figStatusErrors)) and the expected value of sample information (Fig \@ref(fig:figEVSI)). When anthropogenic disturbance is high (right panels of Fig \@ref(fig:figStatusErrors) and Fig \@ref(fig:figEVSI)), projections of population status informed only by priors from the national demographic-disturbance relationships are accurate, and adding additional local monitoring data does not improve accuracy. At lower levels of disturbance, local monitoring can reduce uncertainty, but there are diminishing returns as the number of collars deployed or the number of years of monitoring increases (Fig \@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). The shapes of the relationships between monitoring effort and the probability of correct status assessment depend on how anthropogenic disturbance is changing over time, but there are diminishing benefits of increased monitoring regardless of whether disturbance is increasing or decreasing (supplement D). Adding unknown unknown bias increases uncertainty, but these increases are not large for the set of parameters we investigate (supplement E).
+
+```{r examplePredictions, fig.cap="Prior (top row) and posterior (bottom row) predictions from the Bayesian model for an example population trajectory. In this example scenario anthropogenic disturbance increases by 2\\% per year from 0 to 100\\%. The population is monitored for 15 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95\\% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5\\% and 97.5\\% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty (bottom row), but when disturbance is very high local data is not required to predict viability (population growth <= 0.99). When projected populations become very small, stochastic variation in projected population growth rate increases (as in the top right panel).", cache=TRUE}
 
 knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.png"))
-
 ```
 
-```{r figStatusErrors, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Probabilities are calculated for 200 example population trajectories (see example trajectories in Figure \\@ref(fig:exampleTrajectories)). For each example population, the status assessment is correct if the Bayesian posterior mean and the true population growth rate are both less than or equal to 0.99, or both greater than 0.99. When disturbance is very high or very low the probability of correct status assessment is high even without local monitoring. Where disturbance is moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as sample size increases. In these examples the apparent number of adult females per collared animal in composition survey $w$ is 6; varying this parameter does not qualitatively alter outcomes (supplement D).", cache=TRUE}
-knitr::include_graphics(here::here("figs/forPaper/powercmult6ay3aSf1.png"))
-```
-
-```{r figDiffs, fig.cap="The distribution of differences between true population growth rates and Bayesian posterior mean growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Differences are calculated for 200 example population trajectories (see example trajectories in Figure \\@ref(fig:exampleTrajectories)). Differences decrease as the number of years of monitoring and the number of collars increase. Differences are larger when the projection period is longer. Differences are also larger when anthropogenic disturbance is high because stochastic variation in population growth rate is high for small populations. In these examples the apparent number of adult females per collared animal in composition survey $w$ is 6, and collars are renewed each year.", cache=TRUE}
+```{r figDiffs, fig.cap="The distribution of differences between true population growth rates and Bayesian posterior mean growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Differences are calculated for 500 example population trajectories (see example trajectories in Figure \\@ref(fig:exampleTrajectories)). Differences decrease as the number of years of monitoring and the number of collars increase. Differences are larger when the projection period is longer. Differences are also larger when anthropogenic disturbance is high because stochastic variation in population growth rate is higher for small populations. In these examples the apparent number of adult females per collared animal in composition survey $w$ is 6, and collars are renewed each year. To ensure results are comparable across monitoring scenarios and that populations remain extant through the monitoring period, all simulations are started with $N_0=5000$ animals 24 years prior to the start of the projection period.", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay3aSf1.png"))
 ```
 
+```{r figStatusErrors, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Probabilities are calculated for 500 example population trajectories (see example trajectories in Figure \\@ref(fig:exampleTrajectories)). To ensure results are comparable across monitoring scenarios and that populations remain extant through the monitoring period, all simulations are started with $N_0=5000$ animals 24 years prior to the start of the projection period. For each example population, the status assessment is correct if the Bayesian posterior mean and the true population growth rate are both less than or equal to 0.99, or both greater than 0.99. When disturbance is very high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as sample size increases. In these examples the apparent number of adult females per collared animal in composition survey $w$ is 6; varying this parameter does alter qualitative conclusions (supplements D and E).", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/powercmult6ay3aSf1.png"))
+```
+
+```{r figEVSI, fig.cap="The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). When disturbance is very high EVSI is low, indicating that local sampling does not alter status assessments. Where disturbance is low or moderate, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as sample size increases. See Figure \\@ref(fig:figStatusErrors) for additional scenario details.", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay3aSf1.png"))
+```
+
+```{r figEVPI, fig.cap="The expected value of perfect information (EVSI) varies with among anthropogenic disturbance scenarios (see increasing, decreasing and stable scenarios in Figs \\@ref(fig:figDisturbance), D.1 and D.5 respectively) and the number of years projected (x axis). When disturbance is high EVPI is low, indicating that local sampling will not alter status assessments. Increasing the forecast horizon can either increase or decrease the EVPI, depending on whether the anthropogenic disturbance trend makes outcomes more or less predictable.", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/EVPIall.png"))
+```
+
+
 # Discussion
 
-Will need a section on the fundamental assumptions of these
-models/aspatial nature of them, e.g. that collared cows and cows
-observed in surveys are a random representative sample of the larger
-population, and that there is full mixing in the population so that
-estimated survival/recruitment rates apply equally to all animals in the
-population. We can discuss this with some contrasting examples, e.g.
-collaring 30 animals from a very small/restricted population (like
-Little Smoky, 308,606ha, pop size estimate 78 as of COSEWIC 2014) would
-likely be much more representative of the population vs. collaring 30
-animals from a relatively large/expansive population (northern Quebec
-range Q6, 62,156,186 ha, pop size 9000 as of COSEWIC 2014). But because
-of the way this model is built, we assume that the sample is equally
-representative in either of those cases, so changing the initial
-starting N won't affect model performance/predictions much here...
-
-On a related topic to population size; Note that the stuff we got from
-ArtR regarding simulations for sample size does acknowledge that pops of
-different sizes have different monitoring requirements, and Sara's
-Labrador numbers also show targets relative to pop size... Since this
-kind of aspatial model will mostly be using small population sizes in
-order to see any effects, we'll jsut have to acknowledge that a caveat
-of this is that we're not fully able to explore all the population size
-effects with this model, but generally Josie has found little impact of
-initial population size to the results.
-
-Discuss limitations of assumption that example populations remain in their quantile over time which limits ranges from transitioning e.g. really low values to really high values. If you think of the larger variation at low disturbance values = variation created by climatic events or some other short term factor influence habitat this could be problematic. not sure if being clear but trying to say that ranges with poor demography at low disturbance values could experience high demographic values a few years later (as observed in NWT)
-
-Discuss what is gained by including misidentification bias parameters.
-
-Discuss pros and cons of alternative approach to modelling with more age classes...
-
-Include some commentary on addressing limitations of aspatial
-demographic models with spatial models. Not a panacea. It is possible
-(cite examples) to develop spatially explicit models of movement and
-adult mortality risk - though sample size is a challenge. Recruitment,
-which is more variable among study areas and with anthropogenic disturbance,
-is difficult to characterize at finer spatial scales because it depends
-on the conditions experienced by mothers over years as they move across
-the study area, and on spatial variation in calf mortality risk that is not
-measured directly.
-
-We should likely also have a pgph about costs of monitoring - it'll be
-pretty short, cause basically we have no idea what it costs since nobody
-will tell us :) Through the NBCKC Monitoring Working Group work, we
-tried over and over to get some basic cost estimates from P/T reps and
-practitioners, and hit a wall - nobody wanted to tell us a thing. Don't
-know if we'd now find anyone is more open to sharing, but don't think we
-should get our hopes up. But at the very least we'll want to acknowledge
-that we haven't accounted for relative costs of monitoring... [e.g.
-costs outlined in the Telemetry guidance report from the MonitoringWG:
-"Expenses to consider in radio-collared monitoring will vary, based on:
-helicopter (or other aircraft) use, purchase of tracking collars, data
-fees associated with the collars (the cost of which varies by operating
-system, recording frequency and data transmission frequency), and
-live-capture equipment (3 or more sets of capture nets and associated
-buckets, a netting gun, and ankle hobbles)"] --\>perhaps the keen
-MonitoringWG contacts would be willing to provide even really rough cost
-estimates, and/or even jsut a relative sense of how different it would
-be to e.g. monitor a few pops for many yrs vs lots of pops for a short
-time...?
-
-Re paragraph on costs of monitoring. The reality is that costs vary with
-remoteness and the difficulty of finding animals to collar (which also
-depends on how many collars are deployed). Since costs are so
-context-specific, there isn't a good way to incorporate them into this
-general analysis. It would be interesting to work through a case study
-(i.e. Newfoundland) informed by context-specific costs, and consider how
-incorporation of those costs may change the relative value of
-alternative monitoring scenarios.
-
-Biases in composition survey estimates also vary with vegetation cover
-(i.e. the difficulty of seeing animals) and the care taken to correctly
-identify the sex of unknown animals. Misidentification rates could be
-estimated from discrepancies among results from multiple independent
-observers analyzing photos of animal groups.
-
-The tool we have developed is a proof of concept, designed to
-demonstrate possibilities and help users develop a general understanding
-of the relative value of alternative monitoring strategies for boreal
-caribou. In current form the tool will have limited value for managers
-who have some local data and wish to know the value of collecting more,
-because it is designed to either integrate real local data or simulated
-local data, but not both. Development of a tool designed to help
-decision makers assess the relative value of strategies for additional
-monitoring given their existing local data and national-demographic
-disturbance relationships would be a useful followup to this work.
-
-A tool that integrates real local data with national demographic
-disturbance relationships can also be used to provide consistent and
-transparent assessments of the strength of evidence for local deviations
-from the expected mean of national demographic-disturbance
-relationships. Help distinguish real variation among populations from
-apparent variation that can be attributed to lack of local data.
+See <https://docs.google.com/document/d/1RD7bJ6yhtBJULjJFRJfHzObQscteyObM/edit>.
 
 # Acknowledgements
 

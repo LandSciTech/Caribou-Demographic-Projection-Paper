@@ -13,9 +13,12 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s9"
+setName = "s8"
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
+
+
+table(scns$pageId)
 
 nrow(scns)
 pagesa=unique(scns$pageId)
@@ -26,7 +29,7 @@ for (p in pagesa){
   if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
 }
 
-batchStrip<-function(l,batches=seq(1:10)){
+batchStrip<-function(l,batches=c(10,seq(1:9))){
   for(b in batches){
     l=gsub(paste0("repBatch",b),"",l,fixed=T)
   }
@@ -36,8 +39,10 @@ batchStrip<-function(l,batches=seq(1:10)){
 pages=sort(pages)
 
 combine=T
+addEV = F
+addProbs=F
 for(i in 1:length(pages)){
-  #combine=F;i=1
+  #combine=F;i=50
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -63,9 +68,10 @@ for(i in 1:length(pages)){
     scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
   }
 
-  if(as.numeric(strsplit(nextP,"repBatch")[[1]][2])<=as.numeric(strsplit(p,"repBatch")[[1]][2])){
+  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=10)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
     combine=F
   }else{combine=T;next}
+
 
   #figure out how to count out errors.
   head(scResults$rr.summary.all)
@@ -103,6 +109,7 @@ for(i in 1:length(pages)){
     geom_hline(yintercept=1, color = "black",size=0.7)+scale_fill_discrete(type=pal2)+scale_color_discrete(type=pal2)
   print(base)
   dev.off()
+
 
   probs = subset(scResults$rr.summary.all,(Parameter=="Population growth rate"))
   probs$startYear = probs$startYear+probs$preYears
@@ -166,11 +173,12 @@ for(i in 1:length(pages)){
   probs = merge(probs,sizeTrue)
   probs = merge(probs,sizeProj)
 
-  head(probs)
-  probs$obsYears[probs$collarCount==1]=0
   probs$viableTrue = (probs$trueMean>0.99)&(probs$trueSize>10)
 
-  probs$wrong = ((probs$Mean<=0.99)|(probs$projSize<=10))&probs$viableTrue
+  probs$viablePred = (probs$Mean>0.99)&(probs$projSize>10)
+
+  probs$wrong = probs$viableTrue != probs$viablePred
+
   probs$CorrectStatus[probs$wrong]="no"
   probs$CorrectStatus[!probs$wrong]="yes"
   probs$LambdaDiff = probs$trueMean-probs$Mean
@@ -186,11 +194,20 @@ for(i in 1:length(pages)){
     #pp=pagesB[3]
     png(here::here(paste0("figs/",setName,"/bands",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
-    base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3)+
+    base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
       theme_bw()+xlab("years of monitoring")+ylab("Estimated mean population growth rate")
     print(base)
     dev.off()
+
+    png(here::here(paste0("figs/",setName,"/bandsTrue",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
+      theme_bw()+xlab("years of monitoring")+ylab("True population growth rate")
+    print(base)
+    dev.off()
+
   }
 
 
@@ -214,12 +231,58 @@ for(i in 1:length(pages)){
     dev.off()
   }
 
-  ################
-  #summarize outcome - proportion wrong
+  #######################
+  #EVSI calculations. See Dunham et al and references therein, and EVPIFromNationalSims.R
+
   groupVars = c("Anthro","AnthroScn","YearsOfProjection",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
 
-  probsSum <- probs %>% group_by(across(groupVars)) %>% summarize(propWrong = mean(wrong))
-  probsSum <- subset(probsSum,obsYears>0)
+  #Step 1: get posterior belief that true state is s p0_sd
+  p1 = probs
+  p1$p1_sd = p1$probViable
+  p1$s = 1
+  p1_s0 = p1; p1_s0$s = 0; p1_s0$p1_sd = 1-p1_s0$p1_sd
+  p1 = rbind(p1,p1_s0)
+
+  #step 2: value matrix v_as
+  v = expand.grid(s = c(0,1),a=c(0,1))
+  v$v_as = as.numeric(v$s==v$a)
+
+  #step 3: merge
+  vals = merge(v,p1)
+
+  #step 4: calculate
+  vals$innerProd = vals$p1_sd*vals$v_as
+
+  Es = vals %>%
+    group_by(across(c(groupVars,"rep","a"))) %>%
+    summarise(Es = sum(innerProd))
+
+  Ex = Es %>%
+    group_by(across(c(groupVars,"rep"))) %>%
+    summarise(Ex = max(Es))
+
+  #Now get expected value of Ex across all x i.e. rep
+  EVsample = Ex %>%
+    group_by(across(groupVars)) %>%
+    summarise(EVsample = mean(Ex),EVvar=sd(Ex))
+  #write out sd as a check. For runs informed only by prior sd should be 0ish.
+
+  #Write out results - need to combine with results informed only by priors to get EVSI
+  if(addEV){
+    EVout = rbind(EVout,EVsample)
+  }else{
+    EVout = EVsample;addEV=T
+  }
+
+  ################
+  #summarize outcome - proportion wrong
+  probsSum <- probs %>% group_by(across(groupVars)) %>%
+    summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
+              propViablePosterior=mean(probViable))
+
+
+
+  probsSum = merge(probsSum,EVsample)
   probsSum$grp = paste(probsSum$collarCount,probsSum$collarInterval)
 
   table(probsSum$grp)
@@ -230,6 +293,15 @@ for(i in 1:length(pages)){
   probsSum$NumCollars = as.factor(probsSum$collarCount)
 
   probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
+
+  if(addProbs){
+    ProbsOut = rbind(ProbsOut,probsSum)
+  }else{
+    ProbsOut = probsSum;addProbs=T
+  }
+
+  probsSum <- subset(probsSum,collarCount>0)
+
   for(pp in pagesC){
     #pp=pagesC[1]
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
@@ -240,6 +312,25 @@ for(i in 1:length(pages)){
       scale_color_discrete(type=(pal4))
     print(base)
     dev.off()
+
+    png(here::here(paste0("figs/",setName,"/EVsample",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      theme_bw()+xlab("years of monitoring")+ylab("EVsample")+
+      scale_color_discrete(type=(pal4))
+    print(base)
+    dev.off()
+
+    png(here::here(paste0("figs/",setName,"/probChecks",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      theme_bw()+xlab("years of monitoring")+ylab("propViableTrue")+
+      scale_color_discrete(type=(pal4))
+    print(base)
+    dev.off()
+
 
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
@@ -253,4 +344,8 @@ for(i in 1:length(pages)){
   }
 }
 
+write.csv(EVout,here::here(paste0("tabs/EVsample",setName,".csv")),row.names=F)
 
+write.csv(ProbsOut,here::here(paste0("tabs/ProbsOut",setName,".csv")),row.names=F)
+
+str(subset(EVout,collarCount==0))
