@@ -50,7 +50,9 @@ fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 runScenarios = F 
 doPriorCalibration=F #Note the prior calibration is time consuming. 
 
-resultScenario = "S6"
+resultScenario = "S7"
+noBiasResultScenario = "S8"
+
 ```
 
 # Definitions of variables and parameters in the Bayesian population model
@@ -131,6 +133,16 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$u=\text{uniform}(0,0.2)$|probability|Unknown probability of misidentifying young bulls as adult females and vice versa in composition survey.|
 |$z=\text{uniform}(0,0.2)$|probability|Unknown probability of missing calves in composition survey.|
 |$c$||Unknown bias correction term in Bayesian model (Supplement B).|
+|**Expected value of perfect and sample information**|
+|$\psi=\text{viable or not}$|binary|True status of a population.|
+|$\alpha=\text{viable or not}$|binary|Assigned population status.|
+|$\nu_{\alpha,\psi}=1 \text{when} \alpha=\psi, 0 \text{otherwise}$|binary|Value of classification decision.|
+|$x$||Simulated observations from an example population.|
+|$\tau$||A disturbance and monitoring scenario.|
+|$P(\psi|\tau)$|probability|Prior probability of state $\psi$.|
+|$P(\psi|x,\tau)$|probability|Posterior probability of state $\psi$.|
+|$EVPI_\tau$||Expected value of perfect information.|
+|$EVSI_\tau$||Expected value of sample information.|
 
 # Model of bias in recruitment estimates from calf:cow surveys
 
@@ -284,12 +296,12 @@ Similarly, prior parameter values should be set so that, given no monitoring dat
 
 # Alternative disturbance and monitoring scenarios
 
-```{r figDisturbanceAnthroStatic, fig.cap="Anthropogenic disturbance and monitoring scenarios.", cache=TRUE}
+```{r figDisturbanceAnthroStatic, fig.cap="Static anthropogenic disturbance and monitoring scenarios.", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/distScnscmult6ay3aSf0.png")))
 
 ```
 
-```{r powercmult3ay3aSf0, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroStatic) for for static anthropogenic disturbance scenarios). In these examples there are 3 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+```{r powercmult3ay3aSf0, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroStatic) for static anthropogenic disturbance scenarios). In these examples there are 3 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult3ay3aSf0.png")))
 ```
 
@@ -301,12 +313,42 @@ knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult6ay
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult9ay3aSf0.png")))
 ```
 
-```{r powercmult3ay3aSf1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure 1 for scenarios in which anthropogenic disturbance increases over time). In these examples there are 3 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+```{r figDisturbanceAnthroDeclining, fig.cap="Declining anthropogenic disturbance and monitoring scenarios.", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/distScnscmult6ay3aSf-1.png")))
+```
+
+```{r powercmult3ay3aSfm1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroDeclining) for declining anthropogenic disturbance scenarios). In these examples there are 3 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult3ay3aSf-1.png")))
+```
+
+```{r powercmult6ay3aSfm1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroDeclining) for declining anthropogenic disturbance scenarios). In these examples there are 6 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult6ay3aSf-1.png")))
+```
+
+```{r powercmult9ay3aSfm1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroDeclining) for declining anthropogenic disturbance scenarios). In these examples there are 9 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult9ay3aSf-1.png")))
+```
+
+\newpage
+
+# Sensitivity to unkown bias in recruitment estimates from calf:cow surveys
+
+Adding unknown unknown bias does increase uncertainty, but these increases are not large (compare Figs \@ref(fig:powercmult3ay3aSf1)/\@ref(fig:powercmult3ay3aSf1NoBias) and \@ref(fig:powercmult9ay3aSf1)/\@ref(fig:powercmult9ay3aSf1NoBias)). A key reason for this result is that we assumed the same range of values for the probability of misclassifying adults, and the probability of missing calves (supplement B). Presuming that surveyed groups contain more cows than bulls, and that there is an equal probability of misclassifying cows and young bulls and vice versa, then misclassification errors cause high estimated recruitment. Missing calves causes low estimated recruitment, and together these errors tend to cancel one another out. 
+
+```{r powercmult3ay3aSf1, fig.cap="The probability of a correct status assessment with unknown bias in recruitment estimates from calf:cow surveys. In these examples there are 3 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 4 for additional details. ", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult3ay3aSf1.png")))
 ```
 
-```{r powercmult9ay3aSf1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure 1 for scenarios in which anthropogenic disturbance increases over time). In these examples there are 9 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
+```{r powercmult3ay3aSf1NoBias, fig.cap="The probability of a correct status assessment without bias in recruitment estimates from calf:cow surveys. In these examples there are 3 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 4 for additional details. ", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/powercmult3ay3aSf1.png")))
+```
+
+```{r powercmult9ay3aSf1, fig.cap="The probability of a correct status assessment with unknown bias in recruitment estimates from calf:cow surveys. In these examples there are 9 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 4 for additional details. ", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult9ay3aSf1.png")))
+```
+
+```{r powercmult9ay3aSf1NoBias, fig.cap="The probability of a correct status assessment without bias in recruitment estimates from calf:cow surveys. In these examples there are 9 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 4 for additional details. ", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/powercmult9ay3aSf1.png")))
 ```
 
 # Colophon
