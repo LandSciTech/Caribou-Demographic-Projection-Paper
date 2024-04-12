@@ -150,7 +150,7 @@ plot_recruitment3 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = 0.5*R_t, group = fullGrp, color = fullGrp),
             alpha = 1) +scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare,colour = "black", size = 1.5) +
-  geom_line(colour = "white", size = 2, linetype = "dotted") +
+  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.4), breaks = c(0, 0.1, 0.2, 0.3, 0.4)) +
   xlab("Anthropogenic disturbance (%)") +
@@ -165,7 +165,7 @@ base1 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = S_t, group = rep, colour = rep)) +
   scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare, colour = "black", size = 1.5) +
-  geom_line(colour = "white", size = 2, linetype = "dotted") +
+  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   xlab("Anthropogenic Disturbance (%)") +
   ylab(expression("Adult Female Survival " * dot(S)[t])) +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
@@ -234,7 +234,7 @@ plot_recruitment4 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = 0.5*R_t, group = fullGrp, color = fullGrp),
             alpha = 1) +scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare,aes(y=R_bar/2),colour = "black", size = 1.5) +
-  geom_line(colour = "white", size = 2, linetype = "dotted") +
+  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.4), breaks = c(0, 0.1, 0.2, 0.3, 0.4)) +
   xlab("Anthropogenic disturbance (%)") +

@@ -99,7 +99,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\dot{W}_t$|animals|Surviving adult females before recruitment.|
 |$\dot{J}_t$|animals|New recruits to adult age class.|
 |**True demographic parameters**|
-|$N_0=2000$|animals|Initial adult population size.|
+|$N_0=5000$|animals|Initial adult population size.|
 |$\bar{R}_t$|rate|Expected recruitment (calves per cow).|
 |$\bar{S}_t$|probability|Expected adult female survival.|
 |$\dot{\beta}^R_0$||Recruitment intercept.|
@@ -136,7 +136,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |**Expected value of perfect and sample information**|
 |$\psi=\text{viable or not}$|binary|True status of a population.|
 |$\alpha=\text{viable or not}$|binary|Assigned population status.|
-|$\nu_{\alpha,\psi}=1 \text{when} \alpha=\psi, 0 \text{otherwise}$|binary|Value of classification decision.|
+|$\nu_{\alpha,\psi}=1 \text{ when } \alpha=\psi, 0 \text{ otherwise}$|binary|Value of classification decision.|
 |$x$||Simulated observations from an example population.|
 |$\tau$||A disturbance and monitoring scenario.|
 |$P(\psi|\tau)$|probability|Prior probability of state $\psi$.|
@@ -146,13 +146,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 
 # Model of bias in recruitment estimates from calf:cow surveys
 
-TO DO: get photo of calf:cow survey group. Label classes of animals to illustrate meaning of T, U, V, W, O, P, J, K.
-
-We assume each group of animals in a calf:cow composition survey contains one or more collared adult females ($T$), and may also include: uncollared adult females misidentified as young bulls or unknown sex ($U$); correctly identified uncollared adult females ($V$); young bulls correctly identified as male or unknown sex ($O$); young bulls misidentified as uncollared adult females ($P$); observed calves ($J$); and unobserved calves ($K$). The apparent number of adult females in the group is $T+V+P=Tw$, where $w$ is a multiplier that defines the apparent number of adult females as a function of the number of collared animals. The ratio of young bulls to uncollared adult females in the group is:
-$$q = \frac{P+O}{U+V}.$$
-Assuming an equal probability $u$ of misidentifying young bulls as adult females and vice versa, we get $V=(U+V)(1-u)$ and $P=(O+P)u$. Given a probability $z$ of missing calves, we get $J=(J+K)(1-z)$.
-
-Our objective is to model the sex and bias-corrected recruitment rate $X=\frac{J+K}{2(T+U+V)}$ as a function of the observed calf:cow ratio $R=J/(T+V+P)$, the cow multiplier $w$, the ratio of young bulls to adult females $q$, and the misidentification probabilities $u$ and $z$. We start by solving for $T+U+V$ as a function of $q,w,u$ and $T$. Recognize that $P=Tw-T-V$, $U+V=V/(1-u)$, and $P+O=P/u$ to write $q$ as 
+Assume each group of animals in a calf:cow composition survey contains one or more collared adult females ($T$), and may also include: uncollared adult females misidentified as young bulls or unknown sex ($U$); correctly identified uncollared adult females ($V$); young bulls correctly identified as male or unknown sex ($O$); young bulls misidentified as uncollared adult females ($P$); observed calves ($J$); and unobserved calves ($K$). The apparent number of adult females in the group is $T+V+P=Tw$, where $w$ is a multiplier that defines the apparent number of adult females as a function of the number of collared animals. Our objective is to model the sex and bias-corrected recruitment rate $X=\frac{J+K}{2(T+U+V)}$ as a function of the observed calf:cow ratio $R=J/(T+V+P)$, the cow multiplier $w$, the ratio of young bulls to adult females $q$, and the misidentification probabilities $u$ and $z$. We start by solving for $T+U+V$ as a function of $q,w,u$ and $T$. Recognize that $P=Tw-T-V$, $U+V=V/(1-u)$, and $P+O=P/u$ to write $q$ as 
 $$q=\frac{Tw-T-V}{uV/(1-u)}.$$
 Rearrange to get 
 $$V=\frac{T(w-1)(1-u)}{qu+1-u}.$$

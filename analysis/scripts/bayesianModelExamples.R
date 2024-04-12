@@ -7,7 +7,7 @@ library(RColorBrewer)
 
 baseDir <- "."
 
-monitoringScns = data.frame(obsYears=c(1,15),collarCount=c(0,30),cowMult=c(6),collarInterval=c(1),assessmentYrs=c(3))
+monitoringScns = data.frame(obsYears=c(1,16),collarCount=c(0,30),cowMult=c(6),collarInterval=c(1),assessmentYrs=c(3))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
 
