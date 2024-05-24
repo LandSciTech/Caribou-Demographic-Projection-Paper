@@ -10,7 +10,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# (APPENDIX) Supplementary Material for National demographic-disturbance relationships and local monitoring both reduce uncertainty in projections of boreal caribou population viability: tools to support monitoring decisions {-}
+# (APPENDIX) Supplementary Material for Integration of national demographic-disturbance relationships into local caribou population viability projections can reduce uncertainty and inform monitoring decisions {-}
 
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(
@@ -210,6 +210,12 @@ plot(base)
 
 # Calibration of Priors
 
+Prior parameter values should be set so that, given no monitoring data, the prior survival distribution is similar to the distribution of simulated outcomes from the national model in the case of no anthropogenic disturbance. 
+This condition is met when the multiplier on the prior standard deviation of the survival intercept (sIntSEMod: $\beta^S_0$ in Table 2) is 5 and the mean and standard deviations of the prior distribution of the random effect of year on survival are low  (sSigmaMean & sSigmaSD, $\sigma^2_S$ in Table 2) (Figs \@ref(fig:PriorKSDists) and \@ref(fig:PriorAllFits)). Priors should also be vague enough so that, given intensive monitoring of populations where survival is higher or lower than the national average ('High' and 'Low' scenarios: 15 years of 60 collars per year from 97.5% and 2.5% quantiles of the national model), posteriors reflect local survival, rather than priors from the national model. Setting the mean and standard deviations of the prior distribution of the random effect of year on survival to moderately low values (sSigmaMean=0.034784, sSigmaSD=0.03, $\sigma^2_S$ in Table 2) allows both conditions to be met (Figs \@ref(fig:PriorKSDists), \@ref(fig:PriorAllFits) and \@ref(fig:PriorLowFits)).
+
+Similarly, prior parameter values should be set so that, given no monitoring data, the prior recruitment distribution is similar to the distribution of simulated outcomes from the national model in the case of no anthropogenic disturbance. This condition is met when the multiplier on the prior standard deviation of the recruitment intercept (rIntSEMod: $\beta^R_0$ in Table 2) is 4 and the mean and standard deviations of the prior distribution of the random effect of year on survival are low  (rSigmaMean & rSigmaSD, $\sigma^2_R$ in Table 2) (Figs \@ref(fig:PriorKSDistsRec) and \@ref(fig:PriorAllFitsRec)). Priors should also be vague enough so that, given intensive monitoring of populations where recruitment is higher or lower than the national average ('High' and 'Low' scenarios: 15 years of 9*60 cows per year from 97.5% and 2.5% quantiles of the national model), posteriors reflect local recruitment, rather than priors from the national model. Setting the mean and standard deviations of the prior distribution of the random effect of year on recruitment to moderately low values (rSigmaMean=0.23, rSigmaSD=0.22, $\sigma^2_R$ in Table 2) allows both conditions to be met (Figs \@ref(fig:PriorKSDistsRec), \@ref(fig:PriorAllFitsRec) and \@ref(fig:PriorHighFitsRec)).
+
+
 ```{r priorCalibration, cache=TRUE,echo=FALSE, message=FALSE,results='hide'}
 if(doPriorCalibration){
 
@@ -261,9 +267,6 @@ knitr::include_graphics(here::here("figs/SurvSlopeAll.png"))
 knitr::include_graphics(here::here("figs/SurvSlopeHigh.png"))
 ```
 
-Prior parameter values should be set so that, given no monitoring data, the prior survival distribution is similar to the distribution of simulated outcomes from the national model in the case of no anthropogenic disturbance. This condition is met when the multiplier on the prior standard deviation of the survival intercept (sIntSEMod: $\beta^S_0$ in Table 2) is 5 and the mean and standard deviations of the prior distribution of the random effect of year on survival are low  (sSigmaMean & sSigmaSD, $\sigma^2_S$ in Table 2) (Figs \@ref(fig:PriorKSDists) and \@ref(fig:PriorAllFits)). Priors should also be vague enough so that, given intensive monitoring of populations where survival is higher or lower than the national average ('High' and 'Low' scenarios: 15 years of 60 collars per year from 97.5% and 2.5% quantiles of the national model), posteriors reflect local survival, rather than priors from the national model. Setting the mean and standard deviations of the prior distribution of the random effect of year on survival to moderately low values (sSigmaMean=0.034784, sSigmaSD=0.03, $\sigma^2_S$ in Table 2) allows both conditions to be met (Figs \@ref(fig:PriorKSDists), \@ref(fig:PriorAllFits) and \@ref(fig:PriorLowFits)).
-
-
 ```{r PriorKSDistsRec, fig.cap="Similarity of the prior recruitment distribution to the distribution of simulated outcomes from the national model measured by Kolmogorov-Smirnov distance [ks.test function in @r_core_team_r_2022]. The distributions are similar when the multiplier on the prior standard deviation of the survival intercept (rIntSEMod: $\\beta^R_0$ in Table 2) is 4 and the mean and standard deviations of the prior distribution of the random effect of year on survival are low  (rSigmaMean & rSigmaSD, $\\sigma^2_R$ in Table 2). Anthropogenic disturbance is set to 0 in these scenarios." , cache=TRUE}
 knitr::include_graphics(here::here("figs/PriorKSDistsRec.png"))
 ```
@@ -283,8 +286,6 @@ knitr::include_graphics(here::here("figs/RecSlopeAll.png"))
 ```{r PriorHighFitsAnthro90Rec, fig.cap="Posterior predictive recruitment distributions from the Bayesian model, assuming intensive monitoring (9*60 cows per year for 15 years) of populations from the 97.5 \\% quantile of the national model. In these examples, anthropogenic disturbance is 90\\%, and the effect of anthropogenic disturbance varies from none (rSlopeMod=0) through expected (rSlopeMod=1) to double the expected slope (rSlopeMod=2). All considered multipliers on the prior standard deviation of the recruitment slope >1 (rSlopeSEMod: $\\beta^R_a$ in Table 2) are sufficiently vague to reflect local variation among populations. Bands show 95 \\% posterior predictive intervals, black dots show true survival rates from the simulated population, and open triangles show observed survival rates.", cache=TRUE}
 knitr::include_graphics(here::here("figs/RecSlopeHigh.png"))
 ```
-
-Similarly, prior parameter values should be set so that, given no monitoring data, the prior recruitment distribution is similar to the distribution of simulated outcomes from the national model in the case of no anthropogenic disturbance. This condition is met when the multiplier on the prior standard deviation of the recruitment intercept (rIntSEMod: $\beta^R_0$ in Table 2) is 4 and the mean and standard deviations of the prior distribution of the random effect of year on survival are low  (rSigmaMean & rSigmaSD, $\sigma^2_R$ in Table 2) (Figs \@ref(fig:PriorKSDistsRec) and \@ref(fig:PriorAllFitsRec)). Priors should also be vague enough so that, given intensive monitoring of populations where recruitment is higher or lower than the national average ('High' and 'Low' scenarios: 15 years of 9*60 cows per year from 97.5% and 2.5% quantiles of the national model), posteriors reflect local recruitment, rather than priors from the national model. Setting the mean and standard deviations of the prior distribution of the random effect of year on recruitment to moderately low values (rSigmaMean=0.23, rSigmaSD=0.22, $\sigma^2_R$ in Table 2) allows both conditions to be met (Figs \@ref(fig:PriorKSDistsRec), \@ref(fig:PriorAllFitsRec) and \@ref(fig:PriorHighFitsRec)).
 
 \newpage
 
