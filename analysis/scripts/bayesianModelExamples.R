@@ -43,7 +43,7 @@ yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
-recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = 0.75,
+recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = 0.8,
                     legendPosition="none",breakInterval=breakInterval,
                     labFontSize=labFontSize) +
   yr_scale1 +
@@ -62,7 +62,7 @@ lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=0.6,
 plot(lambdaPrior)
 
 posteriorResult = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
-recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.75,
+recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.8,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
@@ -80,7 +80,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
   ylim(c(0, 1.2))
 plot(lambdaPosterior)
 
-leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.75,
+leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.8,
                legendPosition="left",breakInterval=breakInterval,labFontSize=labFontSize)
 leg <- ggpubr::get_legend(leg)
 
@@ -110,7 +110,7 @@ yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
-recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = 0.75,
+recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = 0.8,
                     legendPosition="none",breakInterval=breakInterval,
                     labFontSize=labFontSize) +
   yr_scale1 +
@@ -129,7 +129,7 @@ lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=0.6,
 plot(lambdaPrior)
 
 posteriorResult = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
-recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.75,
+recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.8,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
@@ -147,7 +147,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
   ylim(c(0, 1.2))
 plot(lambdaPosterior)
 
-leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.75,
+leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.8,
                legendPosition="left",breakInterval=breakInterval,labFontSize=labFontSize)
 leg <- ggpubr::get_legend(leg)
 
