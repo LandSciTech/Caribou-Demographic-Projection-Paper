@@ -368,9 +368,9 @@ individual animal $i$ in year $t$ and month $m$ is Bernoulli distributed
 
 All regression coefficients are assumed to be Gaussian distributed, with
 prior means from Johnson et al's (2020) regression model estimates (Table \@ref(tab:priors)). We
-calibrated the standard deviations of the priors so that the 95% prior predictive
+calibrated the standard deviations of the priors so that the the 95% prior predictive
 intervals for survival and recruitment from the Bayesian model match the
-or exceed the 95% predictive intervals from Johnson et al's regression model (Supplement C, Figure
+95% predictive intervals from Johnson et al's regression model (Supplement C, Figure
 \@ref(fig:examplePredictions)).
 
 ```{r priors, echo=FALSE,message=FALSE}
@@ -378,7 +378,7 @@ or exceed the 95% predictive intervals from Johnson et al's regression model (Su
 source(here::here("analysis/scripts/formatPriors.R"))
 
 knitr::kable(tbl,caption="Prior means and standard deviations of Gaussian distributed survival and reproduction model parameters. Standard deviations are calibrated so that the 95\\% prior predictive intervals for survival and recruitment from the Bayesian model match the
-or exceed the 95% predictive intervals from Johnson et al's regression model (Supplement C).")
+the 95% predictive intervals from Johnson et al's regression model (Supplement C).")
 ```
 
 As in the simulations, we assume a simple demographic model, with a census in late
