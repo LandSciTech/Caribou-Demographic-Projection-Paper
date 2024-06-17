@@ -248,7 +248,6 @@ knitr::include_graphics(here::here("figs/SurvBoth.png"))
 
 knitr::include_graphics(here::here("figs/RecBoth.png"))
 ```
-
 \newpage
 
 # Alternative disturbance and monitoring scenarios
@@ -285,6 +284,15 @@ knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult6ay
 ```{r powercmult9ay3aSfm1, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbanceAnthroDeclining) for declining anthropogenic disturbance scenarios). In these examples there are 9 cows per collared cow in recruitment surveys. See Figure 4 for additional details. ", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult9ay3aSf-1.png")))
 ```
+
+\newpage
+
+# Expected value of perfect information
+
+```{r figEVPI, fig.cap="The expected value of perfect information (EVPI) varies among anthropogenic disturbance scenarios (see increasing, decreasing and stable scenarios in Figs 1, D.1 and D.5 respectively) and the number of years projected. When disturbance is high EVPI is low, indicating that local sampling will not alter status assessments. Increasing the forecast horizon can either increase or decrease the EVPI as the anthropogenic disturbance trend makes outcomes more or less predictable.", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/EVPIall.png"))
+```
+
 
 \newpage
 

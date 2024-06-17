@@ -23,7 +23,7 @@ for(n in nameSet){
 }
 
 pars <- data.frame(name="l.R",Parameter="$\\beta^R_0$",Description="R intercept")
-pars<-rbind(pars,data.frame(name="beta.Rec.anthro",Parameter="$\\beta^R_a$",Description="R anthro slope"))
+pars<-rbind(pars,data.frame(name="beta.Rec.anthro",Parameter="$\\beta^R_a$",Description="R anthropogenic disturbance slope"))
 pars<-rbind(pars,data.frame(name="beta.Rec.fire",Parameter="$\\beta^R_f$",Description="R fire slope"))
 #pars<-rbind(pars,data.frame(name="sig.R",Parameter="$\\sigma^2_{R}$",Description="R random effect"))
 pars <- rbind(pars,data.frame(name="l.Saf",Parameter="$\\beta^S_0$",Description="S intercept"))
