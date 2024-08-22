@@ -116,9 +116,9 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\nu_R=0.46$||Coefficient of variation in $\dot{R}_t$ among years.|
 |$\nu_S=0.08696$||Coefficient of variation in $\dot{S}_t$ among years.|
 |$l_R=0$||Minimum value for $\dot{R}_t$.|
-|$l_S=0$||Minimum value for $\dot{S}_t$.|
-|$h_R=0$||Maximum value for $\dot{R}_t$.|
-|$h_S=0$||Maximum value for $\dot{S}_t$.|
+|$l_S=0.61$||Minimum value for $\dot{S}_t$.|
+|$h_R=0.82$||Maximum value for $\dot{R}_t$.|
+|$h_S=1$||Maximum value for $\dot{S}_t$.|
 |**Observation model parameters**|
 |$d=1,2,4,8,16, \text{ or } 24$|years|Monitoring duration.|
 |$n=15,30, \text{ or } 60$|animals|Target number of collared females.|
