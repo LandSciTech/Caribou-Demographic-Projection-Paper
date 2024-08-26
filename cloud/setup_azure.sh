@@ -8,15 +8,15 @@ az batch pool list
 
 
 #### Move files to container ##############
-end=`date -u -d "20 days" '+%Y-%m-%dT%H:%MZ'`
+end=`date -u -d "7 days" '+%Y-%m-%dT%H:%MZ'`
 sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end --name sendicott --permissions racwdli -o tsv --auth-mode login --as-user`
 
 # I actually created the SASURL manually bc it wouldn't let me do more than 7 days through CLI
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
 
-setName="s8"
+setName="s7"
 
-nBatches=30
+nBatches=90
 
 jobName="sendicott_job_"$setName
 
@@ -42,6 +42,10 @@ do
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id $jobName
 done
 
+az batch pool list  \
+--query "[].{id:id, curNodes: currentDedicatedNodes,tarNodes: targetDedicatedNodes, allocState:allocationState}" \
+--output yaml
+
 #### Monitor tasks ############################
 
 # details for a single task filtered by query
@@ -50,8 +54,12 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-az batch task file download --task-id caribou-demog_sens_batch1 \
---job-id $jobName --file-path "wd/nohup_1.out" --destination "./nohup_1.out"
+az batch task file download --task-id caribou-demog_sens_batch30 \
+--job-id $jobName --file-path "wd/nohup_30.out" --destination "./nohup_30.out"
+
+cat "./nohup_30.out"
+
+rm "./nohup_30.out"
 
 # List of all tasks and their state
 # See here for making fancy queries https://jmespath.org/tutorial.html
@@ -59,6 +67,20 @@ az batch task list --job-id $jobName --query "{tasks: [].[id, state][]}" --outpu
 
 # Summary of task counts by state
 az batch job task-counts show --job-id $jobName
+
+az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
+ --auto-scale-formula 'percentage = 70;
+ span = TimeInterval_Second * 15;
+ $samples = $ActiveTasks.GetSamplePercent(span);
+ $tasks = $samples < percentage ? max(0,$ActiveTasks.GetSample(1)) : max( $ActiveTasks.GetSample(1), avg($ActiveTasks.GetSample(span)));
+ multiplier = 1;
+ $cores = $TargetDedicatedNodes;
+ $extraVMs = (($tasks - $cores) + 0) * multiplier;
+ $targetVMs = ($TargetDedicatedNodes + $extraVMs);
+ $TargetDedicatedNodes = max(0, min($targetVMs, 50));
+ $NodeDeallocationOption = taskcompletion;'
+
+
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
