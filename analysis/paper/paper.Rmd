@@ -416,10 +416,13 @@ ratio $\dot{R}_t$ is adjusted for sex ratio, misidentification biases
 for the reality that yearlings generally do not breed
 [@eacker_web-based_2019; @decesare_estimating_2012] to get maximum
 potential recruitment of female calves per cow $\dot{X}_t$:
+
 \begin{equation}
   \dot{X}_t=\frac{\dot{c}\dot{R}_t/2}{1+\dot{c}\dot{R}_t/2};\dot{c}=\frac{w(1+\dot{q}\dot{u}-\dot{u})}{(w+\dot{q}\dot{u}-\dot{u})(1-\dot{z})},
   (\#eq:dotX)
-\end{equation} where $w$ is the ratio of observed adult females to
+\end{equation}
+
+where $w$ is the ratio of observed adult females to
 collared animals, $\dot{q}$ is the ratio of young bulls to adult
 females, $\dot{u}$ is the probability of misidentifying young bulls as
 adult females and vice versa, and $\dot{z}$ is the probability of
@@ -432,7 +435,9 @@ Realized recruitment rate varies with population density
 [@lacy_vortex_2017], and the number of juveniles recruiting to the
 post-juvenile class at the census $(\dot{J}_{t})$ is a binomially
 distributed function of the number of surviving post-juvenile females
-and the adjusted recruitment rate: \begin{equation}
+and the adjusted recruitment rate: 
+
+\begin{equation}
   \dot{J}_{t} \sim \text{Binomial}(\dot{W}_t,\dot{X}_t[p_0-(p_0-p_k)(\frac{\dot{W}_t}{N_0k})^b]\frac{\dot{W}_t}{\dot{W}_t+a}).
   (\#eq:dotJ)
 \end{equation}
@@ -443,7 +448,9 @@ $\dot{N}_t=1$, approaches a maximum of $\dot{X}_t$ at intermediate
 population sizes, and declines to $0.6\dot{X}_t$ as the population
 reaches carrying capacity of $k=100$ times the initial population size.
 The post-juvenile female population in the next year includes both
-survivors and new recruits: \begin{equation}
+survivors and new recruits: 
+
+\begin{equation}
 \dot{N}_{t+1}=\text{min}(\dot{W}_t+\dot{J}_t,r_{max}\dot{N}_t).
   (\#eq:dotN)
 \end{equation}
@@ -458,20 +465,18 @@ are given in Table A1. Expected recruitment ($\bar{R}_t$) and survival
 ($\bar{S}_t$) vary with disturbance according the beta regression models
 estimated by Johnson et al. [-@johnson_science_2020]:
 
-```{=tex}
 \begin{equation}
 \bar{R}_t \sim Beta(\mu^R_t,\phi^R); 
 log(\mu^R_t) = \dot{\beta}^R_0+\dot{\beta}^R_a A_t+\dot{\beta}^R_f F_t,
   (\#eq:barR)
 \end{equation}
-```
-```{=tex}
+
 \begin{equation}
 \bar{S}_t \sim (46 \times Beta(\mu^S_t,\phi^S)-0.5)/45;
 log(\mu^S_t) = \dot{\beta}^S_0+\dot{\beta}^S_a A_t.
   (\#eq:barS)
 \end{equation}
-```
+
 $\phi^R \sim \text{Normal}(19.862,2.229)$ and
 $\phi^S \sim \text{Normal}(63.733,8.311)$ are precisions of the Beta
 distributed errors [@ferrari_beta_2004]. At the beginning of a
@@ -563,7 +568,8 @@ To account for bias and additional uncertainty caused by unknown
 misidentification biases (Supplement B) and delayed age of age of first
 reproduction [@eacker_web-based_2019; @decesare_estimating_2012] the
 estimated recruitment probability is adjusted to get expected female
-recruits per female: \begin{equation}
+recruits per female: 
+\begin{equation}
 X_t=\frac{cR_t/2}{1+cR_t/2}; c=\frac{w(1+qu-u)}{(w+qu-u)(1-z)}.
   (\#eq:X)
 \end{equation}
@@ -604,7 +610,8 @@ probability as an adjusted function of buffered anthropogenic
 disturbance $A_t$ with a log link [@stewart_climate-informed_2023;
 @dyson_existing_2022]. We add a Gaussian distributed random year effect
 to account for stochastic variation among years
-[@eacker_web-based_2019]: \begin{equation}
+[@eacker_web-based_2019]: 
+\begin{equation}
 S_t=\text{min}(46 \tilde{S_t}-0.5)/45,1); \log(\tilde{S_t})=\beta^S_0+\beta^S_a A_t+\epsilon^S_t; \epsilon^S_t \sim \text{Normal}(0,\sigma^2_{S}).
   (\#eq:S)
 \end{equation}
@@ -614,7 +621,8 @@ handle cases in which there is little or no survival data, we also
 implemented an alternative parametric exponential survival model,
 wherein the observed state (alive or dead, $\hat{I}_{i,t,m}$) of an
 individual animal $i$ in year $t$ and month $m$ is Bernoulli distributed
-[@schaub_integrated_2021]: \begin{equation}
+[@schaub_integrated_2021]: 
+\begin{equation}
 \hat{I}_{i,t,m} \sim \text{Bernoulli}(S^{1/12}_t\hat{I}_{i,t,m-1}).
   (\#eq:hatIEst)
 \end{equation}
@@ -715,11 +723,13 @@ when the status assessment is incorrect. This is "the value ascribed by
 the decision-maker to the outcome, and is thus the measure of management
 performance" [@runge_which_2011]. The expected value of current
 information is the average utility of decisions informed by knowledge of
-the disturbance scenario $\tau$ (Fig \@ref(fig:figDisturbance)) and
-priors from the national model: \begin{equation}
+the disturbance scenario $\tau$ (Figure \@ref(fig:figDisturbance)) and
+priors from the national model:
+\begin{equation}
 EV_{current} = max_{\alpha}\sum_\psi[P(\psi|\tau)\nu_{\alpha,\psi}],
   (\#eq:EVcurrent)
-\end{equation} where $P(\psi|\tau)$ is the prior probability that the
+\end{equation}
+where $P(\psi|\tau)$ is the prior probability that the
 true state of the population is $\psi$, and each population is assigned
 a status $\alpha$ informed by the prior. The expected value under
 certainty (i.e. the expected value of a decision when the true state of
@@ -730,10 +740,12 @@ perfectly known.
 
 EVSI measures expected improvement from a particular sampling strategy
 as the difference between the expected value with and without additional
-sample information: \begin{equation}
+sample information: 
+\begin{equation}
 EVSI_{\tau} = E_x[max_{\alpha}\sum_\psi[P(\psi|x,\tau)\nu_{\alpha,\psi}]] - EV_{current},
   (\#eq:EVSI)
-\end{equation} where $x$ is the sample information from a particular
+\end{equation}
+where $x$ is the sample information from a particular
 example trajectory. In this study, we treat simulated observations from
 500 example trajectories for each disturbance and monitoring scenario
 $\tau$ (Figure \@ref(fig:figDisturbance)) as samples from the
@@ -755,38 +767,38 @@ rates.
 Analysis of simulated example demographic trajectories confirms that our
 Bayesian model can effectively combine local demographic data with
 priors from national demographic-disturbance relationships to reduce
-uncertainty in boreal caribou demographic projections (Figs
+uncertainty in boreal caribou demographic projections (Figures
 \@ref(fig:examplePredictions) and \@ref(fig:figDiffs)). As expected,
 uncertainty about the population growth rate decreases as sampling
 effort in each year (i.e. number of collars) or the number of years of
-monitoring (Fig \@ref(fig:figDiffs)) increase. Uncertainty is higher
+monitoring (Figure \@ref(fig:figDiffs)) increase. Uncertainty is higher
 when the forecast horizon is long (compare 5 and 20 year projections in
-Fig \@ref(fig:figDiffs)). Uncertainty is also higher in our high
-anthropogenic disturbance scenarios (Fig \@ref(fig:figDiffs)) because
+Figure \@ref(fig:figDiffs)). Uncertainty is also higher in our high
+anthropogenic disturbance scenarios (Figure \@ref(fig:figDiffs)) because
 stochastic variation in population growth rates increase as populations
-become very small (as in top right panel of Fig
+become very small (as in top right panel of Figure
 \@ref(fig:examplePredictions)).
 
 Our analysis becomes more informative when we examine the probability of
-correctly assessing population status (Fig \@ref(fig:figStatusErrors))
-and the expected value of information (Figs \@ref(fig:figEVSI) and E.1).
-When anthropogenic disturbance is high (right panels of Figs
+correctly assessing population status (Figure \@ref(fig:figStatusErrors))
+and the expected value of information (Figures \@ref(fig:figEVSI) and E.1).
+When anthropogenic disturbance is high (right panels of Figures
 \@ref(fig:figStatusErrors), \@ref(fig:figEVSI), and E.1)), projections
 of population status informed only by priors from the national
 demographic-disturbance relationships are accurate, and adding
 additional local monitoring data does not improve accuracy.
 Interestingly, when the projection period is long and anthropogenic
-disturbance is high, we see a negative EVSI (lower right panel of Fig
+disturbance is high, we see a negative EVSI (lower right panel of Figure
 \@ref(fig:figEVSI)), and we do not see an associated decrease in the
 probability of correctly assessing population status (lower right panel
-of Fig \@ref(fig:figStatusErrors)). This means that the long-term
+of Figure \@ref(fig:figStatusErrors)). This means that the long-term
 projections informed by local monitoring data are on average less
 precise but not less accurate, which can happen when there is very small
 prior probability that population is viable (orange band in the top
-right panel of Fig \@ref(fig:examplePredictions) falls below 1). At
+right panel of Figure \@ref(fig:examplePredictions) falls below 1). At
 lower levels of disturbance, local monitoring can reduce uncertainty,
 but there are diminishing returns as the number of collars deployed or
-the number of years of monitoring increases (Figs
+the number of years of monitoring increases (Figures
 \@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). The shapes of the
 relationships between monitoring effort and the probability of correct
 status assessment depend on how anthropogenic disturbance is changing
