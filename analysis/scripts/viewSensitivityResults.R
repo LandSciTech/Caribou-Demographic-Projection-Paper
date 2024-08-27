@@ -196,7 +196,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-      theme_bw()+xlab("years of monitoring")+ylab("Estimated mean population growth rate")
+      theme_bw()+xlab("Years of monitoring")+ylab("Estimated mean population growth rate")
     print(base)
     dev.off()
 
@@ -204,7 +204,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-      theme_bw()+xlab("years of monitoring")+ylab("True population growth rate")
+      theme_bw()+xlab("Years of monitoring")+ylab("True population growth rate")
     print(base)
     dev.off()
 
@@ -225,7 +225,7 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probs,(pageLab==pp)&(RenewalInterval==1)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
       geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars",fill="Number of\n Collars")+
-      theme_bw()+xlab("years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
+      theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
       scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
     print(base)
     dev.off()
@@ -308,7 +308,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
-      theme_bw()+xlab("years of monitoring")+ylab("Probability of correct status assessment")+
+      theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)
     dev.off()
@@ -317,7 +317,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
-      theme_bw()+xlab("years of monitoring")+ylab("EVsample")+
+      theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
       scale_color_discrete(type=(pal4))
     print(base)
     dev.off()
@@ -326,7 +326,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
-      theme_bw()+xlab("years of monitoring")+ylab("propViableTrue")+
+      theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
       scale_color_discrete(type=(pal4))
     print(base)
     dev.off()
@@ -336,7 +336,7 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
-      theme_bw()+xlab("years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
+      theme_bw()+xlab("Years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)
     dev.off()
