@@ -19,7 +19,7 @@ author:
     correspondence: false
 
 institute:
-  - ECCC: Environment and Climate Change Canada 
+  - ECCC: Landscape Science and Technology Division, National Wildlife Research Center, Environment and Climate Change Canada, 1125 Colonel By Dr, Ottawa, ON, K1S 5B6, Canada
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
     bookdown::word_document2:
