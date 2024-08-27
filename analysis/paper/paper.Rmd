@@ -723,7 +723,7 @@ when the status assessment is incorrect. This is "the value ascribed by
 the decision-maker to the outcome, and is thus the measure of management
 performance" [@runge_which_2011]. The expected value of current
 information is the average utility of decisions informed by knowledge of
-the disturbance scenario $\tau$ (Fig \@ref(fig:figDisturbance)) and
+the disturbance scenario $\tau$ (Figure \@ref(fig:figDisturbance)) and
 priors from the national model:
 \begin{equation}
 EV_{current} = max_{\alpha}\sum_\psi[P(\psi|\tau)\nu_{\alpha,\psi}],
@@ -767,38 +767,38 @@ rates.
 Analysis of simulated example demographic trajectories confirms that our
 Bayesian model can effectively combine local demographic data with
 priors from national demographic-disturbance relationships to reduce
-uncertainty in boreal caribou demographic projections (Figs
+uncertainty in boreal caribou demographic projections (Figures
 \@ref(fig:examplePredictions) and \@ref(fig:figDiffs)). As expected,
 uncertainty about the population growth rate decreases as sampling
 effort in each year (i.e. number of collars) or the number of years of
-monitoring (Fig \@ref(fig:figDiffs)) increase. Uncertainty is higher
+monitoring (Figure \@ref(fig:figDiffs)) increase. Uncertainty is higher
 when the forecast horizon is long (compare 5 and 20 year projections in
-Fig \@ref(fig:figDiffs)). Uncertainty is also higher in our high
-anthropogenic disturbance scenarios (Fig \@ref(fig:figDiffs)) because
+Figure \@ref(fig:figDiffs)). Uncertainty is also higher in our high
+anthropogenic disturbance scenarios (Figure \@ref(fig:figDiffs)) because
 stochastic variation in population growth rates increase as populations
-become very small (as in top right panel of Fig
+become very small (as in top right panel of Figure
 \@ref(fig:examplePredictions)).
 
 Our analysis becomes more informative when we examine the probability of
-correctly assessing population status (Fig \@ref(fig:figStatusErrors))
-and the expected value of information (Figs \@ref(fig:figEVSI) and E.1).
-When anthropogenic disturbance is high (right panels of Figs
+correctly assessing population status (Figure \@ref(fig:figStatusErrors))
+and the expected value of information (Figures \@ref(fig:figEVSI) and E.1).
+When anthropogenic disturbance is high (right panels of Figures
 \@ref(fig:figStatusErrors), \@ref(fig:figEVSI), and E.1)), projections
 of population status informed only by priors from the national
 demographic-disturbance relationships are accurate, and adding
 additional local monitoring data does not improve accuracy.
 Interestingly, when the projection period is long and anthropogenic
-disturbance is high, we see a negative EVSI (lower right panel of Fig
+disturbance is high, we see a negative EVSI (lower right panel of Figure
 \@ref(fig:figEVSI)), and we do not see an associated decrease in the
 probability of correctly assessing population status (lower right panel
-of Fig \@ref(fig:figStatusErrors)). This means that the long-term
+of Figure \@ref(fig:figStatusErrors)). This means that the long-term
 projections informed by local monitoring data are on average less
 precise but not less accurate, which can happen when there is very small
 prior probability that population is viable (orange band in the top
-right panel of Fig \@ref(fig:examplePredictions) falls below 1). At
+right panel of Figure \@ref(fig:examplePredictions) falls below 1). At
 lower levels of disturbance, local monitoring can reduce uncertainty,
 but there are diminishing returns as the number of collars deployed or
-the number of years of monitoring increases (Figs
+the number of years of monitoring increases (Figures
 \@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). The shapes of the
 relationships between monitoring effort and the probability of correct
 status assessment depend on how anthropogenic disturbance is changing
