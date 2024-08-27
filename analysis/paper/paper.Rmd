@@ -1082,6 +1082,14 @@ needs and questions.
 
 # Acknowledgements
 
+# Author contributions
+**Josie Hughes:** Conceptualization, Formal analysis, Methodology, Investigation,
+Supervision, Software, Writing – original draft, Writing – review and editing, 
+Visualization
+**Sarah Endicott:** Resources, Software, Writing – review and editing
+**Anna M Calvert:** Conceptualization, Writing – original draft, Writing – review and editing
+**Cheryl A Johnson:** Conceptualization, Writing – review and editing
+
 <!-- The following line inserts a page break  -->
 
 \newpage
