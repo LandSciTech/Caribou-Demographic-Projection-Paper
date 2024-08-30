@@ -276,11 +276,18 @@ pal_nm <- "Redon"
 fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 
 runScenarios = F #To do: set up to run full analysis from within this document.
-doPriorCalibration=F #Note the prior calibration is time consuming. 
 
 resultScenario = "S7"
 resultSet ="cmult6ay3aSf1"
 figSet = c("diffs","distScns","EVSI","power","EVPIall")
+
+if(runScenarios){
+    source(here::here("analysis/scripts/0_nationalModelTrajectories.R"))
+    source(here::here("analysis/scripts/0_bayesianModelExamples.R"))
+    #create scenarios with sensitivity1.R and run in cloud
+    #run viewSensitivityResults.R for S8 and S7
+    #run EVSIPlots.R
+}
 
 for(f in figSet){
   if(f =="EVPIall"){addBit=""}else{addBit=resultSet}
@@ -288,8 +295,6 @@ for(f in figSet){
   newFile = here::here(paste0("figs/forPaper/",f,addBit,".png"))
   file.copy(currentFile, newFile,overwrite=T)
 }
-
-
 ```
 
 ## Caribou population monitoring data and composition survey bias correction
@@ -458,8 +463,8 @@ survivors and new recruits:
 Interannual variation in survival and recruitment is modelled using
 truncated beta distributions [rtrunc function;
 @novomestky_package_2016]:
-$\dot{R}_t \sim \text{TruncatedBeta}(\bar{R}_t,\nu_R,l_R,h_R); \dot{S}_t \sim \text{TruncatedBeta}(\bar{S}_t,\nu_S,l_S,h_S)$.
-Coefficients of variation among years $(\nu_R,\nu_S)$ and
+$\dot{R}_t \sim \text{TruncatedBeta}(\bar{R}_t,v_R,l_R,h_R); \dot{S}_t \sim \text{TruncatedBeta}(\bar{S}_t,v_S,l_S,h_S)$.
+Coefficients of variation among years $(v_R,v_S)$ and
 maximum/minimum values $l_R,h_R,l_S,h_S$ for recruitment and survival
 are given in Table A1. Expected recruitment ($\bar{R}_t$) and survival
 ($\bar{S}_t$) vary with disturbance according the beta regression models
@@ -491,7 +496,7 @@ monitoring scenarios and that populations remain extant through the
 monitoring period, all simulations are started with $N_0=5000$ animals
 24 years prior to the start of the projection period.
 
-```{r exampleTrajectories, fig.cap="Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships with (top row) and without (bottom row) delayed reproduction. Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95\\% predictive intervals from Johnson et al's (2020) regression models without adjustment for misidentification bias and delayed reproduction.", cache=TRUE}
+```{r exampleTrajectories, fig.cap="Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships with (top row) and without (bottom row) delayed reproduction. To highlight how variation among trajectories persists as disturbance changes we have reduced interannual variability ($v_S,v_R$) by 75\\% in these examples. Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95\\% predictive intervals from Johnson et al's (2020) regression models without adjustment for misidentification bias and delayed reproduction.", cache=TRUE}
 
 knitr::include_graphics(here::here("analysis/paper/figs/DemographicRatesDelay.png"))
 
@@ -532,9 +537,9 @@ of adult females and calves in the recruitment surveys
 collared female in the composition survey $w$, and the measures of
 anthropogenic disturbance and fire ($A_t, F_t$). Recruitment rate $R_t$
 is estimated from the observed number of calves $\hat{J}_t$ and adult
-female caribou $\hat{W}_t$ assuming a Poisson distribution:
+female caribou $\hat{W}_t$ assuming a Binomial distribution:
 \begin{equation}
-\hat{J}_t \sim \text{Poisson}(\hat{W}_t,R_t).
+\hat{J}_t \sim \text{Binomial}(\hat{W}_t,R_t).
   (\#eq:hatJEst)
 \end{equation}
 
@@ -548,13 +553,17 @@ are provided, and used to estimate the unobserved recruitment rate
 $R_t$.
 
 In both models recruitment probability is a function of anthropogenic
-disturbance and fire with a log link [@johnson_science_2020;
-@stewart_climate-informed_2023; @dyson_existing_2022]. In the Bayesian
-model we add a Gaussian distributed random year effect to account for
-stochastic variation among years [@eacker_web-based_2019]:
+disturbance and fire with a log link and Beta distributed interannual variation [@johnson_science_2020;
+@stewart_climate-informed_2023; @dyson_existing_2022]. The coefficient of variation $\nu_R$ is constant, while the mean $\tilde{R_t}$ and standard deviation $\sigma_{R,t}$ vary with disturbance:
 \begin{equation}
-\log(R_t)=\beta^R_0+\beta^R_a A_t+\beta^R_f F_t+\epsilon^R_t; \epsilon^R_t \sim \text{Normal}(0,\sigma^2_{R}).
-  (\#eq:R)
+log(\tilde{R_t})=\beta^R_0+\beta^R_a A_t+\beta^R_f F_t
+  (\#eq:Rtilde)
+\end{equation}
+
+\begin{equation}
+R_t \sim \text{Beta}(\tilde{R_t},\sigma_{R,t});
+\sigma_{R,t} = min(\nu_R \tilde{R_t},\sqrt{\tilde{R_t} (1-\tilde{R_t})})
+(\#eq:R)
 \end{equation}
 
 In the simulation model (eq \@ref(eq:barR)), regression coefficient
@@ -605,23 +614,26 @@ years with a random effect [@eacker_web-based_2019,@lamb2024]:
   (\#eq:hatSEst)
 \end{equation}
 
-For consistency with [@johnson_science_2020], we model survival
+For consistency with Johnson et al. [-@johnson_science_2020], we model survival
 probability as an adjusted function of buffered anthropogenic
-disturbance $A_t$ with a log link [@stewart_climate-informed_2023;
-@dyson_existing_2022]. We add a Gaussian distributed random year effect
-to account for stochastic variation among years
-[@eacker_web-based_2019]: 
+disturbance $A_t$ with a log link and Beta distributed interannual variation with coefficient of variation $\nu_S$, mean $\tilde{S_t}$ and standard deviation $\sigma_{S,t}$ [@stewart_climate-informed_2023;
+@dyson_existing_2022]: 
 \begin{equation}
-S_t=\text{min}(46 \tilde{S_t}-0.5)/45,1); \log(\tilde{S_t})=\beta^S_0+\beta^S_a A_t+\epsilon^S_t; \epsilon^S_t \sim \text{Normal}(0,\sigma^2_{S}).
-  (\#eq:S)
+\tilde{S_t}=(46 e^{\beta^S_0+\beta^S_a A_t}-0.5)/45
+  (\#eq:Stilde)
+\end{equation}
+
+\begin{equation}
+S_t \sim \text{Beta}(\tilde{S_t},\sigma_{S,t});
+\sigma_{S,t} = min(\nu_S \tilde{S_t},\sqrt{\tilde{S_t} (1-\tilde{S_t})})
+(\#eq:S)
 \end{equation}
 
 To assess sensitivity of results to the survival estimation method and
 handle cases in which there is little or no survival data, we also
 implemented an alternative parametric exponential survival model,
 wherein the observed state (alive or dead, $\hat{I}_{i,t,m}$) of an
-individual animal $i$ in year $t$ and month $m$ is Bernoulli distributed
-[@schaub_integrated_2021]: 
+individual animal $i$ in year $t$ and month $m$ is Bernoulli distributed: 
 \begin{equation}
 \hat{I}_{i,t,m} \sim \text{Bernoulli}(S^{1/12}_t\hat{I}_{i,t,m-1}).
   (\#eq:hatIEst)
@@ -717,8 +729,8 @@ As suggested by Dunham et al. [-@dunham_strategic_2023] we also
 calculate the expected value of perfect information (EVPI) and the
 expected value of sample information (EVSI) [@runge_which_2011;
 @yokota_value_2004]. We assign a value or utility of
-$\nu_{\alpha,\psi}=1$ when the true state of the population $\psi$
-matches the assigned status $\alpha$, and value of $\nu_{\alpha,\psi}=0$
+$\eta_{\alpha,\psi}=1$ when the true state of the population $\psi$
+matches the assigned status $\alpha$, and value of $\eta_{\alpha,\psi}=0$
 when the status assessment is incorrect. This is "the value ascribed by
 the decision-maker to the outcome, and is thus the measure of management
 performance" [@runge_which_2011]. The expected value of current
@@ -726,7 +738,7 @@ information is the average utility of decisions informed by knowledge of
 the disturbance scenario $\tau$ (Figure \@ref(fig:figDisturbance)) and
 priors from the national model:
 \begin{equation}
-EV_{current} = max_{\alpha}\sum_\psi[P(\psi|\tau)\nu_{\alpha,\psi}],
+EV_{current} = max_{\alpha}\sum_\psi[P(\psi|\tau)\eta_{\alpha,\psi}],
   (\#eq:EVcurrent)
 \end{equation}
 where $P(\psi|\tau)$ is the prior probability that the
@@ -742,7 +754,7 @@ EVSI measures expected improvement from a particular sampling strategy
 as the difference between the expected value with and without additional
 sample information: 
 \begin{equation}
-EVSI_{\tau} = E_x[max_{\alpha}\sum_\psi[P(\psi|x,\tau)\nu_{\alpha,\psi}]] - EV_{current},
+EVSI_{\tau} = E_x[max_{\alpha}\sum_\psi[P(\psi|x,\tau)\eta_{\alpha,\psi}]] - EV_{current},
   (\#eq:EVSI)
 \end{equation}
 where $x$ is the sample information from a particular

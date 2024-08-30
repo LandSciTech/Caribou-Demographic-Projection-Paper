@@ -50,7 +50,7 @@ makeInterceptPlots <- function(scResults, addBit = "", facetVars = NULL,
                                               "Recruitment",
                                               "Female population size"),
                                survLow = 0.6, type = "png", useNational = T,lowLine=NULL,highLine=NULL) {
-  # facetVars=NULL;loopVars="sSigmaMax";scResults=scResults
+  # facetVars=NULL;loopVars="sNuMax";scResults=scResults
   #useNational=T;type="png"; survLow=0.6
   if (!is.null(loopVars)) {
     loopSet <- unique(subset(scResults$rr.summary.all, select = loopVars))

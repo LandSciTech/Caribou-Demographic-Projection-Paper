@@ -87,10 +87,10 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\beta^R_0$||Recruitment intercept.|
 |$\beta^R_a$||Anthropogenic disturbance slope for recruitment.|
 |$\beta^R_f$||Fire slope for recruitment.|
-|$\sigma^2_{R}$||Variance in random effect of year on recruitment.|
+|$\nu_{R}$||Coefficient of variation in recruitment among years.|
 |$\beta^S_0$||Survival intercept.|
 |$\beta^S_a$||Anthropogenic disturbance slope for survival.|
-|$\sigma^2_{S}$||Variance in random effect of year on survival.|
+|$\nu_{S}$||Coefficient of variation in survival among years.|
 |**True state**|
 |$\dot{R}_t$|rate|Recruitment (calves per cow).|
 |$\dot{S}_t$|probability|Adult female survival.|
@@ -113,8 +113,8 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$b=4$||Density dependence shape parameter.|
 |$a=1$||Allee effect parameter.|
 |$r_{max}=1.3$||Maximum population growth rate.|
-|$\nu_R=0.46$||Coefficient of variation in $\dot{R}_t$ among years.|
-|$\nu_S=0.08696$||Coefficient of variation in $\dot{S}_t$ among years.|
+|$v_R=0.46$||Coefficient of variation in $\dot{R}_t$ among years.|
+|$v_S=0.08696$||Coefficient of variation in $\dot{S}_t$ among years.|
 |$l_R=0$||Minimum value for $\dot{R}_t$.|
 |$l_S=0.61$||Minimum value for $\dot{S}_t$.|
 |$h_R=0.82$||Maximum value for $\dot{R}_t$.|
@@ -136,7 +136,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |**Expected value of perfect and sample information**|
 |$\psi=\text{viable or not}$|binary|True status of a population.|
 |$\alpha=\text{viable or not}$|binary|Assigned population status.|
-|$\nu_{\alpha,\psi}=1 \text{ when } \alpha=\psi, 0 \text{ otherwise}$|binary|Value of classification decision.|
+|$\eta_{\alpha,\psi}=1 \text{ when } \alpha=\psi, 0 \text{ otherwise}$|binary|Value of classification decision.|
 |$x$||Simulated observations from an example population.|
 |$\tau$||A disturbance and monitoring scenario.|
 |$P(\psi|\tau)$|probability|Prior probability of state $\psi$.|
@@ -214,14 +214,14 @@ We begin by setting random effects to zero, varying the prior standard deviation
 
 We then vary the prior standard deviations of the slopes of the relationships between anthropogenic disturbance and demographic rates (sAnthroSlopeSE is $\beta^S_R$ and rAnthroSlopeSE is $\beta^R_R$ in Table 2), and compare the prior predictive intervals of the Bayesian model to the 95\% predictive intervals from Johnson et al.'s (2020) regression analysis in a case with 90\% anthropogenic disturbance (bottom row of Fig \@ref(fig:InterceptsAndSlopes)). We set the prior standard deviation of the slopes (sAnthroSlopeSE = 0.0005, rAnthroSlopeSE = 0.006) so that the upper bound of the Bayesian predictive interval does not substantially exceed the upper bound of Johnson et al.'s predictive interval. 
 
-The choice of priors for the random effects of year on survival and recruitment are less important because the random effects have no effect on expected population growth rate (Figs \@ref(fig:PriorAllFits) and \@ref(fig:PriorAllFitsR)). We set the hyperprior for the standard deviation of the survival random effect to vary uniformly between sSigmaMin = 0.00001 and sSigmaMax = 0.06 to exceed the variation among national model simulations by a moderate amount (Fig \@ref(fig:PriorAllFits)). We set the hyperprior for the standard deviation of the recruitment random effect to vary uniformly between rSigmaMin = 0.00001 and rSigmaMax = 0.2 to exceed the variation among national model simulations by a moderate amount (Fig \@ref(fig:PriorAllFitsR)).
+The choice of priors for the random effects of year on survival and recruitment are less important because the random effects have little impact on expected population growth rate (Figs \@ref(fig:PriorAllFits) and \@ref(fig:PriorAllFitsR)). We set the prior for the coefficient of variation of survival among years $\nu_S$ to vary uniformly between sNuMin = 0.001 and sNuMax = 0.13 to match the variation among national model simulations (Fig \@ref(fig:PriorAllFits)). We set the prior for the coefficient of variation of recruitment of among years $\nu_S$ to vary uniformly between rNuMin = 0.001 and rNuMax = 0.7 to match the variation among national model simulations (Fig \@ref(fig:PriorAllFitsR)).
 
 Given intensive monitoring (15 years of 60 collars per year) of populations where demographic rates are higher or lower than the national average (from 97.5% and 2.5% quantiles of the national model), and the slope of the anthropogenic disturbance relationship differs from the national model, these priors are vague enough to allow posteriors to reflect local demographic rates (Figs \@ref(fig:SurvBoth) and \@ref(fig:RecBoth)). 
 
 ```{r priorCalibration, cache=TRUE,echo=FALSE, message=FALSE,results='hide'}
 if(doPriorCalibration){
-  source(here::here("analysis/scripts/PriorsFromPIs.R"))
-  source(here::here("analysis/scripts/calibratePriors.R"))
+  source(here::here("analysis/scripts/0_PriorsFromPIs.R"))
+  source(here::here("analysis/scripts/0_calibratePriors.R"))
 }
 ```
 
