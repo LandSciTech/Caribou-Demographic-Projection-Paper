@@ -4,7 +4,9 @@
 
 az login
 az batch account login -g EcDc-WLS-rg -n ecdcwlsbatch
-az batch pool list
+az batch pool list \
+--query "[].{name:id, vmSize:vmSize,  curNodes: currentDedicatedNodes,tarNodes: targetDedicatedNodes, taskSlotsPerNode:taskSlotsPerNode, allocState:allocationState}" \
+--output table
 
 
 #### Move files to container ##############
@@ -14,14 +16,14 @@ sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end
 # I actually created the SASURL manually bc it wouldn't let me do more than 7 days through CLI
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
 
-setName="s7"
+setName="s8"
 
-nBatches=90
+nBatches=30
 
 jobName="sendicott_job_"$setName
-
+jobName2="sendicott_job_s7"
 poolName="sendicott_caribouDemo_"$setName
-
+poolName2="sendicott_caribouDemo_s7"
 # delete old versions of scripts
 rm -r cloud/task_scripts
 rm -r cloud/task_jsons
@@ -42,9 +44,9 @@ do
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id $jobName
 done
 
-az batch pool list  \
---query "[].{id:id, curNodes: currentDedicatedNodes,tarNodes: targetDedicatedNodes, allocState:allocationState}" \
---output yaml
+az batch pool list \
+--query "[].{name:id, vmSize:vmSize,  curNodes: currentDedicatedNodes,tarNodes: targetDedicatedNodes, taskSlotsPerNode:taskSlotsPerNode, allocState:allocationState}" \
+--output table
 
 #### Monitor tasks ############################
 
@@ -54,27 +56,31 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-az batch task file download --task-id caribou-demog_sens_batch30 \
---job-id $jobName --file-path "wd/nohup_30.out" --destination "./nohup_30.out"
+taskNum=14
+az batch task file download --task-id caribou-demog_sens_batch$taskNum \
+--job-id $jobName --file-path "wd/nohup_"$taskNum".out" --destination "./nohup_"$taskNum".out"
 
-cat "./nohup_30.out"
+cat "./nohup_"$taskNum".out"
 
-rm "./nohup_30.out"
+rm "./nohup_"$taskNum".out"
 
 # List of all tasks and their state
 # See here for making fancy queries https://jmespath.org/tutorial.html
-az batch task list --job-id $jobName --query "{tasks: [].[id, state][]}" --output json
+az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[id, state][]}" --output json
+
+az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
 
 # Summary of task counts by state
 az batch job task-counts show --job-id $jobName
 
+# tried adding taskslotspernode here but need to test
 az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
  --auto-scale-formula 'percentage = 70;
  span = TimeInterval_Second * 15;
  $samples = $ActiveTasks.GetSamplePercent(span);
  $tasks = $samples < percentage ? max(0,$ActiveTasks.GetSample(1)) : max( $ActiveTasks.GetSample(1), avg($ActiveTasks.GetSample(span)));
  multiplier = 1;
- $cores = $TargetDedicatedNodes;
+ $cores = $TargetDedicatedNodes/$TaskSlotsPerNode;
  $extraVMs = (($tasks - $cores) + 0) * multiplier;
  $targetVMs = ($TargetDedicatedNodes + $extraVMs);
  $TargetDedicatedNodes = max(0, min($targetVMs, 50));
