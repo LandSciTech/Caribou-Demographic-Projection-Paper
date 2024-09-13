@@ -443,7 +443,7 @@ distributed function of the number of surviving post-juvenile females
 and the adjusted recruitment rate: 
 
 \begin{equation}
-  \dot{J}_{t} \sim \text{Binomial}(\dot{W}_t,\dot{X}_t[p_0-(p_0-p_k)(\frac{\dot{W}_t}{N_0k})^b]\frac{\dot{W}_t}{\dot{W}_t+a}).
+  \dot{J}_{t} \sim \text{Binomial}(\dot{W}_t,\dot{X}_t[p_0-(p_0-p_k)(\frac{\dot{W}_t}{k})^b]\frac{\dot{W}_t}{\dot{W}_t+a}).
   (\#eq:dotJ)
 \end{equation}
 
@@ -451,7 +451,7 @@ Given the values of parameters $p_0,p_k,a,$ and $b$ used by Johnson et
 al. (2020) (Table A1), recruitment rate is lowest $(0.5\dot{X}_t)$ when
 $\dot{N}_t=1$, approaches a maximum of $\dot{X}_t$ at intermediate
 population sizes, and declines to $0.6\dot{X}_t$ as the population
-reaches carrying capacity of $k=100$ times the initial population size.
+reaches carrying capacity of $k=50000$.
 The post-juvenile female population in the next year includes both
 survivors and new recruits: 
 

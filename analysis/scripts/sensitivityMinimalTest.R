@@ -9,10 +9,10 @@ cpageId <- args[1]
 cDir = getwd()
 
 library(caribouMetrics)
-
-# cpageId <- 31;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
-
 setName = args[2]
+
+# setName="s10"; cpageId <- 1;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
+
 
 #######################
 dir.create(paste0(cDir,"/figs/",setName),recursive=T)
@@ -46,10 +46,12 @@ message("batch ", cpageId, " started")
 
 str(scns)
 
+str(subset(scns,interannualVar=="list(R_CV=0.23,S_CV=0.0435)"))
 if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)
 }else{
-  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
+  #scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
+  scResults = runScnSet(scns[3801:3801,],eParsIn,simBig,getKSDists=F,printProgress=F)
 }
 
 saveRDS(scResults,paste0("results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
