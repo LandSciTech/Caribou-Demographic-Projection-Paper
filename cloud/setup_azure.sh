@@ -19,21 +19,19 @@ sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end
 # I actually created the SASURL manually bc it wouldn't let me do more than 7 days through CLI
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
 
-setName="s7"
+setName="s10"
 
-nBatches=90
+nBatches=10
 
 jobName="sendicott_job_"$setName
-jobName2="sendicott_job_s8"
 poolName="sendicott_caribouDemo_"$setName
-poolName2="sendicott_caribouDemo_s8"
 # delete old versions of scripts
 rm -r cloud/task_scripts
 rm -r cloud/task_jsons
 rm -r cloud/pool_json
 
 # might need to update the SASURL secret stored in this script first
-Rscript --vanilla "cloud/make_batch_scripts.R" $setName
+Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl
 
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
 
@@ -59,11 +57,11 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=85
+taskNum=7
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
 --job-id $jobName --file-path "wd/nohup_"$taskNum".out" --destination "./nohup_"$taskNum".out"
 
-cat "./nohup_"$taskNum".out"
+tail -n 20 "./nohup_"$taskNum".out"
 
 rm "./nohup_"$taskNum".out"
 
@@ -77,7 +75,7 @@ az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
 az batch job task-counts show --job-id $jobName
 
 # tried adding taskslotspernode here but need to test
-az batch pool autoscale enable --pool-id $poolName2 --auto-scale-evaluation-interval "PT5M"\
+az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
  --auto-scale-formula 'percentage = 70;
  span = TimeInterval_Second * 15;
  $samples = $ActiveTasks.GetSamplePercent(span);
