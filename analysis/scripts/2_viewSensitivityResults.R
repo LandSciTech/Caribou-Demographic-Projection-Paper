@@ -13,7 +13,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s8" #need to do both s7 and s8
+setName = "s10" #need to do both s7 and s8
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
@@ -24,6 +24,27 @@ nrow(scns)
 pagesa=unique(scns$pageId)
 
 pages = pagesa
+
+str(scns)
+
+setLTYVar <-function(scns){
+  if(is.element("interannualVar",names(scns))){
+    scns$ltyVariable = "low"
+    scns$ltyVariable[grepl("0.46",scns$interannualVar,fixed=T)]="high"
+  }else{
+    scns$ltyVariable=scns$collarInterval
+  }
+  return(scns)
+}
+
+scns = setLTYVar(scns)
+if(is.element("interannualVar",names(scns))){
+  ltyLabel = "Interannual\nVariation"
+}else{
+  ltyLabel = "Collar\nRenewal\nInterval"
+}
+
+
 for (p in pagesa){
   #p=pagesa[1]
   if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
@@ -41,8 +62,9 @@ pages=sort(pages)
 combine=T
 addEV = F
 addProbs=F
+
 for(i in 1:length(pages)){
-  #combine=F;i=50
+  #combine=F;i=10
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -72,12 +94,15 @@ for(i in 1:length(pages)){
     combine=F
   }else{combine=T;next}
 
+  scResults$rr.summary.all = setLTYVar(scResults$rr.summary.all)
 
+  scResults$obs.all = setLTYVar(scResults$obs.all)
   #figure out how to count out errors.
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(collarInterval==1)&(Parameter=="Population growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(Parameter=="Population growth rate"))
+
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
   grpID = subset(exResults,select=c(tA,obsYears,meanQ)) %>% group_by(tA,obsYears) %>%
@@ -93,7 +118,7 @@ for(i in 1:length(pages)){
   exResults$Anthro2023 = pmax(0,exResults$tA)#pmax(0,exResults$tA-2) #correcting for error - change back in round 4
 
 
-  obs = subset(scResults$obs.all,(collarCount==30)&(collarInterval==1)&(parameter=="Population growth rate"))
+  obs = subset(scResults$obs.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(parameter=="Population growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -172,10 +197,12 @@ for(i in 1:length(pages)){
   probs = merge(probs,statusTrue)
   probs = merge(probs,sizeTrue)
   probs = merge(probs,sizeProj)
+  probs$trueChange = probs$trueSize/probs$N0
+  probs$predChange = probs$projSize/probs$N0
 
-  probs$viableTrue = (probs$trueMean>0.99)&(probs$trueSize>10)
+  probs$viableTrue = (probs$trueChange>0.99)&(probs$trueSize>10)
 
-  probs$viablePred = (probs$Mean>0.99)&(probs$projSize>10)
+  probs$viablePred = (probs$predChange>0.99)&(probs$projSize>10)
 
   probs$wrong = probs$viableTrue != probs$viablePred
 
@@ -184,7 +211,7 @@ for(i in 1:length(pages)){
   probs$LambdaDiff = probs$trueMean-probs$Mean
   #probs$LambdaDiff[(probs$projSize<=10)]=NA
 
-  probs$pageLabB = paste0(batchStrip(probs$pageLab),"st",probs$collarCount,"ri",probs$collarInterval)
+  probs$pageLabB = paste0(batchStrip(probs$pageLab),"st",probs$collarCount,"ri",probs$ltyVariable)
   pagesB=unique(probs$pageLabB)
 
   probs$AnthroScn=as.factor(probs$Anthro2023)
@@ -213,7 +240,7 @@ for(i in 1:length(pages)){
 
   probs$pageLab = batchStrip(probs$pageLab)
   pagesCa = unique(probs$pageLab)
-  probs$RenewalInterval=as.factor(probs$collarInterval)
+  probs$RenewalInterval=as.factor(probs$ltyVariable)
   probs$NumCollars = as.factor(probs$collarCount)
   probs$grp = paste(probs$obsYears,probs$NumCollars)
 
@@ -222,7 +249,7 @@ for(i in 1:length(pages)){
     #pp=pagesCa[1]
     png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
-    base=ggplot(subset(probs,(pageLab==pp)&(RenewalInterval==1)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
+    base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
       geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars",fill="Number of\n Collars")+
       theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
@@ -283,13 +310,13 @@ for(i in 1:length(pages)){
 
 
   probsSum = merge(probsSum,EVsample)
-  probsSum$grp = paste(probsSum$collarCount,probsSum$collarInterval)
+  probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
 
   table(probsSum$grp)
   probsSum$pageLabC = batchStrip(probsSum$pageLab)
   pagesC=unique(probsSum$pageLabC)
 
-  probsSum$RenewalInterval=as.factor(probsSum$collarInterval)
+  probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
   probsSum$NumCollars = as.factor(probsSum$collarCount)
 
   probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
@@ -307,7 +334,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -316,7 +343,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/EVsample",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -325,7 +352,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/probChecks",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -335,7 +362,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)

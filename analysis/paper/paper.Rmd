@@ -102,10 +102,9 @@ data to inform decisions include Bayesian population modelling
 @gregory_structured_2012]. To be useful, these methods must be tailored
 to particular species and decision contexts. Here, we offer a simple
 Bayesian population model for boreal caribou (*Rangifer tarandus
-caribou*) that integrates information about the impacts of landscape
-change with available demographic data to reduce uncertainty in
-population viability projections for boreal caribou [building on
-@eacker_web-based_2019]. Following the value of information analysis
+caribou*) that integrates information about the impacts of landscape 
+change [@johnson_science_2020] with available demographic data [building on @eacker_web-based_2019] to reduce uncertainty in
+population viability projections. Following the value of information analysis
 framework proposed by Dunham et al. (2023), we combine this Bayesian
 model with simulations of plausible population trajectories
 [@stewart_climate-informed_2023; @dyson_existing_2022] to show how the
@@ -166,10 +165,10 @@ affixed with with collars that send a mortality signal when no longer
 active [see @nbckc_nbckc_2021], thus allowing estimation of adult
 survival (see @kaplan_nonparametric_1958 and @pollock_survival_1989 for
 original approach, and @mcloughlin_declines_2003,
-@hervieux_widespread_2013, @eacker_web-based_2019, and @lamb2024 for
+@hervieux_widespread_2013, @eacker_web-based_2019, @lamb_effectiveness_2024 and @dalgarno_bboutools_2024 for
 examples of application to caribou). Recruitment is estimated from
 aerial surveys of the composition of groups of animals that include
-collared animals [@nbckc_nbckc_2022]. Groups typically also contain
+collared animals [@nbckc_nbckc_2022, @eacker_web-based_2019, @dalgarno_bboutools_2024]. Groups typically also contain
 uncollared animals, and a critical assumption in these surveys is that
 different demographic groups are equally detectable
 [@ellington_divergent_2020]. Errors that can bias composition survey
@@ -181,13 +180,13 @@ Survival and recruitment survey data can be combined in a simple
 recruitment-mortality population model [@hatter_moose_1991] that serves
 as the basis for many herd viability assessments
 [@decesare_estimating_2012; @serrouya_comparing_2017;
-@eacker_web-based_2019; @eccc_scientific_2011; @johnson_science_2020].
-Some efforts have been made to improve caribou population viability
+@eacker_web-based_2019; @eccc_scientific_2011; @johnson_science_2020; @dalgarno_bboutools_2024].
+Various efforts have been made to improve caribou population viability
 projections and growth rate estimates using Bayesian methods
 [@moeller_integrating_2021; @mcnay_demographic_2022;
-@eacker_web-based_2019; @lamb2024], following broader trends in the
+@eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024], following broader trends in the
 analysis of population dynamics [@schaub_integrated_2021]. In Bayesian
-population models, all available demographic or population data (e.g.
+population models, available demographic or population data (e.g.
 abundance surveys, vital rate estimates, trend data) are combined into a
 single analysis that can permit novel parameter estimation, and improve
 precision, and account for multiple sources of uncertainty
@@ -200,8 +199,7 @@ available for some caribou populations [@johnson_science_2020] and there
 is a risk that lack of local data will be used as a reason to delay
 conservation action [@boan_climate_2018]. Bayesian caribou population
 models [@moeller_integrating_2021; @mcnay_demographic_2022;
-@eacker_web-based_2019; @lamb2024] have not thus far included
-demographic-disturbance relationships, and we are concerned that models
+@eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024] have not thus far included demographic-disturbance relationships, and we are concerned that models
 informed only by local demographic data could be used to inflate
 uncertainty about the status of poorly monitored populations.
 
@@ -209,10 +207,8 @@ We propose to reduce uncertainty in assessments and projections of local
 caribou population viability by integrating prior information from
 national analysis of demographic-disturbance relationships with
 available local demographic data in a simple Bayesian population model
-for boreal caribou [building on @eacker_web-based_2019]. In our simple
-proof-of-concept model, information is shared among populations using
-priors derived from a published analysis of variation in demographic
-rates among populations across Canada [@johnson_science_2020]. A more
+for boreal caribou. In our simple proof-of-concept model, information is 
+shared among populations using priors derived from a published analysis of variation in demographic rates among populations across Canada [@johnson_science_2020]. A more
 rigorous statistical approach would be to integrate multiple populations
 into a hierarchical Bayesian analysis of variation within and among
 populations [@leasure_hierarchical_2019]; we have not done this because
@@ -247,8 +243,7 @@ composition surveys can bias recruitment estimates from those surveys
 [@ellington_divergent_2020; @decesare_estimating_2012] none have thus
 far examined sensitivity of Bayesian caribou population models to these
 sources of error [@moeller_integrating_2021; @mcnay_demographic_2022;
-@eacker_web-based_2019]. We address this gap with a bias correction term
-derived from a simple model of the recruitment survey observation
+@eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. We address this gap with a bias correction term derived from a simple model of the recruitment survey observation
 process.
 
 # Methods
@@ -277,7 +272,7 @@ fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 
 runScenarios = F #To do: set up to run full analysis from within this document.
 
-resultScenario = "S7"
+resultScenario = "S10"
 resultSet ="cmult6ay3aSf1"
 figSet = c("diffs","distScns","EVSI","power","EVPIall")
 
@@ -299,9 +294,7 @@ for(f in figSet){
 
 ## Caribou population monitoring data and composition survey bias correction
 
-We focus on analyzing survival of collared females (as in
-@mcloughlin_declines_2003, @hervieux_widespread_2013 and
-@eacker_web-based_2019), and the ratio of calves to cows in aerial
+We focus on analyzing survival of collared females and the ratio of calves to cows in aerial
 surveys of groups that include collared females [@nbckc_nbckc_2022],
 because these remain the most widely available sources of demographic
 information for boreal caribou populations [@johnson_science_2020].
@@ -402,7 +395,7 @@ of alternative models (hypotheses) about the state of a particular
 caribou population; these alternative scenarios informed by prior
 beliefs are used to assess the expected value of alternative sampling
 strategies [@runge_which_2011; @dunham_strategic_2023]. We also use the
-simulated trajectories to confirm that our Bayesian model successfully
+simulated trajectories to confirm that the Bayesian model successfully
 integrates local data with priors from the national model. For
 reference, all variables and parameters are defined in supplemental
 Table A1.
@@ -496,7 +489,7 @@ monitoring scenarios and that populations remain extant through the
 monitoring period, all simulations are started with $N_0=5000$ animals
 24 years prior to the start of the projection period.
 
-```{r exampleTrajectories, fig.cap="Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships with (top row) and without (bottom row) delayed reproduction. To highlight how variation among trajectories persists as disturbance changes we have reduced interannual variability ($v_S,v_R$) by 75\\% in these examples. Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95\\% predictive intervals from Johnson et al's (2020) regression models without adjustment for misidentification bias and delayed reproduction.", cache=TRUE}
+```{r exampleTrajectories, fig.cap="Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships with (top row) and without (bottom row) delayed reproduction. To highlight how variation among trajectories persists as disturbance changes we have reduced interannual variation by 75\\% in these examples ($v_R=0.115,v_S=0.02175$). Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95\\% predictive intervals from Johnson et al's (2020) regression models without adjustment for misidentification bias and delayed reproduction.", cache=TRUE}
 
 knitr::include_graphics(here::here("analysis/paper/figs/DemographicRatesDelay.png"))
 
@@ -600,15 +593,14 @@ uniformly between 0 and 0.2. To maintain consistency with Johnson et al.
 [-@johnson_science_2020] we also provide an option to only adjust for
 sex ratio and misidentification biases $X_t=cR_t/2$.
 
-Following others [@eacker_web-based_2019; @lamb2024], Kaplan-Meier
+Following others [@eacker_web-based_2019; @lamb_effectiveness_2024], Kaplan-Meier
 estimates of observed adult female survival probability $\hat{S}_t$ and
 associated precisions $\tau_t$ are estimated from known-fate radio
 collar data using the *survival* R package [@therneau_modeling_2000],
 with precisions for years with no observed mortality estimated using a
 separate Bayesian model. Observed estimated survival is modelled as a
 Gaussian distributed function of the true survival probability,
-truncated between 0 and 1, to allow sharing survival information across
-years with a random effect [@eacker_web-based_2019,@lamb2024]:
+truncated between 0 and 1 [@eacker_web-based_2019,@lamb_effectiveness_2024]:
 \begin{equation}
 \hat{S_t} \sim \text{Normal}(S_t,1/\tau_t)T(0,1).
   (\#eq:hatSEst)
@@ -722,8 +714,7 @@ outcome for each disturbance and monitoring scenario (Fig
 observations from 500 example population trajectories (e.g. Fig
 \@ref(fig:exampleTrajectories)), and calculated the percentage of these
 500 examples in which the Bayesian posterior mean population growth rate
-and the true population growth rate are both greater than 0.99, or both
-less than or equal to 0.99.
+and the true population growth rate over the full projection period are both greater than 0.99, or both less than or equal to 0.99.
 
 As suggested by Dunham et al. [-@dunham_strategic_2023] we also
 calculate the expected value of perfect information (EVPI) and the
@@ -785,7 +776,8 @@ uncertainty about the population growth rate decreases as sampling
 effort in each year (i.e. number of collars) or the number of years of
 monitoring (Figure \@ref(fig:figDiffs)) increase. Uncertainty is higher
 when the forecast horizon is long (compare 5 and 20 year projections in
-Figure \@ref(fig:figDiffs)). Uncertainty is also higher in our high
+Figure \@ref(fig:figDiffs)), and when interannual variation is high (Figure
+\@ref(fig:examplePredictions)). Uncertainty is also higher in our high
 anthropogenic disturbance scenarios (Figure \@ref(fig:figDiffs)) because
 stochastic variation in population growth rates increase as populations
 become very small (as in top right panel of Figure
@@ -809,9 +801,10 @@ precise but not less accurate, which can happen when there is very small
 prior probability that population is viable (orange band in the top
 right panel of Figure \@ref(fig:examplePredictions) falls below 1). At
 lower levels of disturbance, local monitoring can reduce uncertainty,
-but there are diminishing returns as the number of collars deployed or
+but in some circumstances there are diminishing returns as the number of collars deployed or
 the number of years of monitoring increases (Figures
-\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). The shapes of the
+\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). High interannual variation makes reducing uncertainty more difficult (Figures
+\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)).The shapes of the
 relationships between monitoring effort and the probability of correct
 status assessment depend on how anthropogenic disturbance is changing
 over time, but there are diminishing benefits of increased monitoring
@@ -820,20 +813,20 @@ regardless of whether disturbance is increasing or decreasing
 increases are not large for the set of parameters we investigate
 (Supplement F).
 
-```{r examplePredictions, fig.cap="Prior (a) and posterior (b) predictions from the Bayesian model for an example population trajectory. In this example scenario anthropogenic disturbance increases by 2\\% per year from 0 to 100\\%. The population is monitored for 16 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95\\% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5\\% and 97.5\\% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty (bottom row), but when disturbance is very high local data is not required to predict viability (population growth <= 0.99). When projected populations become very small, stochastic variation in projected population growth rate increases (as in the top right panel).", cache=TRUE}
+```{r examplePredictions, fig.cap="Prior (a) and posterior predictions from the Bayesian model for population trajectories with high (b: $v_R=0.46,v_S=0.087$) and lower (c: $v_R=0.23,v_S=0.0435$) interannual variation. In this example scenario anthropogenic disturbance increases by 2\\% per year from 0 to 100\\%. The population is monitored for 16 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95\\% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5\\% and 97.5\\% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty more when interannual variation is lower (bottom row), but when disturbance is very high local data is not required to predict viability (population growth <= 0.99). When projected populations become very small, stochastic variation in projected population growth rate increases (as in the top right panel).", cache=TRUE}
 
 knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.png"))
 ```
 
-```{r figDiffs, fig.cap="The distribution of differences between true population growth rates and Bayesian posterior mean growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Differences decrease as the number of years of monitoring and the number of collars increase. Differences are larger when anthropogenic disturbance is high because stochastic variation in population growth rate is higher for small populations. In these examples the composition survey cow multiplier $w$ is 6, and collars are renewed each year.", cache=TRUE}
+```{r figDiffs, fig.cap="The distribution of differences between true population growth rates and Bayesian posterior mean growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Differences decrease as the number of years of monitoring and the number of collars increase. Differences are larger when anthropogenic disturbance is high because stochastic variation in population growth rate is higher for small populations. In these examples the composition survey cow multiplier $w$ is 6, collars are renewed each year, and interannual variation is lower ($v_R=0.23,v_S=0.0435$).", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay3aSf1.png"))
 ```
 
-```{r figStatusErrors, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring (number of years or number of collars) as the number of years or collars increases. In these examples the composition cow multiplier $w$ is 6; varying $w$ does not alter qualitative conclusions (Supplements D and E).", cache=TRUE}
+```{r figStatusErrors, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring (number of years or number of collars) as the number of years or collars increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/powercmult6ay3aSf1.png"))
 ```
 
-```{r figEVSI, fig.cap="The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not alter status assessments. Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring (number of years or number of collars) as the number of years or collars increases. See Figure \\@ref(fig:figStatusErrors) for additional scenario details.", cache=TRUE}
+```{r figEVSI, fig.cap="The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not alter status assessments. Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but in some circumstances there are diminishing returns on additional monitoring (number of years or number of collars) as the number of years or collars increases. See Figure \\@ref(fig:figStatusErrors) for additional scenario details.", cache=TRUE}
 
 knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay3aSf1.png"))
 ```
@@ -892,7 +885,7 @@ means, and in the absence of local data, appropriate priors lead to a
 range of outcomes consistent with the observed range of variation across
 the country [Figures 3 and 5 in @johnson_science_2020]. Others
 [@moeller_integrating_2021; @mcnay_demographic_2022;
-@eacker_web-based_2019] have also used Bayesian models to estimate
+@eacker_web-based_2019; @dalgarno_bboutools_2024] have also used Bayesian models to estimate
 caribou demographic rates from local monitoring data, but our addition
 of prior information from national demographic-disturbance relationships
 is novel, and important for reducing the risk that lack of local data
@@ -912,7 +905,7 @@ nothing in our arguments, models or results that can or should be used
 to discourage much needed monitoring of the effects of conservation
 actions. Even when no additional monitoring is required for assessing
 self-sustainability, there are a variety of reasons to continue
-monitoring highly disturbed boreal caribou populations. Our point is
+monitoring highly disturbed boreal caribou populations. The point we wish to emphasize is
 that action is also required, and lack of monitoring should not be used
 as a reason to delay conservation measures for highly disturbed
 populations.
@@ -1013,7 +1006,7 @@ hierarchical analysis [@leasure_hierarchical_2019] would be better
 suited for estimating variation in demographic model parameters among
 populations, and distinguishing that from variation among years.
 However, data owners have not authorized the use of the data for that
-purpose. In order to proceed with the available published information we
+purpose. To develop a proof-of-concept model with available published information we
 constrained our example trajectory simulations by assuming that
 populations remain in their quantile, so populations that are lower than
 or higher than average remain lower or higher than average over time.
@@ -1029,6 +1022,10 @@ not include all plausible possibilities we believe they are sufficient
 to demonstrate how a Bayesian model can be used to integrate local data
 with national priors, and to show how monitoring requirements depend on
 landscape condition.
+
+For this analysis we used Kaplan-Meier estimates of observed adult female survival probability $\hat{S}_t$ and associated precisions $\tau_t$ [as in @eacker_web-based_2019; @lamb_effectiveness_2024], and assumed Beta distributed interannual variability [as in @johnson_science_2020], but we acknowledge there are other possible approaches [e.g. @dalgarno_bboutools_2024]. We believe the proof-of-concept model presented in this paper is adequate for making general points about the integration of national
+demographic-disturbance relationships with local data, and accounting for
+composition survey errors. However, in future we intend to use the more fully developed and documented 'bboutools' R package [@dalgarno_bboutools_2024] as a starting point for work with local decision makers to develop tools they can use inform local monitoring decisions.
 
 Aspatial demographic models generally assume that observed animals are a
 random and representative sample of a fully mixed population in which
@@ -1074,7 +1071,7 @@ boreal caribou populations in highly disturbed landscapes are
 self-sustaining. There is more variation in caribou demographic rates
 among study areas with low to moderate disturbance, and thus more need
 for local data to inform demographic projections. In these places, our
-analysis suggests a general pattern of diminishing returns from
+analysis suggests that there may be diminishing returns from
 increasing monitoring effort, but more information on monitoring costs,
 objectives, and existing local data would be required to assess the
 adequacy and cost-effectiveness of monitoring scenarios in particular

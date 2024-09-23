@@ -14,7 +14,6 @@ pal4b = brewer.pal(5,"Purples")[c(2,3,4,5)]
 
 scn_defaults <- eval(formals(getScenarioDefaults))
 
-
 batchStrip<-function(l,batches=c(10,seq(1:9))){
   for(b in batches){
     l=gsub(paste0("repBatch",b),"",l,fixed=T)
@@ -22,7 +21,7 @@ batchStrip<-function(l,batches=c(10,seq(1:9))){
   return(l)
 }
 
-setName = "s8"
+setName = "s10"
 probsSum = read.csv(here::here(paste0("tabs/EVsample",setName,".csv")),stringsAsFactors = F)
 
 probsSum$pageLabC = batchStrip(probsSum$pageLab)
@@ -31,11 +30,18 @@ pagesC=unique(probsSum$pageLabC)
 unique(probsSum$AnthroScn)
 probsSum$AnthroScn = factor(probsSum$AnthroScn, levels = c("low","low-med","med-high","high"))
 
+
+if(is.element("interannualVar",names(probsSum))){
+  ltyLabel = "Interannual\nVariation"
+}else{
+  ltyLabel = "Collar\nRenewal\nInterval"
+}
+
+
 EVuncertainty = subset(probsSum,collarCount==0)
-#Resume here - calculate expectations only from priors
 #i.e. obsYears == 0 results
 str(EVuncertainty)
-EVuncertainty=subset(EVuncertainty,select=c(EVsample,EVvar,YearsOfProjection,AnthroScn,pageLab,pageLabC))
+EVuncertainty=subset(EVuncertainty,select=c(EVsample,EVvar,YearsOfProjection,AnthroScn,ltyVariable,pageLab,pageLabC))
 names(EVuncertainty)[names(EVuncertainty)=="EVsample"]="EVuncertainty"
 hist(EVuncertainty$EVvar)#expect low values here. Method used to calculate EVuncertainty assumes priors probs do not differ among replicates.
 
@@ -52,7 +58,6 @@ EVuncertainty$trend[EVuncertainty$trend=="-"]= "decreasing"
 EVuncertainty$trend[EVuncertainty$trend=="0"]= "stable"
 EVuncertainty$trend[EVuncertainty$trend=="1"]= "increasing"
 EVuncertainty$YearsOfProjection =as.factor(EVuncertainty$YearsOfProjection)
-
 
 png(here::here(paste0("figs/",setName,"/EVPIall.png")),
     height = 3.7, width = 7.48, units = "in",res=600)
@@ -73,9 +78,9 @@ probsSum$EVSI = probsSum$EVsample-probsSum$EVuncertainty
 
 names(probsSum)
 hist(probsSum$EVvar)
-probsSum$grp = paste(probsSum$collarCount,probsSum$collarInterval)
+probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
 
-probsSum$RenewalInterval=as.factor(probsSum$collarInterval)
+probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
 probsSum$NumCollars = as.factor(probsSum$collarCount)
 
 
@@ -86,7 +91,7 @@ for(pp in pagesC){
   png(here::here(paste0("figs/",setName,"/EVSI",pp,".png")),
       height = 3.7, width = 7.48, units = "in",res=600)
   base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVSI,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", type="Collar\nRenewal\nInterval")+
+    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
     theme_bw()+xlab("years of monitoring")+ylab("Expected Value of Sample Information EVSI")+
     scale_color_discrete(type=(pal4))
   print(base)

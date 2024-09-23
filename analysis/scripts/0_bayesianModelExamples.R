@@ -11,16 +11,19 @@ monitoringScns = data.frame(obsYears=c(1,16),collarCount=c(0,30),cowMult=c(6),co
                             assessmentYrs=c(3))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
+stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)","list(R_CV=0.23,S_CV=0.0435)")))
 
 stateScns$sQuantile=0.8
 stateScns$rQuantile = 0.8
 scns=merge(monitoringScns,stateScns)
 
+scns = subset(scns,!(grepl("0.23",interannualVar,fixed=T)&(collarCount==0)))
 scns$iAnthro = 0
 scns$tA = scns$iAnthro+(scns$obsYears)*scns$obsAnthroSlope
 scns$projYears = 50-scns$obsYears
 scns$N0 = 5000
 scns$adjustR = TRUE
+
 #scns$assessmentYrs=3
 
 ####################
@@ -82,18 +85,39 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
   ylim(c(0, 1.2))
 plot(lambdaPosterior)
 
+posteriorResultB = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = 0.85,
+                        legendPosition="none",breakInterval=breakInterval,
+                        labFontSize=labFontSize)+
+  yr_scale2 +
+  labs(tag = "c")
+plot(recPosteriorB)
+survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=0.6,
+                         legendPosition="none",breakInterval=breakInterval,
+                         labFontSize=labFontSize)+
+  yr_scale2
+plot(survPosteriorB)
+lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=0.5,
+                           legendPosition="none",breakInterval=breakInterval,
+                           labFontSize=labFontSize)+
+  yr_scale2 +
+  ylim(c(0, 1.2))
+plot(lambdaPosteriorB)
+
+
 leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.85,
                legendPosition="left",breakInterval=breakInterval,labFontSize=labFontSize)
 leg <- ggpubr::get_legend(leg)
 
 # combine ggplots to one figure
 plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
-                          recPosterior, survPosterior, lambdaPosterior, labels = "",
-                          ncol = 3, nrow = 2, vjust = 1)
-ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1))+bgcolor("white")
+                          recPosterior, survPosterior, lambdaPosterior,
+                          recPosteriorB, survPosteriorB,lambdaPosteriorB,labels = "",
+                          ncol = 3, nrow = 3, vjust = 1)
+ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamples.png"),
-       width = 12*0.8, height = 3.6*2, units = "in",
+       width = 12*0.8, height = 4.6*2, units = "in",
        dpi = 1200)
 
 ###############################
@@ -149,18 +173,38 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
   ylim(c(0, 1.2))
 plot(lambdaPosterior)
 
+posteriorResultB = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = 0.85,
+                        legendPosition="none",breakInterval=breakInterval,
+                        labFontSize=labFontSize)+
+  yr_scale2 +
+  labs(tag = "c")
+plot(recPosteriorB)
+survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=0.6,
+                         legendPosition="none",breakInterval=breakInterval,
+                         labFontSize=labFontSize)+
+  yr_scale2
+plot(survPosteriorB)
+lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=0.5,
+                           legendPosition="none",breakInterval=breakInterval,
+                           labFontSize=labFontSize)+
+  yr_scale2 +
+  ylim(c(0, 1.2))
+plot(lambdaPosteriorB)
+
 leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.85,
                legendPosition="left",breakInterval=breakInterval,labFontSize=labFontSize)
 leg <- ggpubr::get_legend(leg)
 
 # combine ggplots to one figure
 plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
-                          recPosterior, survPosterior, lambdaPosterior, labels = "",
-                          ncol = 3, nrow = 2, vjust = 1)
-ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1))+bgcolor("white")
+                          recPosterior, survPosterior, lambdaPosterior,
+                          recPosteriorB, survPosteriorB, lambdaPosteriorB, labels = "",
+                          ncol = 3, nrow = 3, vjust = 1)
+ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesNoBias.png"),
-       width = 12*0.8, height = 3.6*2, units = "in",
+       width = 12*0.8, height = 4.6*2, units = "in",
        dpi = 1200)
 
 ###############################

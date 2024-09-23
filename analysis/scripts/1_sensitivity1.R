@@ -6,7 +6,7 @@
 setName = "s10"
 monitoringScns = expand.grid(obsYears=c(1,2,4,8,16,24),collarCount=c(0,15,30,60),
                              cowMult=c(6),collarInterval=c(1),
-                             assessmentYrs=c(3))
+                             assessmentYrs=c(5))
 #TO DO - in next iteration, remove multiple years of one collar
 monitoringScns = subset(monitoringScns, !((obsYears>1)&(collarCount==0))&!((collarCount==1)&(cowMult>3))&!((collarCount==0)&(collarInterval>1)))
 stateScns = data.frame(tA=c(0,20,40,60),
@@ -33,11 +33,12 @@ scns$adjustR = TRUE
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))
 nrow(scns)
+length(unique(scns$pageLab))
 
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)
 
-
+nrow(scns)
 
 setName = "s7"
 monitoringScns = expand.grid(obsYears=c(1,2,4,8,16,24),collarCount=c(0,15,30,60),
@@ -67,6 +68,8 @@ scns$adjustR = TRUE
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))
+nrow(scns)
+length(unique(scns$pageLab))
 
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)

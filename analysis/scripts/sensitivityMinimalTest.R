@@ -54,6 +54,7 @@ if(n_reps=="all"){
   scResults = runScnSet(scns[3801:3801,],eParsIn,simBig,getKSDists=F,printProgress=F)
 }
 
+unique(scResults$rr.summary.all$Parameter)
 saveRDS(scResults,paste0("results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
 
 message("batch ", cpageId, " complete")
