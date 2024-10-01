@@ -30,7 +30,7 @@ rm -r cloud/task_scripts
 rm -r cloud/task_jsons
 rm -r cloud/pool_json
 
-# might need to update the SASURL secret stored in this script first
+# Updates sasurl and setName in files, might need to change pool slots and target nodes
 Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl
 
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
@@ -46,7 +46,10 @@ do
 done
 
 az batch pool list \
---query "[].{name:id, vmSize:vmSize,  curNodes: currentDedicatedNodes,tarNodes: targetDedicatedNodes, taskSlotsPerNode:taskSlotsPerNode, allocState:allocationState}" \
+--query "[].{name:id, vmSize:vmSize,  curNodes: currentDedicatedNodes,
+tarNodes: targetDedicatedNodes, taskSlotsPerNode:taskSlotsPerNode,
+state:state, enableAutoScale:enableAutoScale,
+allocState:allocationState}" \
 --output table
 
 #### Monitor tasks ############################
@@ -57,7 +60,7 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=7
+taskNum=1
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
 --job-id $jobName --file-path "wd/nohup_"$taskNum".out" --destination "./nohup_"$taskNum".out"
 
@@ -69,7 +72,7 @@ rm "./nohup_"$taskNum".out"
 # See here for making fancy queries https://jmespath.org/tutorial.html
 az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[id, state][]}" --output json
 
-az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
+# az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
 
 # Summary of task counts by state
 az batch job task-counts show --job-id $jobName
