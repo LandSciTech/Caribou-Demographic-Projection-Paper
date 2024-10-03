@@ -34,9 +34,9 @@ runScenario<-function(scns,quants=NULL,Anthro=NULL,survAnalysisMethod="KaplanMei
   #Get full set of sims for comparison
 
   if(is.null(quants)){
-    simBig<-getSimsNational(adjustR=unique(scns$adjustR))#If called with default parameters, use saved object to speed things up.
+    simBig<-getSimsNational()#If called with default parameters, use saved object to speed things up.
   }else{
-    simBig<-getSimsNational(useQuantiles = quants,Anthro=Anthro,adjustR=unique(scns$adjustR))#If called with default parameters, use saved object to speed things up.
+    simBig<-getSimsNational(useQuantiles = quants,Anthro=Anthro)#If called with default parameters, use saved object to speed things up.
   }
 
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,survAnalysisMethod,getKSDists=getKSDists,printProgress=T)

@@ -8,10 +8,10 @@ cpageId <- args[1]
 
 cDir = getwd()
 
-library(caribouMetrics)
 setName = args[2]
 
 # setName="s10"; cpageId <- 1;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
+library(caribouMetrics)
 
 
 #######################

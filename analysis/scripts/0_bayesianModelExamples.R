@@ -8,7 +8,7 @@ library(RColorBrewer)
 baseDir <- "."
 
 monitoringScns = data.frame(obsYears=c(1,16),collarCount=c(0,30),cowMult=c(6),collarInterval=c(1),
-                            assessmentYrs=c(3))
+                            assessmentYrs=c(1))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
 stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)","list(R_CV=0.23,S_CV=0.0435)")))
@@ -21,8 +21,7 @@ scns = subset(scns,!(grepl("0.23",interannualVar,fixed=T)&(collarCount==0)))
 scns$iAnthro = 0
 scns$tA = scns$iAnthro+(scns$obsYears)*scns$obsAnthroSlope
 scns$projYears = 50-scns$obsYears
-scns$N0 = 5000
-scns$adjustR = TRUE
+scns$N0 = 2000
 
 #scns$assessmentYrs=3
 
@@ -63,7 +62,7 @@ lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=0.4,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize)+
   yr_scale1 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPrior)
 
 posteriorResult = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
@@ -71,7 +70,7 @@ recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
-  labs(tag = "b")
+  labs(tag = "c")
 plot(recPosterior)
 survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
@@ -82,7 +81,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPosterior)
 
 posteriorResultB = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
@@ -90,7 +89,7 @@ recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound =
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
-  labs(tag = "c")
+  labs(tag = "b")
 plot(recPosteriorB)
 survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
@@ -101,7 +100,7 @@ lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPosteriorB)
 
 
@@ -111,8 +110,9 @@ leg <- ggpubr::get_legend(leg)
 
 # combine ggplots to one figure
 plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
+                          recPosteriorB, survPosteriorB,lambdaPosteriorB,
                           recPosterior, survPosterior, lambdaPosterior,
-                          recPosteriorB, survPosteriorB,lambdaPosteriorB,labels = "",
+                          labels = "",
                           ncol = 3, nrow = 3, vjust = 1)
 ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
@@ -151,7 +151,7 @@ lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=0.5,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize)+
   yr_scale1 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPrior)
 
 posteriorResult = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
@@ -159,7 +159,7 @@ recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
-  labs(tag = "b")
+  labs(tag = "c")
 plot(recPosterior)
 survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
@@ -170,7 +170,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=0
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPosterior)
 
 posteriorResultB = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
@@ -178,7 +178,7 @@ recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound =
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
   yr_scale2 +
-  labs(tag = "c")
+  labs(tag = "b")
 plot(recPosteriorB)
 survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
@@ -189,7 +189,7 @@ lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
-  ylim(c(0, 1.2))
+  ylim(c(0, 1.3))
 plot(lambdaPosteriorB)
 
 leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.85,
@@ -198,8 +198,9 @@ leg <- ggpubr::get_legend(leg)
 
 # combine ggplots to one figure
 plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
+                          recPosteriorB, survPosteriorB, lambdaPosteriorB,
                           recPosterior, survPosterior, lambdaPosterior,
-                          recPosteriorB, survPosteriorB, lambdaPosteriorB, labels = "",
+                          labels = "",
                           ncol = 3, nrow = 3, vjust = 1)
 ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
@@ -232,7 +233,7 @@ lambdaPrior1 =  plotRes(priorResult, "Population growth rate", lowBound=0.5,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize,facetVars=c("uMax","zMax"))+
   yr_scale1 +
-  ylim(c(0.75, 1.25))
+  ylim(c(0.75, 1.5))
 
 plot(lambdaPrior1)
 

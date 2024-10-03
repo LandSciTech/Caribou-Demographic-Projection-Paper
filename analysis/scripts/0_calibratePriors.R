@@ -1,6 +1,6 @@
 #devtools::load_all(here::here())
 library(caribouMetrics)
-scnsApplyAll = data.frame(qMin=0,qMax=0,uMin=0,uMax=0,zMin=0,zMax=0,adjustR=F)
+scnsApplyAll = data.frame(qMin=0,qMax=0,uMin=0,uMax=0,zMin=0,zMax=0)
 scnsNoData = data.frame(obsYears=1,collarCount=0,cowMult=0,projYears=4)
 scnsLow = data.frame(obsYears=15,collarCount=60,cowMult=9,projYears=1,rQuantile=0.025,sQuantile=0.025)
 scnsHigh = scnsLow;scnsHigh$rQuantile =0.975;scnsHigh$sQuantile=0.975

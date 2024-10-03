@@ -120,26 +120,26 @@ pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
 ))
 
 oo <- pars2 %>%
-  select(Anthro, lambda, fullGrp, rrp) %>%
+  select(Anthro, lambdaTrue, fullGrp, rrp) %>%
   group_by(fullGrp, Anthro) %>%
-  summarise(lambda = median(lambda))
+  summarise(lambdaTrue = median(lambdaTrue))
 
 ooT <- pars1 %>%
-  select(Anthro, lambda, fullGrp, rrp) %>%
+  select(Anthro, lambdaTrue, fullGrp, rrp) %>%
   group_by(fullGrp, Anthro) %>%
-  summarise(lambda = median(lambda))
+  summarise(lambdaTrue = median(lambdaTrue))
 
-oo$lambdaH <- oo$lambda
-oo$lambdaL <- oo$lambda
+oo$lambdaH <- oo$lambdaTrue
+oo$lambdaL <- oo$lambdaTrue
 
 plot_lambda <- ggplot(oo,
-                      aes(x = Anthro, y = lambda, ymin = lambdaH, ymax = lambdaL)) +
+                      aes(x = Anthro, y = lambdaTrue, ymin = lambdaH, ymax = lambdaL)) +
   geom_line(size = 0.5,
-            aes(x = Anthro, y = lambda, group = fullGrp, color = fullGrp),
+            aes(x = Anthro, y = lambdaTrue, group = fullGrp, color = fullGrp),
             alpha = 1) + scale_color_manual(values=pal)+
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Population Growth Rate " * lambda)) +
+  ylab(expression("Population Growth Rate " * dot(lambda)[t])) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 
 str(pars1)
@@ -160,6 +160,22 @@ plot_recruitment3 <- ggplot(data = rateSummaries,
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 plot(plot_recruitment3)
 
+plot_recruitment1 <- ggplot(data = rateSummaries,
+                            aes(x = Anthro, y = R_bar,
+                                ymin = R_PIlow, ymax = R_PIhigh)) +
+  geom_ribbon(fill="#67A9CF",colour=NA,data=johnsonCompare,alpha=0.25)+
+  geom_line(data = subset(pars2,select=c(Anthro,R_bar,R_PIlow,R_PIhigh,fullGrp,R_t,c)), size = 0.5,
+            aes(x = Anthro, y = R_t, group = fullGrp, color = fullGrp),
+            alpha = 1) +scale_color_manual(values=pal)+
+  geom_line(data=johnsonCompare,colour = "black", size = 1.5) +
+  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
+  scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
+  scale_y_continuous(limits = c(0, 0.7), breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5,0.6,0.7)) +
+  xlab("Anthropogenic disturbance (%)") +
+  ylab(expression("Recruitment " * dot(R)[t])) +
+  theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
+plot(plot_recruitment1)
+
 base1 <- ggplot(data = rateSummaries,
                 aes(x = Anthro, y = S_bar, ymin = S_PIlow, ymax = S_PIhigh)) +
   geom_ribbon(fill="#67A9CF",colour=NA,data=johnsonCompare,alpha=0.25)+
@@ -176,81 +192,14 @@ base1 <- ggplot(data = rateSummaries,
 plot(base1)
 
 # combine ggplots to one figure
-ggpubr::ggarrange(plot_lambda, plot_recruitment3,base1, labels = "",
+ggpubr::ggarrange(plot_recruitment3,base1,plot_lambda,labels = "",
                   ncol = 3, vjust = 1)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 12*0.8, height = 3.6*0.9, units = "in",
        dpi = 1200)
 
-##################
-# demography with delayed reproduction
+ggpubr::ggarrange(plot_recruitment1,base1,plot_lambda,labels = "",
+                  ncol = 3, vjust = 1)
 
-pars <- data.frame(N0 = 5000)
-# increase to get a better sample size, or set interannualVar to NA
-pars <- merge(pars, data.frame(rrp = 1))
-pars <- merge(pars, rateSamplesLarge)
-numSteps <- 3
-pars1 <- cbind(pars, caribouPopGrowth(pars$N0,
-  numSteps = numSteps, R_bar = pars$R_bar,
-  S_bar = pars$S_bar, c=pars$c, probOption = "binomial",adjustR=T,
-  interannualVar = list(R_CV=0.46*0.25,S_CV=0.08696*0.25)
-))
-
-pars <- data.frame(N0 = 5000)
-# increase to get a better sample size, or set interannualVar to NA
-pars <- merge(pars, data.frame(rrp = 1))
-pars <- merge(pars, rateSamples)
-numSteps <- 3
-pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
-  numSteps = numSteps, R_bar = pars$R_bar,
-  S_bar = pars$S_bar,c=pars$c, probOption = "binomial",adjustR=T,
-  interannualVar = list(R_CV=0.46*0.25,S_CV=0.08696*0.25)
-))
-
-oo <- pars2 %>%
-  select(Anthro, lambda, fullGrp, rrp) %>%
-  group_by(fullGrp, Anthro) %>%
-  summarise(lambda = median(lambda))
-
-ooT <- pars1 %>%
-  select(Anthro, lambda, fullGrp, rrp) %>%
-  group_by(fullGrp, Anthro) %>%
-  summarise(lambda = median(lambda))
-
-oo$lambdaH <- oo$lambda
-oo$lambdaL <- oo$lambda
-
-plot_lambda2 <- ggplot(oo,
-                      aes(x = Anthro, y = lambda, ymin = lambdaH, ymax = lambdaL)) +
-  geom_line(size = 0.5,
-            aes(x = Anthro, y = lambda, group = fullGrp, color = fullGrp),
-            alpha = 1) + scale_color_manual(values=pal)+
-  scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
-  xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Population Growth Rate With Delay " * lambda)) +
-  theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
-
-plot_recruitment4 <- ggplot(data = rateSummaries,
-                            aes(x = Anthro, y = (c*R_bar/2)/(1+c*R_bar/2),
-                                ymin = R_PIlow/2, ymax = R_PIhigh/2)) +
-  geom_ribbon(fill="#67A9CF",colour=NA,data=johnsonCompare,alpha=0.25)+
-  geom_line(data = subset(pars2,select=c(Anthro,R_bar,R_PIlow,R_PIhigh,fullGrp,R_t,c)), size = 0.5,
-            aes(x = Anthro, y = 0.5*R_t, group = fullGrp, color = fullGrp),
-            alpha = 1) +scale_color_manual(values=pal)+
-  geom_line(data=johnsonCompare,aes(y=R_bar/2),colour = "black", size = 1.5) +
-  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
-  scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
-  scale_y_continuous(limits = c(0, 0.4), breaks = c(0, 0.1, 0.2, 0.3, 0.4)) +
-  xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Adjusted Recruitment with delay " * dot(X)[t])) +
-  theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
-plot(plot_recruitment4)
-
-# combine ggplots to one figure
-ggpubr::ggarrange(plot_recruitment4,base1, plot_lambda2,
-                  plot_recruitment3,base1, plot_lambda, labels = "",
-                  ncol = 3, nrow=2,vjust = 1)
-
-ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRatesDelay.png"), width = 12*0.8, height = 3.6*0.9*2, units = "in",
+ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRatesNotAdjusted.png"), width = 12*0.8, height = 3.6*0.9, units = "in",
        dpi = 1200)
-

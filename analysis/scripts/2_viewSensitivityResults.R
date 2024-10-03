@@ -61,7 +61,7 @@ pages=sort(pages)
 
 combine=T
 addEV = F
-addProbs=F
+addProbs = F
 
 for(i in 1:length(pages)){
   #combine=F;i=10
@@ -191,24 +191,24 @@ for(i in 1:length(pages)){
   sizeTrue$parameter=NULL;sizeTrue$type=NULL;sizeTrue$Mean=NULL
   setdiff(names(statusTrue),names(probs))
 
-  sizeProj = subset(scResults$rr.summary.all,(Parameter=="Female population size"),select=c(label,Year,Mean))
-  sizeProj$projSize = sizeProj$Mean; sizeProj$Mean=NULL
+  #sizeProj = subset(scResults$rr.summary.all,(Parameter=="Female population size"),select=c(label,Year,Mean))
+  #sizeProj$projSize = sizeProj$Mean; sizeProj$Mean=NULL
 
   probs = merge(probs,statusTrue)
   probs = merge(probs,sizeTrue)
-  probs = merge(probs,sizeProj)
-  probs$trueChange = probs$trueSize/probs$N0
-  probs$predChange = probs$projSize/probs$N0
+  #probs = merge(probs,sizeProj)
+  probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
+  probs$predChange = probs$Mean#probs$projSize/probs$N0
 
   probs$viableTrue = (probs$trueChange>0.99)&(probs$trueSize>10)
 
-  probs$viablePred = (probs$predChange>0.99)&(probs$projSize>10)
+  probs$viablePred = (probs$predChange>0.99)#&(probs$projSize>10)
 
   probs$wrong = probs$viableTrue != probs$viablePred
 
   probs$CorrectStatus[probs$wrong]="no"
   probs$CorrectStatus[!probs$wrong]="yes"
-  probs$LambdaDiff = probs$trueMean-probs$Mean
+  probs$LambdaDiff = probs$trueChange-probs$predChange
   #probs$LambdaDiff[(probs$projSize<=10)]=NA
 
   probs$pageLabB = paste0(batchStrip(probs$pageLab),"st",probs$collarCount,"ri",probs$ltyVariable)

@@ -79,7 +79,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$S_t$|probability|Adult female survival.|
 |$N_t$|animals|Adult female population size.|
 |$\bar{\lambda}_{y,t}$|rate|Average population growth over $y$ years.|
-|$X_t$|rate|Recruitment adjusted for sex ratio and (optionally) delayed age of first reproduction.|
+|$X_t$|rate|Recruitment adjusted for sex ratio and misidentification bias.|
 |$W_t$|animals|Surviving adult females before recruitment.|
 |$J_t$|animals|New recruits to adult age class.|
 |$\lambda_t$|rate|Annual population growth.|
@@ -95,7 +95,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\dot{R}_t$|rate|Recruitment (calves per cow).|
 |$\dot{S}_t$|probability|Adult female survival.|
 |$\dot{N}_t$|animals|Adult female population size.|
-|$\dot{X}_t$|rate|Recruitment adjusted for sex ratio and (optionally) delayed age of first reproduction.|
+|$\dot{X}_t$|rate|Recruitment adjusted for sex ratio and misidentification bias.|
 |$\dot{W}_t$|animals|Surviving adult females before recruitment.|
 |$\dot{J}_t$|animals|New recruits to adult age class.|
 |**True demographic parameters**|
@@ -156,8 +156,6 @@ Recognize that the number of observed calves $J$ is the product of the apparent 
 $$X=R\frac{w(1+qu-u)}{2(w+qu-u)(1-z)}.$$
 For simplicity, we write $X$ as a function of a bias correction term $c$: 
 $$c=\frac{w(1+qu-u)}{(w+qu-u)(1-z)}; X=cR/2$$
-
-If we also adjust for delayed age at first reproduction (DeCesare et al. 2012; Eacker et al. 2019), the adjusted recruitment rate becomes $$X=\frac{cR/2}{1+cR/2}.$$
 
 ```{r biasPlot, fig.cap="Variation in the sex and bias corrected recruitment rate $X$ with the cow multiplier $w$, the ratio of young bulls to adult females $q$, and the adult misidentification probability $u$, and the probability of missing a calf $z$. If only collared females are counted ($w=1$) and there is a risk of missing calves $z>0$ then the apparent recruitment rate $R$ will be lower than $X$ (first column). When uncollared animals are counted ($w>1$), the risk of misidentifying adults $u$ inflates the apparent recruitment rate $R$ as on average more cows are misidentified as bulls than vice versa, but this effect is smaller than the effect of missing calves $z$. Increasing the proportion of bulls in the group $q$ reduces the effect of adult misidentification $u$.", fig.height=6,cache=TRUE}
 library(ggplot2)

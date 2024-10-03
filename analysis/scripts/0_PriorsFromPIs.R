@@ -16,6 +16,8 @@ baseDir <- "."
 #numbers from Johnson et al for validation
 johnsonCompare <- read.csv(paste0(baseDir,"/data/Johnson et al. figures5_6.csv"))
 
+
+
 getAnswers <-function(scns,par,johnsonCompare,vName){
   scResults = runScenario(scns,survAnalysisMethod = "Exponential")
   rr = subset(scResults$rr.summary.all,Parameter == par)
@@ -44,7 +46,7 @@ getAnswers <-function(scns,par,johnsonCompare,vName){
 
 rrAll=list()
 #Johnson analysis does not include interannual variation. So omit that to set the survival and reproduction priors.
-scnsApplyAll = data.frame(qMin=0,qMax=0,uMin=0,uMax=0,zMin=0,zMax=0,adjustR=F,iFire=4.27)
+scnsApplyAll = data.frame(qMin=0,qMax=0,uMin=0,uMax=0,zMin=0,zMax=0,iFire=4.27)
 scnsNoData = data.frame(obsYears=1,collarCount=0,cowMult=0,projYears=1)
 scnsLow = data.frame(obsYears=15,collarCount=60,cowMult=9,projYears=1,rQuantile=0.025,sQuantile=0.025)
 scnsHigh = scnsLow;scnsHigh$rQuantile =0.975;scnsHigh$sQuantile=0.975
