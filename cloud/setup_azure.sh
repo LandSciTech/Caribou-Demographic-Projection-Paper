@@ -52,6 +52,11 @@ state:state, enableAutoScale:enableAutoScale,
 allocState:allocationState}" \
 --output table
 
+# List number of tasks running on each node
+az batch node list --pool-id $poolName --query "[].{vmSize: vmSize,
+state: state, running: runningTasksCount, succeeded:totalTasksSucceeded}" \
+--output table
+
 #### Monitor tasks ############################
 
 # details for a single task filtered by query
@@ -77,7 +82,7 @@ az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[i
 # Summary of task counts by state
 az batch job task-counts show --job-id $jobName
 
-# tried adding taskslotspernode here but need to test
+# added taskslotspernode
 az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
  --auto-scale-formula 'percentage = 70;
  span = TimeInterval_Second * 15;
