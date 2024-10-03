@@ -27,7 +27,7 @@ scns$projYears = 20
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/50)
 table(scns$repBatch)
-scns$N0 = 2000
+scns$N0 = 5000
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))
@@ -69,7 +69,7 @@ scns$projYears = 20
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/50)
 table(scns$repBatch)
-scns$N0 = 2000
+scns$N0 = 5000
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
 scns$pageId = as.numeric(as.factor(scns$pageLab))
