@@ -200,7 +200,7 @@ for(i in 1:length(pages)){
   probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
   probs$predChange = probs$Mean#probs$projSize/probs$N0
 
-  probs$viableTrue = (probs$trueChange>0.99)&(probs$trueSize>10)
+  probs$viableTrue = (probs$trueChange>0.99)#&(probs$trueSize>10)
 
   probs$viablePred = (probs$predChange>0.99)#&(probs$projSize>10)
 

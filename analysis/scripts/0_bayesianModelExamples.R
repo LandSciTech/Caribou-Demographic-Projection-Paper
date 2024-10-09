@@ -13,8 +13,8 @@ stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
 stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)","list(R_CV=0.23,S_CV=0.0435)")))
 
-stateScns$sQuantile=0.8
-stateScns$rQuantile = 0.8
+stateScns$sQuantile=0.9
+stateScns$rQuantile = 0.9
 scns=merge(monitoringScns,stateScns)
 
 scns = subset(scns,!(grepl("0.23",interannualVar,fixed=T)&(collarCount==0)))
