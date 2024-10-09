@@ -225,11 +225,12 @@ priorResult = caribouMetrics:::runScnSet(scnsN,eParsIn,simBig,getKSDists=F,print
 
 priorResult$obs.all=NULL; priorResult$sim.all=NULL
 
+
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
-lambdaPrior1 =  plotRes(priorResult, "Population growth rate", lowBound=0.5,
+lambdaPrior1 =  plotRes(priorResult, "Population growth rate", lowBound=0,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize,facetVars=c("uMax","zMax"))+
   yr_scale1 +

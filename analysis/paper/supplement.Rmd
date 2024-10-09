@@ -77,7 +77,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |**Estimated state**|
 |$R_t$|rate|Recruitment (calves per cow).|
 |$S_t$|probability|Adult female survival.|
-|$X_t$|rate|Recruitment adjusted for sex ratio and misidentification bias.|
+|$X_t$|rate|Recruitment adjusted for sex ratio and composition survey errors.|
 |**Estimated Parameters**|
 |$\beta^R_0$||Recruitment intercept.|
 |$\beta^R_a$||Anthropogenic disturbance slope for recruitment.|
