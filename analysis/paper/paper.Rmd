@@ -72,9 +72,6 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-NOTE: please provide comments and suggestions for the introduction here:
-<https://docs.google.com/document/d/1RD7bJ6yhtBJULjJFRJfHzObQscteyObM/edit?usp=sharing&ouid=111541730342945675365&rtpof=true&sd=true>.
-
 The number of species threatened with extinction is high and getting
 higher [@ipbes_global_2019]. Reliable information on the status of
 populations and likely impacts of management are needed to inform
@@ -184,7 +181,7 @@ projections and growth rate estimates using Bayesian methods
 @schaub_integrated_2021]. However, there is very little monitoring data
 available for some caribou populations [@johnson_science_2020] and there
 is a risk that lack of local data will be used as a reason to delay
-conservation action [@boan_climate_2018]. Bayesian caribou population
+conservation action [@bissonnette_controverses_2020; @boan_climate_2018]. Bayesian caribou population
 models [@moeller_integrating_2021; @mcnay_demographic_2022;
 @eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024] have not thus far included demographic-disturbance relationships, and we are concerned that uncertainty in models
 informed only by local demographic data could be used to delay conservation action for poorly monitored populations. We propose to reduce uncertainty in assessments and projections of local
@@ -220,7 +217,7 @@ required to inform decisions and project outcomes on changing
 landscapes. We hope that this approach will help to identify where available
 information is sufficient for assessing and projecting population
 viability, and thereby reduce the risk that uncertainty is used as a
-reason to delay conservation action for imperiled populations.
+reason to delay conservation action for imperiled populations [@bissonnette_controverses_2020; @boan_climate_2018].
 
 # Methods
 
@@ -380,10 +377,7 @@ model described by Dyson et al. [-@dyson_existing_2022]. Given a
 population of post-juvenile females at the beginning of year $t$,
 $\dot{N}_t$, the number that survive to the census, $\dot{W}_t$, is
 binomially distributed with true survival probability $\dot{S}_t$:
-$\dot{W}_{t} \sim \text{Binomial}(\dot{N}_t,\dot{S}_t)$. 
-
-Realized recruitment rate varies with population density
-[@lacy_vortex_2017], and the number of juveniles recruiting to the
+$\dot{W}_{t} \sim \text{Binomial}(\dot{N}_t,\dot{S}_t)$. Realized recruitment rate varies with population density [@lacy_vortex_2017], and the number of juveniles recruiting to the
 post-juvenile class at the census $(\dot{J}_{t})$ is a binomially
 distributed function of the number of surviving post-juvenile females ($\dot{W}_t$)
 and the maximum
@@ -752,9 +746,6 @@ knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay1aSf1.png"))
 
 # Discussion
 
-NOTE: Please provide comments and suggestions for the discussion here:
-<https://docs.google.com/document/d/1RD7bJ6yhtBJULjJFRJfHzObQscteyObM/edit>.
-
 ## Bayesian integration of local demographic data & national demographic-disturbance relationships
 
 The availability of boreal caribou demographic data varies widely across
@@ -785,7 +776,7 @@ two sources of information to reduce uncertainty in projections of the
 impacts of changing landscape conditions. This Bayesian approach
 represents an important improvement over less formally integrated
 methods for estimating and projecting impacts of disturbance on
-population population viability [@eccc_scientific_2011;
+population caribou population viability [@eccc_scientific_2011;
 @johnson_science_2020] because it reconciles and accounts for
 uncertainties in local demographic data and in demographic-disturbance
 relationships.
@@ -807,7 +798,7 @@ caribou demographic rates from local monitoring data, but our addition
 of prior information from national demographic-disturbance relationships
 is novel, and important for reducing the risk that lack of local data
 will be used as a reason to delay conservation action for highly
-disturbed and poorly monitored populations. Integrating
+disturbed and poorly monitored populations [@bissonnette_controverses_2020; @boan_climate_2018]. Integrating
 demographic-disturbance relationships into a viability projection model
 clarifies that no additional information is needed to project outcomes
 where disturbance is high and actions to support recovery are not taken.
