@@ -31,7 +31,7 @@ output:
       - --lua-filter=../templates/author-info-blocks.lua
       - --lua-filter=../templates/pagebreak.lua
 bibliography: CaribouDemographicModel.bib
-csl: "../templates/journal-of-forest-ecology-and-management.csl" # Insert path for the bib-style
+csl: "../templates/ecological-informatics.csl" # Insert path for the bib-style
 abstract: |
   Across fifty-eight boreal caribou study areas in Canada, both survival and recruitment decrease with the percentage of the study area that is disturbed. There is variation in demographic rates among study areas, particularly where anthropogenic disturbance is low, but where disturbance is high we have no evidence of self-sustaining populations across the country. Demographic projections derived from local population-specific data are  uncertain for populations with limited monitoring. We propose a simple Bayesian population model that integrates prior information from a national analysis of demographic-disturbance relationships with available local demographic data to reduce uncertainty in population viability projections, and to reduce the risk that lack of local data will be used as a reason to delay conservation action. The model also acknowledges additional uncertainty and potential bias due to misidentification of sex or missing calves with a term derived from a simple model of the recruitment survey observation process.  We combine this Bayesian model with simulations of plausible population trajectories in a value of information analysis framework to show how the need for local monitoring varies with landscape condition, and to assess the ability of alternative monitoring scenarios to reduce the risk of errors in population viability projections. Where anthropogenic disturbance is high, reasonably accurate status projections can be made using only national demographic-disturbance relationships. At lower disturbance levels where uncertainty is higher, deploying fewer collars for a moderate number of years may be better than intensive short-term monitoring for improving the reliability of status projections. 
 keywords: |
@@ -334,7 +334,11 @@ decreases over time are included in Supplement D.
 
 source(here::here("analysis/scripts/formatScenarios.R"))
 
-knitr::kable(tbl,caption="Monitoring scenario parameters.")
+tbl <- tbl %>% separate_wider_delim(name, names = c("symbol", "name"), delim = ", ") %>% 
+  select(-name, symbol, units, description, values)
+
+knitr::kable(tbl,caption="Monitoring scenario parameters and values used in simulations.",
+             col.names = str_to_title(colnames(tbl)))
 ```
 
 ```{r figDisturbance, fig.cap="Anthropogenic disturbance and monitoring scenarios. Anthropogenic disturbance increases by 1% per year, and the amount of disturbance at the beginning of the projection period varies from low (0%), through low-med (20%) and med-high (40%) to high (60%). These simple hypothetical scenarios are intended to show how the need for local monitoring to reduce uncertainty varies with landscape state, and not intended to reflect real landscape change. In all scenarios, the projection period begins in 2024, and the monitoring period occurs prior to the projection period.", cache=TRUE}
@@ -952,6 +956,15 @@ population viability is only one possible objective for monitoring
 animals should be considered [@nbckc_boreal_2019]. Since monitoring
 costs, options and goals are context specific, we believe the most
 effective way forward will be to use this proof-of-concept analysis, existing local data, and the more fully developed *bboutools* R package [@dalgarno_bboutools_2024] as a starting point for working with interested decision makers to develop monitoring decision support tools that meet real local needs, recognizing that those needs will vary [@nbckc_nbckc_2021;@nbckc_nbckc_2022].
+
+# Supplementary material
+Supplement A: Definitions of variables and parameters in the Bayesian population model
+Supplement B: Model of bias in recruitment estimates from calf:cow surveys
+Supplement C: Calibration of priors
+Supplement D: Alternative disturbance and monitoring scenarios
+Supplement E: Expected value of perfect information
+Supplement F: Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
+
 
 # Acknowledgements
 

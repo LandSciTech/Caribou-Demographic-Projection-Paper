@@ -49,14 +49,14 @@ az batch pool create --json-file cloud/pool_json/caribou_add_pool1.json
 az batch job create --pool-id $poolName --id $jobName
 
 # all batches
-# for ((i=1;i<=nBatches;i++))
+for ((i=1;i<=nBatches;i++))
 
 # this approach only sort of worked because some tasks had to be restarted
 # Only batches with 5550 rows
 # for i in 1 2 3 4 5 6 7 8 9 10 31 32 33 34 35 36 37 38 39 40 61 62 63 64 65 66 67 68 69 70
 
 # Only batches with 7400 rows
-for i in 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90
+# for i in 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90
 do
 	echo "setting up task" $i
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id $jobName
@@ -82,9 +82,11 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=1
+taskNum=4
+
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
---job-id $jobName --file-path "wd/nohup_"$taskNum".out" --destination "./nohup_"$taskNum".out"
+--job-id $jobName --file-path "wd/nohup_"$taskNum".out" \
+--destination "./nohup_"$taskNum".out"
 
 tail -n 20 "./nohup_"$taskNum".out"
 
