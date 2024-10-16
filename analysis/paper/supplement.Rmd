@@ -205,7 +205,7 @@ plot(base)
 
 ```
 
-# Calibration of Priors
+# Calibration of priors
 
 We begin by setting random effects to zero, varying the prior standard deviations of the survival intercept (sIntSE is $\beta^S_0$ in Table 2) and recruitment intercept (rIntSE is $\beta^R_0$ in Table 2), and comparing the prior predictive intervals of the Bayesian model to the 95\% predictive intervals from Johnson et al.'s (2020) regression analysis in a case with no anthropogenic disturbance (top row of Fig \@ref(fig:InterceptsAndSlopes)). We set the prior standard deviation intercept parameters (sIntSE = 0.04, rIntSE = 0.25) so that the upper bounds of the Bayesian predictive intervals match the upper bounds of Johnson et al.'s predictive intervals.  
 
@@ -293,7 +293,7 @@ knitr::include_graphics(here::here("figs/forPaper/EVPIall.png"))
 
 \newpage
 
-# Sensitivity to unkown bias in recruitment estimates from calf:cow surveys
+# Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
 
 Adding unknown unknown bias does increase uncertainty, but these increases are not large (compare Figs \@ref(fig:powercmult3ay3aSf1)/\@ref(fig:powercmult3ay3aSf1NoBias) and \@ref(fig:powercmult9ay3aSf1)/\@ref(fig:powercmult9ay3aSf1NoBias)). A key reason for this result is that we assumed the same range of values for the probability of misclassifying adults, and the probability of missing calves (supplement B). Presuming that surveyed groups contain more cows than bulls, and that there is an equal probability of misclassifying cows and young bulls and vice versa, then misclassification errors cause high estimated recruitment. Missing calves causes low estimated recruitment, and together these errors tend to cancel one another out. 
 

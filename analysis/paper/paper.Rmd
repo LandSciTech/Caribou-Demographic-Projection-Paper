@@ -953,6 +953,15 @@ animals should be considered [@nbckc_boreal_2019]. Since monitoring
 costs, options and goals are context specific, we believe the most
 effective way forward will be to use this proof-of-concept analysis, existing local data, and the more fully developed *bboutools* R package [@dalgarno_bboutools_2024] as a starting point for working with interested decision makers to develop monitoring decision support tools that meet real local needs, recognizing that those needs will vary [@nbckc_nbckc_2021;@nbckc_nbckc_2022].
 
+# Supplementary material
+Supplement A: Definitions of variables and parameters in the Bayesian population model
+Supplement B: Model of bias in recruitment estimates from calf:cow surveys
+Supplement C: Calibration of priors
+Supplement D: Alternative disturbance and monitoring scenarios
+Supplement E: Expected value of perfect information
+Supplement F: Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
+
+
 # Acknowledgements
 
 # Author contributions
