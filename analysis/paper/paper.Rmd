@@ -159,9 +159,9 @@ are typically captured via net-gun from aircraft in late winter, and
 affixed with with collars that send a mortality signal when no longer
 active [see @nbckc_nbckc_2021], thus allowing estimation of adult
 survival [e.g. @mcloughlin_declines_2003;
-@hervieux_widespread_2013; @eacker_web-based_2019, @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. Recruitment is estimated from
+@hervieux_widespread_2013; @eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. Recruitment is estimated from
 aerial surveys of the composition of groups of animals that include
-collared animals [@nbckc_nbckc_2022, @eacker_web-based_2019, @dalgarno_bboutools_2024]. Groups typically also contain uncollared animals, and a critical assumption in these surveys is that
+collared animals [@nbckc_nbckc_2022; @eacker_web-based_2019; @dalgarno_bboutools_2024]. Groups typically also contain uncollared animals, and a critical assumption in these surveys is that
 different demographic groups are equally detectable
 [@ellington_divergent_2020]. Errors that can bias composition survey
 results include misidentifying young bulls as cows or vice versa , and
