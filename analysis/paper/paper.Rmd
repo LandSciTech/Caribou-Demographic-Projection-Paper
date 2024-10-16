@@ -334,7 +334,11 @@ decreases over time are included in Supplement D.
 
 source(here::here("analysis/scripts/formatScenarios.R"))
 
-knitr::kable(tbl,caption="Monitoring scenario parameters.")
+tbl <- tbl %>% separate_wider_delim(name, names = c("symbol", "name"), delim = ", ") %>% 
+  select(-name, symbol, units, description, values)
+
+knitr::kable(tbl,caption="Monitoring scenario parameters and values used in simulations.",
+             col.names = str_to_title(colnames(tbl)))
 ```
 
 ```{r figDisturbance, fig.cap="Anthropogenic disturbance and monitoring scenarios. Anthropogenic disturbance increases by 1% per year, and the amount of disturbance at the beginning of the projection period varies from low (0%), through low-med (20%) and med-high (40%) to high (60%). These simple hypothetical scenarios are intended to show how the need for local monitoring to reduce uncertainty varies with landscape state, and not intended to reflect real landscape change. In all scenarios, the projection period begins in 2024, and the monitoring period occurs prior to the projection period.", cache=TRUE}
