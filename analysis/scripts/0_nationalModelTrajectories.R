@@ -139,7 +139,7 @@ plot_lambda <- ggplot(oo,
             alpha = 1) + scale_color_manual(values=pal)+
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Population Growth Rate " * dot(lambda)[t])) +
+  ylab(expression("Population growth rate " * dot(lambda)[t])) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 
 str(pars1)
@@ -156,7 +156,7 @@ plot_recruitment3 <- ggplot(data = rateSummaries,
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.5), breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5)) +
   xlab("Anthropogenic disturbance (%)") +
-  ylab(expression("Adjusted Recruitment " * dot(X)[t])) +
+  ylab(expression("Adjusted recruitment " * dot(X)[t])) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 plot(plot_recruitment3)
 
@@ -184,8 +184,8 @@ base1 <- ggplot(data = rateSummaries,
   scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare, colour = "black", size = 1.5) +
   geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
-  xlab("Anthropogenic Disturbance (%)") +
-  ylab(expression("Adult Female Survival " * dot(S)[t])) +
+  xlab("Anthropogenic disturbance (%)") +
+  ylab(expression("Adult female survival " * dot(S)[t])) +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0.5, 1)) +
   theme(legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
@@ -195,7 +195,9 @@ plot(base1)
 ggpubr::ggarrange(plot_recruitment3,base1,plot_lambda,labels = "",
                   ncol = 3, vjust = 1)
 
-ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 12*0.8, height = 3.6*0.9, units = "in",
+ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 9.6*0.779, height = 3.24*0.779, units = "in",
+       dpi = 1200)
+ggsave(paste0(baseDir,"/analysis/paper/figs_submit/DemographicRates.pdf"), width = 9.6*0.779, height = 3.24*0.779, units = "in",
        dpi = 1200)
 
 ggpubr::ggarrange(plot_recruitment1,base1,plot_lambda,labels = "",

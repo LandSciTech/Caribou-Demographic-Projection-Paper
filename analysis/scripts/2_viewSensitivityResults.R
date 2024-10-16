@@ -39,9 +39,9 @@ setLTYVar <-function(scns){
 
 scns = setLTYVar(scns)
 if(is.element("interannualVar",names(scns))){
-  ltyLabel = "Interannual\nVariation"
+  ltyLabel = "Interannual\nvariation"
 }else{
-  ltyLabel = "Collar\nRenewal\nInterval"
+  ltyLabel = "Collar\nrenewal\ninterval"
 }
 
 
@@ -168,12 +168,18 @@ for(i in 1:length(pages)){
   timelineLabs = unique(subset(distScns,(Year==startYear)|(Year>=2023),select=c(Year,Timeline,Anthro,DisturbanceScn,grp)))
   timelineLabs = timelineLabs[order(timelineLabs$Year),]
 
-  png(here::here(paste0("figs/",setName,"/distScns",batchStrip(p),".png")),
-      height = 4, width = 5.51, units = "in",res=600)
   base=ggplot(distScns,aes(x=Year,y=Anthro,col=DisturbanceScn,group=grp))+geom_line()+geom_point(data=timelineLabs)+
     theme_bw()+theme(axis.text.x = element_text(angle=90,vjust=0.5,hjust=1,size=8)) + labs(color="Anthropogenic\nDisturbance\nScenario")+
     scale_x_continuous(name="Timeline", breaks=timelineLabs$Year, labels=timelineLabs$Timeline)+ylab("Anthropogenic Disturbance")+
     scale_color_discrete(type=(pal4b))
+
+  png(here::here(paste0("figs/",setName,"/distScns",batchStrip(p),".png")),
+      height = 4, width = 5.51, units = "in",res=600)
+  print(base)
+  dev.off()
+
+  pdf(here::here(paste0("figs/",setName,"/distScns",batchStrip(p),".pdf")),
+      height = 4, width = 5.51)
   print(base)
   dev.off()
 
@@ -247,13 +253,19 @@ for(i in 1:length(pages)){
   probs$CollarYrs = as.numeric(as.character(probs$NumCollars))*probs$obsYears
   for(pp in pagesCa){
     #pp=pagesCa[1]
-    png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
       geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars",fill="Number of\n Collars")+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
       theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
       scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
+
+    png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    pdf(here::here(paste0("figs/",setName,"/diffs",pp,".pdf")),
+        height = 4, width = 7.48)
     print(base)
     dev.off()
   }
@@ -331,19 +343,25 @@ for(i in 1:length(pages)){
 
   for(pp in pagesC){
     #pp=pagesC[1]
-    png(here::here(paste0("figs/",setName,"/power",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
+
+    png(here::here(paste0("figs/",setName,"/power",pp,".png")),
+        height = 4, width = 7.48, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    pdf(here::here(paste0("figs/",setName,"/power",pp,".pdf")),
+        height = 4, width = 7.48)
     print(base)
     dev.off()
 
     png(here::here(paste0("figs/",setName,"/EVsample",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -352,7 +370,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/probChecks",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
       scale_color_discrete(type=(pal4))
     print(base)
@@ -362,7 +380,7 @@ for(i in 1:length(pages)){
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
+      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
       scale_color_discrete(type=(pal4))
     print(base)

@@ -32,9 +32,9 @@ probsSum$AnthroScn = factor(probsSum$AnthroScn, levels = c("low","low-med","med-
 
 
 if(is.element("interannualVar",names(probsSum))){
-  ltyLabel = "Interannual\nVariation"
+  ltyLabel = "Interannual\nvariation"
 }else{
-  ltyLabel = "Collar\nRenewal\nInterval"
+  ltyLabel = "Collar\nrenewal\ninterval"
 }
 
 
@@ -88,12 +88,18 @@ probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsY
 EVuncertainty$YearsOfProjection=as.factor(EVuncertainty$YearsOfProjection)
 for(pp in pagesC){
   #pp=pagesC[1]
+  base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVSI,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n collars", linetype=ltyLabel)+
+    theme_bw()+xlab("Years of monitoring")+ylab("Expected value of sample information EVSI")+
+    scale_color_discrete(type=(pal4))
+
   png(here::here(paste0("figs/",setName,"/EVSI",pp,".png")),
       height = 3.7, width = 7.48, units = "in",res=600)
-  base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVSI,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n Collars", linetype=ltyLabel)+
-    theme_bw()+xlab("years of monitoring")+ylab("Expected Value of Sample Information EVSI")+
-    scale_color_discrete(type=(pal4))
+  print(base)
+  dev.off()
+
+  pdf(here::here(paste0("figs/",setName,"/EVSI",pp,".pdf")),
+      height = 3.7, width = 7.48)
   print(base)
   dev.off()
 
