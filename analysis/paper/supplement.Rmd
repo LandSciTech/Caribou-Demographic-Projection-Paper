@@ -4,7 +4,7 @@ output:
     bookdown::html_document2:
       number_sections: yes
 bibliography: CaribouDemographicModel.bib
-csl: "../templates/journal-of-forest-ecology-and-management.csl" # Insert path for the bib-style
+csl: "../templates/ecological-informatics.csl" # Insert path for the bib-style
 
 editor_options: 
   chunk_output_type: inline
