@@ -341,10 +341,6 @@ knitr::kable(tbl,caption="Monitoring scenario parameters and values used in simu
              col.names = str_to_title(colnames(tbl)))
 ```
 
-```{r figDisturbance, fig.cap="Anthropogenic disturbance and monitoring scenarios. Anthropogenic disturbance increases by 1% per year, and the amount of disturbance at the beginning of the projection period varies from low (0%), through low-med (20%) and med-high (40%) to high (60%). These simple hypothetical scenarios are intended to show how the need for local monitoring to reduce uncertainty varies with landscape state, and not intended to reflect real landscape change. In all scenarios, the projection period begins in 2024, and the monitoring period occurs prior to the projection period.", cache=TRUE}
-knitr::include_graphics(here::here("figs/forPaper/distScnscmult6ay1aSf1.png"))
-
-```
 
 ```{=html}
 <!--
@@ -461,11 +457,7 @@ monitoring scenarios and that populations remain extant through the
 monitoring period, all simulations are started with $N_0=5000$ animals
 24 years prior to the start of the projection period. Realized population growth rate is $\dot{\lambda}_t=\dot{N}_t/\dot{N}_{t-1}$ Expected population growth rate (without interannual variation, demographic stochasticity, or effects of population density) is $\bar{\lambda}_t=\bar{S}_t(1+\dot{c}\bar{R}_t/2)$.
 
-```{r exampleTrajectories, fig.cap="Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships. To highlight how variation among trajectories persists as disturbance changes, we have reduced interannual variation by 75\\% in these examples ($v_R=0.115,v_S=0.02175$). Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95\\% predictive intervals from Johnson et al's (2020) regression models.", cache=TRUE}
 
-knitr::include_graphics(here::here("analysis/paper/figs/DemographicRates.png"))
-
-```
 
 In our simulated example populations, mortality risk does not vary over
 time or among individuals, so the observed state (dead or alive) of a
@@ -730,23 +722,6 @@ regardless of whether disturbance is increasing or decreasing
 (Supplement D). Acknowledging the possibility of composition survey errors increases uncertainty, but these increases are not large for the set of parameters we investigate
 (Supplement F).
 
-```{r examplePredictions, fig.cap="Prior (a) and posterior predictions from the Bayesian model for population trajectories with low (b: $v_R=0.23,v_S=0.0435$) and high (c: $v_R=0.46,v_S=0.087$) interannual variation. In this example scenario anthropogenic disturbance increases by 2\\% per year from 0 to 100\\%. The population is monitored for 16 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95\\% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5\\% and 97.5\\% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty about demographic rates, but local data is not required to predict viability (population growth <= 0.99) of highly disturbed populations.", cache=TRUE}
-
-knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.png"))
-```
-
-```{r figDiffs, fig.cap="The distribution of differences between true expected population growth rates and Bayesian posterior expected growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). Differences decrease as the number of years of monitoring and the number of collars increase. In these examples the composition survey cow multiplier $w$ is 6, collars are renewed each year, and interannual variation is lower ($v_R=0.23,v_S=0.0435$).", cache=TRUE}
-knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay1aSf1.png"))
-```
-
-```{r figStatusErrors, fig.cap="The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort (see Figure \\@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as the number of years increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).", cache=TRUE}
-knitr::include_graphics(here::here("figs/forPaper/powercmult6ay1aSf1.png"))
-```
-
-```{r figEVSI, fig.cap="The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not change predicted status.Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \\@ref(fig:figStatusErrors) for additional scenario details.", cache=TRUE}
-
-knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay1aSf1.png"))
-```
 
 # Discussion
 
@@ -986,6 +961,53 @@ Visualization
 
 ::: {#refs}
 :::
+
+# Figures
+
+```{r figDisturbance, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/distScnscmult6ay1aSf1.png"))
+
+```
+
+```{r exampleTrajectories, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("analysis/paper/figs/DemographicRates.png"))
+
+```
+
+```{r examplePredictions, fig.cap=".", cache=TRUE}
+
+knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.png"))
+```
+
+```{r figDiffs, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay1aSf1.png"))
+```
+
+```{r figStatusErrors, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/powercmult6ay1aSf1.png"))
+```
+
+```{r figEVSI, fig.cap=".", cache=TRUE}
+
+knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay1aSf1.png"))
+```
+
+
+## Figure Captions
+Figure 1: Anthropogenic disturbance and monitoring scenarios. Anthropogenic disturbance increases by 1% per year, and the amount of disturbance at the beginning of the projection period varies from low (0%), through low-med (20%) and med-high (40%) to high (60%). These simple hypothetical scenarios are intended to show how the need for local monitoring to reduce uncertainty varies with landscape state, and not intended to reflect real landscape change. In all scenarios, the projection period begins in 2024, and the monitoring period occurs prior to the projection period.
+
+Figure 2: Examples of simulated population trajectories from a model informed only by national disturbance-demographic relationships. To highlight how variation among trajectories persists as disturbance changes, we have reduced interannual variation by 75% in these examples ($v_R=0.115,v_S=0.02175$). Orange dots show means of 500 example trajectories. For reference, black lines and and shaded bands show means and 95% predictive intervals from Johnson et al's (2020) regression models.
+
+Figure 3: Prior (a) and posterior predictions from the Bayesian model for population trajectories with low (b: $v_R=0.23,v_S=0.0435$) and high (c: $v_R=0.46,v_S=0.087$) interannual variation. In this example scenario anthropogenic disturbance increases by 2% per year from 0 to 100%. The population is monitored for 16 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95% predictive intervals (top row, orange lines and shading) are similar to the means and ranges between the 2.5% and 97.5% quantiles of 3000 simulated survival and recruitment trajectories from the national model (top row, blue lines and shading). Local population data (open triangles) reduces uncertainty about demographic rates, but local data is not required to predict viability (population growth <= 0.99) of highly disturbed populations.
+
+Figure 4: The distribution of differences between true expected population growth rates and Bayesian posterior expected growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). Differences decrease as the number of years of monitoring and the number of collars increase. In these examples the composition survey cow multiplier $w$ is 6, collars are renewed each year, and interannual variation is lower ($v_R=0.23,v_S=0.0435$).
+
+Figure 5: The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as the number of years increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).
+
+Figure 6: The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not change predicted status.Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \@ref(fig:figStatusErrors) for additional scenario details.
+
+
+
 
 ### Colophon
 
