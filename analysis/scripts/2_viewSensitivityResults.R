@@ -13,7 +13,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s10" #need to do both s7 and s8
+setName = "s11" #need to do both s7 and s8
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
@@ -161,7 +161,7 @@ for(i in 1:length(pages)){
   startLevels = unique(distScns$Timeline[distScns$Year<2023])
   #distScns$Timeline = factor(distScns$Timeline,levels=c(startLevels[length(startLevels):1],"Finish monitoring","Assessment 2028","Assessment 2043"))
   distScns$Anthro2023=as.factor(distScns$Anthro2023)
-  levels(distScns$Anthro2023) = c("low","low-med","med-high","high")
+  levels(distScns$Anthro2023) = c("high","med-high","low-med","low")
 
   distScns$DisturbanceScn = distScns$Anthro2023
 

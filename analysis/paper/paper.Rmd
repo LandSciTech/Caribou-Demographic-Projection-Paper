@@ -159,9 +159,9 @@ are typically captured via net-gun from aircraft in late winter, and
 affixed with with collars that send a mortality signal when no longer
 active [see @nbckc_nbckc_2021], thus allowing estimation of adult
 survival [e.g. @mcloughlin_declines_2003;
-@hervieux_widespread_2013; @eacker_web-based_2019, @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. Recruitment is estimated from
+@hervieux_widespread_2013; @eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. Recruitment is estimated from
 aerial surveys of the composition of groups of animals that include
-collared animals [@nbckc_nbckc_2022, @eacker_web-based_2019, @dalgarno_bboutools_2024]. Groups typically also contain uncollared animals, and a critical assumption in these surveys is that
+collared animals [@nbckc_nbckc_2022; @eacker_web-based_2019; @dalgarno_bboutools_2024]. Groups typically also contain uncollared animals, and a critical assumption in these surveys is that
 different demographic groups are equally detectable
 [@ellington_divergent_2020]. Errors that can bias composition survey
 results include misidentifying young bulls as cows or vice versa , and
@@ -1004,7 +1004,7 @@ Figure 4: The distribution of differences between true expected population growt
 
 Figure 5: The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as the number of years increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).
 
-Figure 6: The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not change predicted status.Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \@ref(fig:figStatusErrors) for additional scenario details.
+Figure 6: The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local sampling does not change predicted status. Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \@ref(fig:figStatusErrors) for additional scenario details.
 
 
 
