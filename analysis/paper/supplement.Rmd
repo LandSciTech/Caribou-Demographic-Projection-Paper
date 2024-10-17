@@ -87,7 +87,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\nu_{S}$||Coefficient of variation in survival among years.|
 |$\tilde{R}_{t}$|rate|Expected recruitment (calves per cow).|
 |$\tilde{S}_{t}$|rate|Expected adult female survival.|
-|$\tilde{lambda}_{t}$|rate|Expected annual population growth.|
+|$\tilde{\lambda}_{t}$|rate|Expected annual population growth.|
 |**True state in simulated example trajectories**|
 |$\dot{R}_t$|rate|Recruitment (calves per cow).|
 |$\dot{S}_t$|probability|Adult female survival.|
@@ -100,7 +100,7 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$\bar{R}_t$|rate|Expected recruitment (calves per cow).|
 |$\bar{S}_t$|probability|Expected adult female survival.|
 |$\dot{\lambda}_t$|rate|Annual population growth.|
-|$\bar{lambda}_{t}$|rate|Expected annual population growth.|
+|$\bar{\lambda}_{t}$|rate|Expected annual population growth.|
 |$\dot{\beta}^R_0$||Recruitment intercept.|
 |$\dot{\beta}^R_a$||Anthropogenic disturbance slope for recruitment.|
 |$\dot{\beta}^R_f$||Fire slope for recruitment.|
