@@ -1,7 +1,7 @@
 
 library(caribouMetrics)
 
-rawScns<-read.csv(here::here("tabs/s6.csv"))
+rawScns<-read.csv(here::here("tabs/s10.csv"))
 nrow(rawScns)
 rawScns = subset(rawScns,collarCount!=1)
 

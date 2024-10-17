@@ -13,7 +13,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s11" #need to do both s7 and s8
+setName = "s11" #need to do s10, s11, and s12
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
@@ -28,7 +28,7 @@ pages = pagesa
 str(scns)
 
 setLTYVar <-function(scns){
-  if(is.element("interannualVar",names(scns))){
+  if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar))>1)){
     scns$ltyVariable = "low"
     scns$ltyVariable[grepl("0.46",scns$interannualVar,fixed=T)]="high"
   }else{
@@ -118,6 +118,9 @@ for(i in 1:length(pages)){
   exResults$Anthro2023 = pmax(0,exResults$tA)#pmax(0,exResults$tA-2) #correcting for error - change back in round 4
 
 
+  unique(scResults$obs.all$collarCount)
+  unique(scResults$obs.all$ltyVariable)
+  unique(scResults$obs.all$parameter)
   obs = subset(scResults$obs.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(parameter=="Population growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))

@@ -35,7 +35,7 @@ csl: "../templates/ecological-informatics.csl" # Insert path for the bib-style
 abstract: |
   Across fifty-eight boreal caribou study areas in Canada, both survival and recruitment decrease with the percentage of the study area that is disturbed. There is variation in demographic rates among study areas, particularly where anthropogenic disturbance is low, but where disturbance is high we have no evidence of self-sustaining populations across the country. Demographic projections derived from local population-specific data are  uncertain for populations with limited monitoring. We propose a simple Bayesian population model that integrates prior information from a national analysis of demographic-disturbance relationships with available local demographic data to reduce uncertainty in population viability projections, and to reduce the risk that lack of local data will be used as a reason to delay conservation action. The model also acknowledges additional uncertainty and potential bias due to misidentification of sex or missing calves with a term derived from a simple model of the recruitment survey observation process.  We combine this Bayesian model with simulations of plausible population trajectories in a value of information analysis framework to show how the need for local monitoring varies with landscape condition, and to assess the ability of alternative monitoring scenarios to reduce the risk of errors in population viability projections. Where anthropogenic disturbance is high, reasonably accurate status projections can be made using only national demographic-disturbance relationships. At lower disturbance levels where uncertainty is higher, deploying fewer collars for a moderate number of years may be better than intensive short-term monitoring for improving the reliability of status projections. 
 keywords: |
-  keyword 1; keyword 2; keyword 3
+  woodland caribou (*Rangifer tarandus caribou*); anthropogenic disturbance scenarios; population viability; value of information; monitoring decisions; species at risk; prior information
 highlights: |
   These are the highlights. 
 editor_options: 
@@ -96,10 +96,10 @@ Analysis methods that can make better use of available monitoring
 data to inform decisions include Bayesian population modelling
 [@schaub_integrated_2021] and value of information analyses
 [@bennett_when_2018; @dunham_strategic_2023; @runge_which_2011;
-@gregory_structured_2012]. But to be useful, these methods must be tailored
+@gregory_structured_2012]. For sparsely monitored populations, incorporating prior information from elsewhere can help reduce uncertainty [@drummond_combining_2018; @parlato_incorporating_2021; @tufto_bayesian_2000]. To be useful, these methods must be tailored
 to particular species and decision contexts. Here, we offer a simple
 Bayesian population model for boreal caribou (*Rangifer tarandus
-caribou*) that integrates information about the impacts of landscape 
+caribou*) that integrates prior information about the impacts of landscape 
 change [@johnson_science_2020] with available demographic data [building on @eacker_web-based_2019] to reduce uncertainty in
 population viability projections. Following the value of information analysis
 framework proposed by Dunham et al. (2023), we combine this Bayesian
@@ -151,15 +151,15 @@ The most widely available source of boreal caribou demographic
 information is from cows fitted with telemetry collars [e.g.
 @courtois_aerial_2003; @rettie_dynamics_1998; @hervieux_widespread_2013;
 @decesare_estimating_2012], though genetic methods are playing an
-increasingly important role in some caribou monitoring programs [e.g.
+increasingly important role in some caribou monitoring programs [e.g.@flasko_fecal_2017;
 @hettinga_estimating_2012; @mcfarlane_genetic_2018;
-@moeller_integrating_2021; @flasko_fecal_2017; @jones_novel_2023;
+@moeller_integrating_2021; @jones_novel_2023;
 @mcfarlane_identification_2022; @mcfarlane_spatial_2021]. Caribou cows
 are typically captured via net-gun from aircraft in late winter, and
 affixed with with collars that send a mortality signal when no longer
 active [see @nbckc_nbckc_2021], thus allowing estimation of adult
-survival [e.g. @mcloughlin_declines_2003;
-@hervieux_widespread_2013; @eacker_web-based_2019; @lamb_effectiveness_2024; @dalgarno_bboutools_2024]. Recruitment is estimated from
+survival [e.g. @dalgarno_bboutools_2024; @mcloughlin_declines_2003;
+@hervieux_widespread_2013; @eacker_web-based_2019; @lamb_effectiveness_2024]. Recruitment is estimated from
 aerial surveys of the composition of groups of animals that include
 collared animals [@nbckc_nbckc_2022; @eacker_web-based_2019; @dalgarno_bboutools_2024]. Groups typically also contain uncollared animals, and a critical assumption in these surveys is that
 different demographic groups are equally detectable
@@ -292,7 +292,7 @@ $q = (P+O)/(U+V).$ Assuming an equal probability $u$ of misidentifying
 young bulls as adult females and vice versa, we get $V=(U+V)(1-u)$ and
 $P=(O+P)u$. Given a probability $z$ of missing calves, we get
 $J=(J+K)(1-z)$. Given these assumptions and definitions, the sex and
-bias-corrected recruitment rate $X$ can be written as a function of the
+bias-adjusted recruitment rate $X$ can be written as a function of the
 observed calf:cow ratio $R$, the cow multiplier $w$, the ratio of young
 bulls to adult females $q$, and the misidentification probabilities $u$
 and $z$ (see Supplement B for details). For simplicity, we combine the
@@ -380,8 +380,7 @@ binomially distributed with true survival probability $\dot{S}_t$:
 $\dot{W}_{t} \sim \text{Binomial}(\dot{N}_t,\dot{S}_t)$. Realized recruitment rate varies with population density [@lacy_vortex_2017], and the number of juveniles recruiting to the
 post-juvenile class at the census $(\dot{J}_{t})$ is a binomially
 distributed function of the number of surviving post-juvenile females ($\dot{W}_t$)
-and the maximum
-potential recruitment of female calves per cow ($\dot{X}_t$): 
+and the maximum potential recruitment of female calves per cow ($\dot{X}_t$): 
 
 \begin{equation}
   \dot{J}_{t} \sim \text{Binomial}(\dot{W}_t,\dot{X}_t[p_0-(p_0-p_k)(\frac{\dot{W}_t}{k})^b]\frac{\dot{W}_t}{\dot{W}_t+a}),
@@ -397,10 +396,11 @@ The post-juvenile female population in the next year includes both
 survivors and new recruits: 
 
 \begin{equation}
-\dot{N}_{t+1}=\text{min}(\dot{W}_t+\dot{J}_t,r_{max}\dot{N}_t).
+\dot{N}_{t+1}=\text{min}(\dot{W}_t+\dot{J}_t,r_{max}\dot{N}_t),
   (\#eq:dotN)
 \end{equation}
 
+where the maximum potential population growth rate is $r_{max}=1.3$.
 
 The observable calf:cow
 ratio $\dot{R}_t$ is adjusted for sex ratio and composition survey errors
@@ -905,7 +905,7 @@ structure within populations [@jones_novel_2023;
 @mcfarlane_spatial_2021; @mcfarlane_identification_2022]. Analyses of
 movement data also show spatial variation in risks and benefits for
 caribou and variation in habitat preferences and space use among
-individuals [e.g. @decesare_linking_2014; @avgar_spaceuse_2015]. It is possible to integrate complexities such as variation in demographic rates
+individuals [e.g. @avgar_spaceuse_2015; @decesare_linking_2014]. It is possible to integrate complexities such as variation in demographic rates
 among individuals [@armstrong_incorporating_2021], population size
 information from aerial or fecal dna surveys, and variation in demographic rates among age classes [@moeller_integrating_2021; @mcnay_demographic_2022] into Bayesian population models. However, in many contexts there is not enough to data to estimate more complex model parameters, and simple models remain relevant. 
 
@@ -940,16 +940,15 @@ Supplement D: Alternative disturbance and monitoring scenarios
 Supplement E: Expected value of perfect information
 Supplement F: Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
 
-
 # Acknowledgements
+This work was informed by a variety of discussions with more people than we can name, but here are a few. Members of the Monitoring Working Group of the National Boreal Caribou Knowledge Consortium and the Scientific Assessment of Federal and Provincial Frameworks for the Conservation of Boreal Caribou in Ontario helped us understand context. Tal Avgar and Micheline Manseau encouraged us to think about composition survey errors. Comments from Joseph Bennett and Daniel Eacker on early versions of this work motivated a variety of improvements. Note that our acknowledgement of these contributions does not imply endorsement; we also acknowledge disagreement on some points, and that all remaining errors are our own.
 
 # Author contributions
-**Josie Hughes:** Conceptualization, Formal analysis, Methodology, Investigation,
-Supervision, Software, Writing – original draft, Writing – review and editing, 
-Visualization
+**Josie Hughes:** Conceptualization, Methodology, Formal analysis, Investigation,
+Supervision, Software, Visualization, Writing – original draft, Writing – review and editing
 **Sarah Endicott:** Resources, Software, Writing – review and editing
-**Anna M Calvert:** Conceptualization, Writing – original draft, Writing – review and editing
-**Cheryl A Johnson:** Conceptualization, Writing – review and editing
+**Anna M Calvert:** Conceptualization, Methodology, Writing – original draft, Writing – review and editing
+**Cheryl A Johnson:** Conceptualization, Methodology, Writing – review and editing
 
 <!-- The following line inserts a page break  -->
 

@@ -21,7 +21,7 @@ batchStrip<-function(l,batches=c(10,seq(1:9))){
   return(l)
 }
 
-setName = "s10"
+setName = "s11"
 probsSum = read.csv(here::here(paste0("tabs/EVsample",setName,".csv")),stringsAsFactors = F)
 
 probsSum$pageLabC = batchStrip(probsSum$pageLab)
@@ -59,8 +59,10 @@ EVuncertainty$trend[EVuncertainty$trend=="0"]= "stable"
 EVuncertainty$trend[EVuncertainty$trend=="1"]= "increasing"
 EVuncertainty$YearsOfProjection =as.factor(EVuncertainty$YearsOfProjection)
 
+subset(EVuncertainty, (AnthroScn=="high")&(trend=="decreasing"))
+
 png(here::here(paste0("figs/",setName,"/EVPIall.png")),
-    height = 3.7, width = 7.48, units = "in",res=600)
+    height = 3.8, width = 7.48, units = "in",res=600)
 base=ggplot(EVuncertainty,aes(x=YearsOfProjection,y=EVPI,col=cmult,group=pageLabC))+geom_point()+
   facet_grid(trend~AnthroScn,labeller="label_both")+labs(color="cow multiplier")+
   theme_bw()+xlab("years of projection")+ylab("Expected Value of Perfect Information EVPI")+
