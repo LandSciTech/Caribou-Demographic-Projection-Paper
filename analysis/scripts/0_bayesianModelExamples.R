@@ -117,11 +117,11 @@ plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
 ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamples.png"),
-       width = 9.6*0.779, height = 9.2*0.779, units = "in",
+       width = 9.6*0.779, height = 9.2, units = "in",
        dpi = 1200)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamples.pdf"),
-       width = 9.6*0.779, height = 9.2*0.779, units = "in",
+       width = 9.6*0.779, height = 9.2, units = "in",
        dpi = 1200)
 ###############################
 #Without bias adjustment
@@ -208,7 +208,7 @@ plts <- ggpubr::ggarrange(recPrior, survPrior, lambdaPrior,
 ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesNoBias.png"),
-       width = 12*0.8, height = 4.6*2, units = "in",
+       width = 9.6*0.779, height = 9.2, units = "in",
        dpi = 1200)
 
 ###############################
