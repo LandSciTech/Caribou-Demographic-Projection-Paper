@@ -262,6 +262,10 @@ for(f in figSet){
   currentFile = here::here(paste0("figs/",resultScenario,"/",f,addBit,".png"))
   newFile = here::here(paste0("figs/forPaper/",f,addBit,".png"))
   file.copy(currentFile, newFile,overwrite=T)
+  
+  currentFile = here::here(paste0("figs/",resultScenario,"/",f,addBit,".pdf"))
+  newFile = here::here(paste0("analysis/paper/figs_submit/",f,addBit,".pdf"))
+  file.copy(currentFile, newFile,overwrite=T)
 }
 ```
 
@@ -965,30 +969,38 @@ Supervision, Software, Visualization, Writing – original draft, Writing – re
 
 ```{r figDisturbance, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/distScnscmult6ay1aSf1.png"))
-
+file.rename(here::here("analysis/paper/figs_submit/distScnscmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure1_distScnscmult6ay1aSf1.pdf"))
 ```
 
 ```{r exampleTrajectories, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("analysis/paper/figs/DemographicRates.png"))
-
+file.rename(here::here("analysis/paper/figs_submit/DemographicRates.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure2_DemographicRates.pdf"))
 ```
 
 ```{r examplePredictions, fig.cap=".", cache=TRUE}
-
 knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamples.png"))
+file.rename(here::here("analysis/paper/figs_submit/bayesianModelExamples.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure3_bayesianModelExamples.pdf"))
 ```
 
 ```{r figDiffs, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/diffscmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure4_diffscmult6ay1aSf1.pdf"))
 ```
 
 ```{r figStatusErrors, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/powercmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/powercmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure5_powercmult6ay1aSf1.pdf"))
 ```
 
 ```{r figEVSI, fig.cap=".", cache=TRUE}
-
 knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/EVSIcmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure6_EVSIcmult6ay1aSf1.pdf"))
 ```
 
 
