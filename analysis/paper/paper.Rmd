@@ -37,7 +37,18 @@ abstract: |
 keywords: |
   woodland caribou (*Rangifer tarandus caribou*); anthropogenic disturbance scenarios; population viability; value of information; monitoring decisions; species at risk; prior information
 highlights: |
-  These are the highlights. 
+
+
+  * Across fifty-eight boreal caribou study areas in Canada, both survival and recruitment decrease with the percentage of the study area that is disturbed.
+  
+  * We show how Bayesian integration of prior information from a national analysis of demographic-disturbance relationships can reduce uncertainty about the viability of sparsely monitored populations.
+  
+  * Integrating prior information about demographic-disturbance relationships clarifies that no additional information is needed to project population viability where disturbance is high and there are no actions to support recovery.
+  
+  * At lower disturbance levels where uncertainty is higher, deploying fewer collars for a moderate number of years is likely better than intensive short-term monitoring for reducing uncertainty about population viability.
+  
+  * We introduce a method for acknowledging potential errors in recruitment surveys to help clarify where and when these these errors are likely to alter conclusions about population viability.  
+
 editor_options: 
   chunk_output_type: inline
   markdown: 
@@ -151,7 +162,7 @@ The most widely available source of boreal caribou demographic
 information is from cows fitted with telemetry collars [e.g.
 @courtois_aerial_2003; @rettie_dynamics_1998; @hervieux_widespread_2013;
 @decesare_estimating_2012], though genetic methods are playing an
-increasingly important role in some caribou monitoring programs [e.g.@flasko_fecal_2017;
+increasingly important role in some caribou monitoring programs [e.g. @flasko_fecal_2017;
 @hettinga_estimating_2012; @mcfarlane_genetic_2018;
 @moeller_integrating_2021; @jones_novel_2023;
 @mcfarlane_identification_2022; @mcfarlane_spatial_2021]. Caribou cows
