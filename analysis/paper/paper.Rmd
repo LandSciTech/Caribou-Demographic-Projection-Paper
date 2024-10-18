@@ -955,6 +955,9 @@ Supplement D: Alternative disturbance and monitoring scenarios
 Supplement E: Expected value of perfect information
 Supplement F: Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
 
+# Data statement
+Code required to create the data, run analyses and reproduce figures in this paper is available at https://github.com/LandSciTech/Caribou-Demographic-Projection-Paper, and in the caribouMetrics R package available on GitHub at https://github.com/LandSciTech/caribouMetrics.
+
 # Acknowledgements
 This work was informed by a variety of discussions with more people than we can name, but here are a few. Members of the Monitoring Working Group of the National Boreal Caribou Knowledge Consortium and the Scientific Assessment of Federal and Provincial Frameworks for the Conservation of Boreal Caribou in Ontario helped us understand context. Tal Avgar and Micheline Manseau encouraged us to think about composition survey errors. Comments from Joseph Bennett and Daniel Eacker on early versions of this work motivated a variety of improvements. Note that our acknowledgement of these contributions does not imply endorsement; we also acknowledge disagreement on some points, and that all remaining errors are our own.
 
