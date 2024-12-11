@@ -11,7 +11,29 @@ setName = cargs[1]
 allScns = read.csv(paste0("tabs/",setName,".csv"))
 scn_nums <- unique(allScns$pageId)
 
+nBatches <- length(scn_nums)
 sasurl <- cargs[2]
+
+# Choose best vmSize and number of slots per node to avoid extra vCPUs
+
+# set of possible vmSizes
+vmSizes <- c(2,4,8,16,32)
+
+# assuming 12 is the max nodes of 27 for all LERS that we want to use at a time
+nSlotsPerNodeOpts <- nBatches/1:12
+
+wchnSlotsPerNode <- sapply(nSlotsPerNodeOpts,
+                           function(x) min((vmSizes - x)[(vmSizes - x) >= 0]))|>
+  which.min()
+
+nSlotsPerNode <- ceiling(nSlotsPerNodeOpts[wchnSlotsPerNode])
+
+# requiring vmSize that is 2 times nBatches per node cores ensures there is enough RAM
+wchVM <- vmSizes - nSlotsPerNode *2
+
+vmSizeUse <- vmSizes[which(wchVM == min(wchVM[wchVM >= 0]))]
+
+nNodes <- ceiling(nBatches/nSlotsPerNode)
 
 # write a version of run_caribou.sh and task json for each batch
 dir.create("cloud/task_scripts")
@@ -50,7 +72,10 @@ outfile <-  file(paste0("cloud/pool_json/caribou_add_pool1.json"), "wb")
 readLines("cloud/caribou_add_pool.json") |>
   stringr::str_replace_all("<subnetId>", keyring::key_get("Azure_subnetId")) |>
   stringr::str_replace_all("<id>", paste0("sendicott_caribouDemo_", setName)) |>
-  # divide by 4 because set 8 slots per node
-  stringr::str_replace_all("<n_nodes>", (length(scn_nums)/4)|> ceiling()|> as.character()) |>
+  stringr::str_replace_all("<n_nodes>", as.character(nNodes)) |>
+  stringr::str_replace_all("<n_slots>", as.character(nSlotsPerNode)) |>
+  stringr::str_replace_all("<vmSize>", as.character(vmSizeUse)) |>
   writeLines(con = outfile)
 close(outfile)
+
+cat(as.character(nBatches))

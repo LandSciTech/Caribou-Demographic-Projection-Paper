@@ -5,11 +5,24 @@ There is also a limit of 27 nodes running at once so to run more than 27 differe
 
 Steps:
 
-1) Make sure the Caribou-Demographic-Projection-Paper is correct and has been pushed to GitHub. If doing a new set need to change in make_batch_scripts
-3) In make_batch_scripts, make sure that the SASURL for the Azure storage container is up-to-date. You may need to modify the vmSize in the pool JSON template and the number of taskSlotsPerNode and the targetNumberNodes.  
-4) Step through the setup_azure.sh script interactively. You will need to edit the total number of tasks and pool name as needed. 
-5) Tasks will run and when complete the results should be copied to the Azure storage container. This should take ~1 day. When complete use the script to ensure that all results are successfully copied and then delete the pool. We will continue paying until the pool is deleted to try to do it ASAP after completion. 
+1) Make sure the Caribou-Demographic-Projection-Paper repo is correct and has been 
+   pushed to GitHub. 
+2) Make sure gh::gh_token() returns your GitHub PAT because it is used in the script
+3) In setup_azure.sh change setName. 
 
-*n = number of pageIds in set
+4) Run a test: Do this when ever significant changes have been made to ensure it works as expected
+4.1) Change the name of the script called in run_caribou.sh to sensitivityMinimalTest.R
+4.2) Follow all the steps below and ensure that it works and files are correctly copied to Azure
+4.3) Change the name of the script called in run_caribou.sh back to sensitivityMinimal.R
+
+4) Step through the setup_azure.sh script interactively until you get to Monitor Tasks section. 
+5) Once all tasks are running enable autoscaling. If you don't turn on autoscaling we 
+   will continue paying until the pool is deleted.
+6) Tasks will run and when complete the results should be copied to the Azure 
+   storage container. Autoscaling should should remove nodes once they are not in use.
+7) When complete use the script to download results from Azure and then delete
+   the data from Azure and delete the pool.  
+
+
 
 

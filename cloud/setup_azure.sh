@@ -1,7 +1,11 @@
 #!/bin/bash
 #############################################
-#####Login etc##################
 
+#### Parameters to change
+setName="s10"
+
+
+#####Login etc##################
 az login
 az batch account login -g EcDc-WLS-rg -n ecdcwlsbatch
 az batch pool list \
@@ -16,17 +20,8 @@ allocState:allocationState}" \
 end=`date -u -d "7 days" '+%Y-%m-%dT%H:%MZ'`
 sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end --name sendicott --permissions racwdli -o tsv --auth-mode login --as-user`
 
-# I actually created the SASURL manually bc it wouldn't let me do more than 7 days through CLI
+#
 sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
-
-setName="s12"
-
-# 30 batches have 5550 runs and 60 have 7400 it would be smart to have them on
-# the same nodes so the node can close when finished
-# 30: 4 nodes with 8 slots
-# 60: 8 nodes with 8 slots
-
-nBatches=10
 
 jobName="sendicott_job_"$setName
 poolName="sendicott_caribouDemo_"$setName
@@ -36,12 +31,13 @@ rm -r cloud/task_jsons
 rm -r cloud/pool_json
 
 # Updates sasurl and setName in files, might need to change pool slots and target nodes
-Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl
+nBatches=$(Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl)
 
-# Check what container is empty
+# Check that container is empty
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
 --query "[].{name:name}" --output yaml
 
+# Upload scripts to use in tasks
 az storage copy -d $sasurl -s cloud/task_scripts --recursive
 
 #### Create pool, job, tasks ##########################
@@ -50,13 +46,6 @@ az batch job create --pool-id $poolName --id $jobName
 
 # all batches
 for ((i=1;i<=nBatches;i++))
-
-# this approach only sort of worked because some tasks had to be restarted
-# Only batches with 5550 rows
-# for i in 1 2 3 4 5 6 7 8 9 10 31 32 33 34 35 36 37 38 39 40 61 62 63 64 65 66 67 68 69 70
-
-# Only batches with 7400 rows
-# for i in 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90
 do
 	echo "setting up task" $i
 	az batch task create --json-file cloud/task_jsons/caribouDemo$i.json --job-id $jobName
@@ -75,6 +64,27 @@ state: state, running: runningTasksCount, succeeded:totalTasksSucceeded}" \
 --output table
 
 #### Monitor tasks ############################
+
+# Summary of task counts by state
+az batch job task-counts show --job-id $jobName
+
+# added taskslotspernode # doesn't seem to recognize needs more nodes when slots full
+az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
+ --auto-scale-formula 'percentage = 70;
+ span = TimeInterval_Second * 15;
+ $samples = $ActiveTasks.GetSamplePercent(span);
+ $tasks = $samples < percentage ? max(0,$ActiveTasks.GetSample(1)) : max( $ActiveTasks.GetSample(1), avg($ActiveTasks.GetSample(span)));
+ multiplier = 1;
+ $cores = $TargetDedicatedNodes*$TaskSlotsPerNode;
+ $extraVMs = (($tasks - $cores) + 0) * multiplier / $TaskSlotsPerNode;
+ $targetVMs = ($TargetDedicatedNodes + $extraVMs);
+ $TargetDedicatedNodes = max(0, min($targetVMs, 50));
+ $NodeDeallocationOption = taskcompletion;'
+
+# If autoscale not working as desired, disable set target nodes, then re-enable
+# once tasks are running
+az batch pool autoscale disable --pool-id $poolName
+az batch pool resize --pool-id $poolName --target-dedicated-nodes 12
 
 # details for a single task filtered by query
 az batch task show --job-id $jobName \
@@ -98,26 +108,7 @@ az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[i
 
 # az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
 
-# Summary of task counts by state
-az batch job task-counts show --job-id $jobName
 
-# added taskslotspernode # doesn't seem to recognize needs more nodes when slots full
-az batch pool autoscale enable --pool-id $poolName --auto-scale-evaluation-interval "PT5M"\
- --auto-scale-formula 'percentage = 70;
- span = TimeInterval_Second * 15;
- $samples = $ActiveTasks.GetSamplePercent(span);
- $tasks = $samples < percentage ? max(0,$ActiveTasks.GetSample(1)) : max( $ActiveTasks.GetSample(1), avg($ActiveTasks.GetSample(span)));
- multiplier = 1;
- $cores = $TargetDedicatedNodes*$TaskSlotsPerNode;
- $extraVMs = (($tasks - $cores) + 0) * multiplier / $TaskSlotsPerNode;
- $targetVMs = ($TargetDedicatedNodes + $extraVMs);
- $TargetDedicatedNodes = max(0, min($targetVMs, 50));
- $NodeDeallocationOption = taskcompletion;'
-
-# If autoscale not working as desired, disable set target nodes, then re-enable
-# once tasks are running
-az batch pool autoscale disable --pool-id $poolName
-az batch pool resize --pool-id $poolName --target-dedicated-nodes 12
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
