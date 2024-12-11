@@ -46,12 +46,11 @@ message("batch ", cpageId, " started")
 
 str(scns)
 
-str(subset(scns,interannualVar=="list(R_CV=0.23,S_CV=0.0435)"))
 if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)
 }else{
-  #scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
-  scResults = runScnSet(scns[3801:3801,],eParsIn,simBig,getKSDists=F,printProgress=F)
+  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
+  # scResults = runScnSet(scns[3801:3801,],eParsIn,simBig,getKSDists=F,printProgress=F)
 }
 
 unique(scResults$rr.summary.all$Parameter)
