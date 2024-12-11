@@ -6,6 +6,7 @@ setName="s10"
 
 
 #####Login etc##################
+# Accept the default tenant by pressing enter when prompted
 az login
 az batch account login -g EcDc-WLS-rg -n ecdcwlsbatch
 az batch pool list \
@@ -30,7 +31,8 @@ rm -r cloud/task_scripts
 rm -r cloud/task_jsons
 rm -r cloud/pool_json
 
-# Updates sasurl and setName in files, might need to change pool slots and target nodes
+# Sets PAT, sasurl, setName, nNodes, nSlots, and vmSize in files and makes a
+# separate file for each batch
 nBatches=$(Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl)
 
 # Check that container is empty
@@ -92,7 +94,7 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=4
+taskNum=10
 
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
 --job-id $jobName --file-path "wd/nohup_"$taskNum".out" \
@@ -109,6 +111,7 @@ az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[i
 # az batch task reactivate --task-id caribou-demog_sens_batch86 --job-id $jobName
 
 
+#### Download results ##########################
 
 # Check what results have been added to the storage container
 az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \

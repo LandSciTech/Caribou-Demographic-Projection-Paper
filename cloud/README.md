@@ -15,12 +15,13 @@ Steps:
 4.2) Follow all the steps below and ensure that it works and files are correctly copied to Azure
 4.3) Change the name of the script called in run_caribou.sh back to sensitivityMinimal.R
 
-4) Step through the setup_azure.sh script interactively until you get to Monitor Tasks section. 
-5) Once all tasks are running enable autoscaling. If you don't turn on autoscaling we 
+5) Step through the setup_azure.sh script interactively until you get to Monitor Tasks section. 
+6) Once all tasks are running enable autoscaling. Tasks will show as active until
+   the nodes are finished being set up If you don't turn on autoscaling we 
    will continue paying until the pool is deleted.
-6) Tasks will run and when complete the results should be copied to the Azure 
+7) Tasks will run and when complete the results should be copied to the Azure 
    storage container. Autoscaling should should remove nodes once they are not in use.
-7) When complete use the script to download results from Azure and then delete
+8) When complete use the script to download results from Azure and then delete
    the data from Azure and delete the pool.  
 
 
