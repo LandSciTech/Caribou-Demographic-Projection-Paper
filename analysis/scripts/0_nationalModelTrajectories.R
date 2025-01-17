@@ -119,6 +119,7 @@ pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
   interannualVar = list(R_CV=0.46*0.25,S_CV=0.08696*0.25)
 ))
 
+str(pars)
 oo <- pars2 %>%
   select(Anthro, lambdaTrue, fullGrp, rrp) %>%
   group_by(fullGrp, Anthro) %>%

@@ -13,7 +13,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s10" #need to do s10, s11, and s12
+setName = "s12" #need to do s10, s11, and s12
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 

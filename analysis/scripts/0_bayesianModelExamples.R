@@ -71,7 +71,10 @@ recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0
                         labFontSize=labFontSize)+
   yr_scale2 +
   labs(tag = "c")
+
+
 plot(recPosterior)
+
 survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
                          labFontSize=labFontSize)+
@@ -91,6 +94,11 @@ recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound =
   yr_scale2 +
   labs(tag = "b")
 plot(recPosteriorB)
+
+ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesRecBOnly.png"),
+       width = 3, height = 3, units = "in",
+       dpi = 1200)
+
 survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=0.6,
                          legendPosition="none",breakInterval=breakInterval,
                          labFontSize=labFontSize)+
