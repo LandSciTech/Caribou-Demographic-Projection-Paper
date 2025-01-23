@@ -14,11 +14,12 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s10" #need to do s10, s11, and s12
+setName = "s14" #need to do s13, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
-
+numBatches= max(scns$repBatch)
+str(scns)
 table(scns$pageId)
 
 nrow(scns)
@@ -30,7 +31,8 @@ str(scns)
 
 setLTYVar <-function(scns){
   if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar))>1)){
-    scns$ltyVariable = "low"
+    scns$ltyVariable = "none"
+    scns$ltyVariable[grepl("0.23",scns$interannualVar,fixed=T)]="low"
     scns$ltyVariable[grepl("0.46",scns$interannualVar,fixed=T)]="high"
   }else{
     scns$ltyVariable=scns$collarInterval
@@ -51,7 +53,8 @@ for (p in pagesa){
   if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
 }
 
-batchStrip<-function(l,batches=c(10,seq(1:9))){
+
+batchStrip<-function(l,batches=c(seq(10,numBatches),seq(1:9))){
   for(b in batches){
     l=gsub(paste0("repBatch",b),"",l,fixed=T)
   }
@@ -65,7 +68,7 @@ addEV = F
 addProbs = F
 
 for(i in 1:length(pages)){
-  #combine=F;i=10
+  #combine=F;i=12
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -91,7 +94,7 @@ for(i in 1:length(pages)){
     scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
   }
 
-  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=10)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
+  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=numBatches)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
     combine=F
   }else{combine=T;next}
 
@@ -119,9 +122,9 @@ for(i in 1:length(pages)){
   exResults$Anthro2023 = pmax(0,exResults$tA)#pmax(0,exResults$tA-2) #correcting for error - change back in round 4
 
 
-  unique(scResults$obs.all$collarCount)
-  unique(scResults$obs.all$ltyVariable)
-  unique(scResults$obs.all$parameter)
+  #unique(scResults$obs.all$collarCount)
+  #unique(scResults$obs.all$ltyVariable)
+  pars = unique(scResults$obs.all$parameter)
   obs = subset(scResults$obs.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(parameter=="Population growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
@@ -139,13 +142,13 @@ for(i in 1:length(pages)){
   print(base)
   dev.off()
 
-  probs = subset(scResults$rr.summary.all,(Parameter=="Population growth rate"))
+  probs <- scResults$rr.summary.all%>%
+    pivot_wider(names_from = Parameter, values_from = c("Mean","SD","Lower 95% CRI","Upper 95% CRI","probViable"))
+  names(probs)= gsub("_Population growth rate","",names(probs),fixed=T)
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
   probs$Anthro2023 = pmax(0,probs$tA)#pmax(0,probs$tA-2) #correcting for error - change back in round 4
   probs$YearsOfProjection = probs$projectionTime
-
-  names(probs)
 
   #See disturbance scenarios
   #distScns = subset(probs,is.element(projectionTime,c(0,5,20))|(Year==iYr))
@@ -164,8 +167,11 @@ for(i in 1:length(pages)){
   startLevels = unique(distScns$Timeline[distScns$Year<2023])
   #distScns$Timeline = factor(distScns$Timeline,levels=c(startLevels[length(startLevels):1],"Finish monitoring","Assessment 2028","Assessment 2043"))
   distScns$Anthro2023=as.factor(distScns$Anthro2023)
-  levels(distScns$Anthro2023) = c("high","med-high","low-med","low")
-
+  if(is.element(0,levels(distScns$Anthro2023))){
+    levels(distScns$Anthro2023) = rev(c("high","med-high","low-med","low"))
+  }else{
+    levels(distScns$Anthro2023) = rev(c("high","med-high","low-med"))
+  }
   distScns$DisturbanceScn = distScns$Anthro2023
 
   timelineLabs = unique(subset(distScns,(Year==startYear)|(Year>=2023),select=c(Year,Timeline,Anthro,DisturbanceScn,grp)))
@@ -186,45 +192,42 @@ for(i in 1:length(pages)){
   print(base)
   dev.off()
 
+  #make wide obs table
+  obsWide <- subset(scResults$obs.all,(type=="true"))%>%
+    pivot_wider(names_from = parameter, values_from = Mean)
+    str(obsWide)
+  obsWide$startYear=obsWide$startYear+obsWide$preYears
+
+  check = subset(obsWide,is.na(interannualVar))
+  check$expLambda = check[["Adult female survival"]]*(1+check[["Adjusted recruitment"]])
+  range(check$expLambda-check[["Population growth rate"]])
+  check=NULL
+
+  obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
+
+  #now combine and make small
+  names(obsWide)[names(obsWide)=="Population growth rate"]= "trueMean"
+  names(obsWide)[names(obsWide)=="Female population size"]= "trueSize"
   probs = subset(probs,is.element(projectionTime,c(5,20)))
+  obsWide=subset(obsWide, (Year>(startYear+obsYears-1)&(type=="true")))
 
-  unique(scResults$obs.all$parameter)
-
-  #get true survey bias
-  cTrue = subset(scResults$obs.all,(type=="true")&is.element(parameter,c("Recruitment"))&
-                   (Year>(startYear+obsYears-1)))
-  cTrue$R = cTrue$Mean
-  cTrue$parameter=NULL;cTrue$type=NULL;cTrue$Mean=NULL
-  ccTrue = subset(scResults$obs.all,(type=="true")&is.element(parameter,c("Adjusted recruitment"))&
-                   (Year>(startYear+obsYears-1)))
-  ccTrue$X = ccTrue$Mean
-  ccTrue$parameter=NULL;ccTrue$type=NULL;ccTrue$Mean=NULL
-  cTrue = merge(cTrue, ccTrue)
-  ccTrue = NULL
-  cTrue$c = cTrue$X*2/cTrue$R
-  cTrue$startYear=cTrue$startYear+cTrue$preYears
-
-  #plot probability of making an error about true population state
-  statusTrue = subset(scResults$obs.all,(type=="true")&(parameter=="Population growth rate")&(Year>(startYear+obsYears-1)))
-  statusTrue$startYear=statusTrue$startYear+statusTrue$preYears
-  statusTrue$trueMean = statusTrue$Mean
-  statusTrue$parameter=NULL;statusTrue$type=NULL;statusTrue$Mean=NULL
-
-  sizeTrue = subset(scResults$obs.all,(type=="true")&(parameter=="Female population size")&(Year>(startYear+obsYears-1)))
-  sizeTrue$startYear = sizeTrue$startYear+sizeTrue$preYears
-  sizeTrue$trueSize = sizeTrue$Mean
-  sizeTrue$parameter=NULL;sizeTrue$type=NULL;sizeTrue$Mean=NULL
-  setdiff(names(statusTrue),names(probs))
-
-  #sizeProj = subset(scResults$rr.summary.all,(Parameter=="Female population size"),select=c(label,Year,Mean))
-  #sizeProj$projSize = sizeProj$Mean; sizeProj$Mean=NULL
-
-  probs = merge(probs,statusTrue)
-  probs = merge(probs,sizeTrue)
-  probs = merge(probs,cTrue)
   nrow(probs)
-  statusTrue=NULL;sizeTrue=NULL;cTrue=NULL
-  #probs = merge(probs,sizeProj)
+  intersect(names(probs),names(obsWide))
+  probs = merge(probs,obsWide)
+  nrow(probs)
+  obsWide=NULL
+
+  check=subset(probs,is.na(interannualVar))
+
+  hist(check$Mean_Recruitment-check$Recruitment)
+  mean(check$Mean_Recruitment-check$Recruitment)
+  hist(check[["Mean_Adult female survival"]]-check[["Adult female survival"]])
+  mean(check[["Mean_Adult female survival"]]-check[["Adult female survival"]])
+  hist(check[["Mean_Adjusted recruitment"]]-check[["Adjusted recruitment"]])
+  mean(check[["Mean_Adjusted recruitment"]]-check[["Adjusted recruitment"]])
+  hist(check[["Mean"]]-check[["trueMean"]])
+  mean(check[["Mean"]]-check[["trueMean"]])
+
   probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
   probs$predChange = probs$Mean#probs$projSize/probs$N0
 
@@ -243,7 +246,12 @@ for(i in 1:length(pages)){
   pagesB=unique(probs$pageLabB)
 
   probs$AnthroScn=as.factor(probs$Anthro2023)
-  levels(probs$AnthroScn) = c("low","low-med","med-high","high")
+
+  if(is.element(0,levels(probs$AnthroScn))){
+    levels(probs$AnthroScn) = c("low","low-med","med-high","high")
+  }else{
+    levels(probs$AnthroScn) = c("low-med","med-high","high")
+  }
 
   for(pp in pagesB){
     #pp=pagesB[3]
@@ -295,15 +303,52 @@ for(i in 1:length(pages)){
     dev.off()
 
     #for low anthro, lots of collars, lots of monitoring, 5 yrs projection, look at effects of rQuantile, sQuantile (panels) and c
-    probf = subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])&(AnthroScn=="low")&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==5))
+    probf = subset(probs,(pageLab==pp)&(AnthroScn=="low")&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==5))
+    probf$Sdiff = probf[["Adult female survival"]]-probf[["Mean_Adult female survival"]]
+    probf$Sdot = probf[["Adult female survival"]]
+    probf$S = probf[["Mean_Adult female survival"]]
+    #probf = subset(probf,Sdot>0.85)
 
-    base=ggplot(probf,aes(x=trueMean,y=LambdaDiff,col=c))+
+    base=ggplot(probf,aes(x=Sdot,y=S,col=c))+
       geom_point()+scale_colour_gradient2(
         low = muted("red"),
-        mid = "white",
+        mid = "grey",
         high = muted("blue"),
         midpoint = 1,
-      )+xlab("True population growth rate")+ylab("Difference between true growth rate & posterior mean")
+      )+geom_smooth(col="black")+
+      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)
+
+    png(here::here(paste0("figs/",setName,"/diffsSFocus",pp,".png")),
+        height = 4, width = 5.51, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    probf$Rdiff = probf[["Adjusted recruitment"]]-probf[["Mean_Adjusted recruitment"]]
+    probf$Rdot = probf[["Adjusted recruitment"]]
+    probf$R = probf[["Mean_Adjusted recruitment"]]
+    base=ggplot(probf,aes(x=Rdot,y=R,col=c))+
+      geom_point()+scale_colour_gradient2(
+        low = muted("red"),
+        mid = "grey",
+        high = muted("blue"),
+        midpoint = 1,
+      )+geom_smooth(col="black")+
+      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)
+
+    png(here::here(paste0("figs/",setName,"/diffsRFocus",pp,".png")),
+        height = 4, width = 5.51, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    base=ggplot(probf,aes(x=trueMean,y=Mean,col=c))+
+      geom_point()+scale_colour_gradient2(
+        low = muted("red"),
+        mid = "grey",
+        high = muted("blue"),
+        midpoint = 1,
+      )+geom_smooth(col="black")+
+      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)+
+    xlab("True population growth rate")+ylab("Posterior mean growth rate")
 
     png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
         height = 4, width = 5.51, units = "in",res=600)

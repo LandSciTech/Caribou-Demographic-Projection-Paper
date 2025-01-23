@@ -66,7 +66,7 @@ plot(rrAll[[vName]]$plot)
 #set sIntSE = 0.04. Set to match high bound.
 
 #Now vary sAnthroSlopeSE to match Johnson predictive interval when anthropogenic disturbance is high.
-sIntSE=0.04; sNuMin=0;sNuMax=0
+sIntSE=0.06; sNuMin=0;sNuMax=0
 sAnthroSlopeSE=seq(0.0001,0.001,by=0.0001)
 
 scnsSSlope=expand.grid(obsAnthroSlope = 0, projAnthroSlope = 0,iAnthro=90,
@@ -94,7 +94,7 @@ plot(rrAll[[vName]]$plot)
 #set rIntSE = 0.25. Set to match upper bound of Johnson.
 
 #Now vary rAnthroSlopeSE to match Johnson predictive interval when anthropogenic disturbance is high.
-rIntSE=0.25;rNuMin=0;rNuMax=0;
+rIntSE=0.35;rNuMin=0;rNuMax=0;
 rAnthroSlopeSE=seq(0.001,0.01,by=0.001)
 
 scnsRSlope=expand.grid(obsAnthroSlope = 0, projAnthroSlope = 0,iAnthro=90,

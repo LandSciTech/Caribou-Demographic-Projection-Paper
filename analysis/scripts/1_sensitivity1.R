@@ -40,7 +40,7 @@ pages=unique(scns$pageLab)
 
 ###################
 #Without bias
-setName = "s15" #14 is the same, just bigger batches.
+setName = "s16" #14 is the same, just bigger batches.
 scns$qMax = 0;scns$uMax=0;scns$zMax=0
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)

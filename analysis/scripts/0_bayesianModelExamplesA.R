@@ -15,12 +15,10 @@ stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
 stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.23,S_CV=0.0435)")))
 stateScns = merge(stateScns,data.frame(survivalModelNumber = c("M1","M0"), recruitmentModelNumber=c("M4","M0"),
                                        rAnthroSlopeSE = c(0.006,0.06),rFireSlopeSE = c(0.002,0.02),
-                                       sAnthroSlopeSE = c(0.0005,0.005),sIntSE = c(0.04,0.4),
-                                       rIntSE = c(0.25,2.5),sQuantile=c(0.9,0.9),rQuantile=c(0.9,0.9)))
+                                       sAnthroSlopeSE = c(0.0005,0.005),sIntSE = c(0.06,0.6),
+                                       rIntSE = c(0.35,2.5),sQuantile=c(0.9,0.9),rQuantile=c(0.9,0.9)))
 
 scns=merge(monitoringScns,stateScns)
-#scns$obsYears[scns$survivalModelNumber=="M0"]=4
-#scns$obsYears[scns$survivalModelNumber=="M0"]=4
 
 scns = subset(scns,!(grepl("2.5",rIntSE,fixed=T)&(collarCount==0)))
 scns$iAnthro = 0

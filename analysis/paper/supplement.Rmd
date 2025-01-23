@@ -51,7 +51,7 @@ runScenarios = F
 doPriorCalibration=F #Note the prior calibration is time consuming. 
 
 resultScenario = "S11"
-noBiasResultScenario = "S12"
+noBiasResultScenario = "S14"
 
 ```
 
@@ -208,7 +208,7 @@ plot(base)
 
 # Calibration of priors
 
-We begin by setting random effects to zero, varying the prior standard deviations of the survival intercept (sIntSE is $\beta^S_0$ in Table 2) and recruitment intercept (rIntSE is $\beta^R_0$ in Table 2), and comparing the prior predictive intervals of the Bayesian model to the 95\% predictive intervals from Johnson et al.'s (2020) regression analysis in a case with no anthropogenic disturbance (top row of Fig \@ref(fig:InterceptsAndSlopes)). We set the prior standard deviation intercept parameters (sIntSE = 0.04, rIntSE = 0.25) so that the upper bounds of the Bayesian predictive intervals match the upper bounds of Johnson et al.'s predictive intervals.  
+We begin by setting random effects to zero, varying the prior standard deviations of the survival intercept (sIntSE is $\beta^S_0$ in Table 2) and recruitment intercept (rIntSE is $\beta^R_0$ in Table 2), and comparing the prior predictive intervals of the Bayesian model to the 95\% predictive intervals from Johnson et al.'s (2020) regression analysis in a case with no anthropogenic disturbance (top row of Fig \@ref(fig:InterceptsAndSlopes)). We set the prior standard deviation intercept parameters (sIntSE = 0.06, rIntSE = 0.35) so that the lower bounds of the Bayesian predictive intervals match the upper bounds of Johnson et al.'s predictive intervals.  
 
 We then vary the prior standard deviations of the slopes of the relationships between anthropogenic disturbance and demographic rates (sAnthroSlopeSE is $\beta^S_R$ and rAnthroSlopeSE is $\beta^R_R$ in Table 2), and compare the prior predictive intervals of the Bayesian model to the 95\% predictive intervals from Johnson et al.'s (2020) regression analysis in a case with 90\% anthropogenic disturbance (bottom row of Fig \@ref(fig:InterceptsAndSlopes)). We set the prior standard deviation of the slopes (sAnthroSlopeSE = 0.0005, rAnthroSlopeSE = 0.006) so that the upper bound of the Bayesian predictive interval does not substantially exceed the upper bound of Johnson et al.'s predictive interval. 
 
