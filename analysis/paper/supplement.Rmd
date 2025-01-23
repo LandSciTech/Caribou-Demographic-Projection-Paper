@@ -287,7 +287,7 @@ knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/powercmult9ay
 
 # Expected value of perfect information
 
-```{r figEVPI, fig.cap="The expected value of perfect information (EVPI) varies among anthropogenic disturbance scenarios (see increasing, decreasing and stable scenarios in Figs 1, D.1 and D.5 respectively) and the number of years projected. When disturbance is high EVPI is low, indicating that local sampling will not alter status assessments. Increasing the forecast horizon can either increase or decrease the EVPI as the anthropogenic disturbance trend makes outcomes more or less predictable.", cache=TRUE}
+```{r figEVPI, fig.cap="The expected value of perfect information (EVPI) varies among anthropogenic disturbance scenarios (see increasing, decreasing and stable scenarios in Figs 1, D.1 and D.5 respectively) and the number of years projected. When disturbance is high EVPI is low, indicating that local monitoring will not alter status assessments. Increasing the forecast horizon can either increase or decrease the EVPI as the anthropogenic disturbance trend makes outcomes more or less predictable.", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/EVPIall.png")))
 ```
 

@@ -11,14 +11,16 @@ monitoringScns = data.frame(obsYears=c(1,16),collarCount=c(0,30),cowMult=c(6),co
                             assessmentYrs=c(1))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
-stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)")))
+#stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)")))
+stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.23,S_CV=0.0435)")))
 stateScns = merge(stateScns,data.frame(survivalModelNumber = c("M1","M0"), recruitmentModelNumber=c("M4","M0"),
                                        rAnthroSlopeSE = c(0.006,0.06),rFireSlopeSE = c(0.002,0.02),
                                        sAnthroSlopeSE = c(0.0005,0.005),sIntSE = c(0.04,0.4),
-                                       rIntSE = c(0.25,2.5)))
-stateScns$sQuantile=0.9
-stateScns$rQuantile = 0.9
+                                       rIntSE = c(0.25,2.5),sQuantile=c(0.9,0.9),rQuantile=c(0.9,0.9)))
+
 scns=merge(monitoringScns,stateScns)
+#scns$obsYears[scns$survivalModelNumber=="M0"]=4
+#scns$obsYears[scns$survivalModelNumber=="M0"]=4
 
 scns = subset(scns,!(grepl("2.5",rIntSE,fixed=T)&(collarCount==0)))
 scns$iAnthro = 0
@@ -259,3 +261,86 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelBiasSensitivity.png"),
        width = 12*0.8, height = 3.6*2, units = "in",
        dpi = 1200)
 
+###################################
+#Low effort scenario
+monitoringScns = data.frame(obsYears=c(1,4),collarCount=c(0,15),cowMult=c(3),collarInterval=c(1),
+                            assessmentYrs=c(1))
+stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
+stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
+stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)")))
+#stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.23,S_CV=0.0435)")))
+stateScns = merge(stateScns,data.frame(survivalModelNumber = c("M1","M0"), recruitmentModelNumber=c("M4","M0"),
+                                       rAnthroSlopeSE = c(0.006,0.06),rFireSlopeSE = c(0.002,0.02),
+                                       sAnthroSlopeSE = c(0.0005,0.005),sIntSE = c(0.04,0.4),
+                                       rIntSE = c(0.25,2.5),sQuantile=c(0.3,0.3),rQuantile=c(0.1,0.1)))
+
+scns=merge(monitoringScns,stateScns)
+
+scns = subset(scns,!(grepl("2.5",rIntSE,fixed=T)&(collarCount==0)))
+scns$iAnthro = 0
+scns$tA = scns$iAnthro+(scns$obsYears)*scns$obsAnthroSlope
+scns$projYears = 50-scns$obsYears
+scns$N0 = 2000
+
+scns
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
+                        legendPosition="none",breakInterval=breakInterval,
+                        labFontSize=labFontSize)+
+  yr_scale2 +
+  labs(tag = "b")
+
+plot(recPosterior)
+
+survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=bounds$survLow,
+                         legendPosition="none",breakInterval=breakInterval,
+                         labFontSize=labFontSize)+
+  yr_scale2
+plot(survPosterior)
+lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=bounds$lamLow,
+                           legendPosition="none",breakInterval=breakInterval,
+                           labFontSize=labFontSize)+
+  yr_scale2 +
+  ylim(c(0, 1.8))
+plot(lambdaPosterior)
+
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
+recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
+                         legendPosition="none",breakInterval=breakInterval,
+                         labFontSize=labFontSize)+
+  yr_scale2 +
+  labs(tag = "a")
+plot(recPosteriorB)
+
+survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=bounds$survLow,
+                          legendPosition="none",breakInterval=breakInterval,
+                          labFontSize=labFontSize)+
+  yr_scale2
+plot(survPosteriorB)
+lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=bounds$lamLow,
+                            legendPosition="none",breakInterval=breakInterval,
+                            labFontSize=labFontSize)+
+  yr_scale2 +
+  ylim(c(0, 1.8))
+plot(lambdaPosteriorB)
+
+
+leg <- plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = 0.85,
+               legendPosition="left",breakInterval=breakInterval,labFontSize=labFontSize)
+leg <- ggpubr::get_legend(leg)
+
+# combine ggplots to one figure
+plts <- ggpubr::ggarrange(
+                          recPosteriorB, survPosteriorB,lambdaPosteriorB,
+                          recPosterior, survPosterior, lambdaPosterior,
+                          labels = "",
+                          ncol = 3, nrow = 2, vjust = 1)
+ggpubr::ggarrange(plts, leg, ncol = 2, widths = c(6,1),heights=0.75)+bgcolor("white")
+
+ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesLowEffort.png"),
+       width = 9.6*0.779, height = 9.2*2/3, units = "in",
+       dpi = 1200)
+
+ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamplesLowEffort.pdf"),
+       width = 9.6*0.779, height = 9.2, units = "in",
+       dpi = 1200)

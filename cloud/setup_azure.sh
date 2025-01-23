@@ -2,7 +2,7 @@
 #############################################
 
 #### Parameters to change
-setName="s10"
+setName="s13"
 
 
 #####Login etc##################
@@ -19,13 +19,15 @@ allocState:allocationState}" \
 
 #### Move files to container ##############
 end=`date -u -d "7 days" '+%Y-%m-%dT%H:%MZ'`
-sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end --name sendicott --permissions racwdli -o tsv --auth-mode login --as-user`
+sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end --name jhughes --permissions racwdli -o tsv --auth-mode login --as-user`
 
+subnetid=$(az network vnet subnet list --resource-group EcDc-WLS-rg --vnet-name EcDc-WLS-vnet \
+--query "[?name=='EcDc-WLS_compute-cluster-snet'].id" --output tsv)
 #
-sasurl=https://ecdcwls.blob.core.windows.net/sendicott/?$sastoken
+sasurl=https://ecdcwls.blob.core.windows.net/jhughes/?$sastoken
 
-jobName="sendicott_job_"$setName
-poolName="sendicott_caribouDemo_"$setName
+jobName="jhughes_job_"$setName
+poolName="jhughes_caribouDemo_"$setName
 # delete old versions of scripts
 rm -r cloud/task_scripts
 rm -r cloud/task_jsons
@@ -36,7 +38,7 @@ rm -r cloud/pool_json
 nBatches=$(Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl)
 
 # Check that container is empty
-az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
+az storage blob list -c jhughes --account-name ecdcwls --sas-token $sastoken \
 --query "[].{name:name}" --output yaml
 
 # Upload scripts to use in tasks
@@ -94,7 +96,7 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=10
+taskNum=12
 
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
 --job-id $jobName --file-path "wd/nohup_"$taskNum".out" \
@@ -114,15 +116,15 @@ az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[i
 #### Download results ##########################
 
 # Check what results have been added to the storage container
-az storage blob list -c sendicott --account-name ecdcwls --sas-token $sastoken \
+az storage blob list -c jhughes --account-name ecdcwls --sas-token $sastoken \
 --query "[].{name:name}" --prefix $setName --output yaml
 
 #### Download results and remove from storage ################################
-az storage copy -s https://ecdcwls.blob.core.windows.net/sendicott/$setName/?$sastoken \
+az storage copy -s https://ecdcwls.blob.core.windows.net/jhughes/$setName/?$sastoken \
 -d results --recursive
 
 # NOTE removes ***everything*** from the storage container
-az storage remove -c sendicott --account-name ecdcwls --sas-token $sastoken --recursive
+az storage remove -c jhughes --account-name ecdcwls --sas-token $sastoken --recursive
 
 #### Delete pool and job ##########################
 az batch job delete --job-id $jobName
@@ -141,6 +143,6 @@ done
 az batch pool resize --pool-id $poolName --target-dedicated-nodes 1 \
 --node-deallocation-option "taskcompletion"
 
-az storage copy -d https://ecdcwls.blob.core.windows.net/sendicott/s8/?$sastoken \
+az storage copy -d https://ecdcwls.blob.core.windows.net/jhughes/s8/?$sastoken \
 -s results/s8 --recursive
 

@@ -3,6 +3,7 @@ library(tidyverse)
 library(ggplot2)
 library(caribouMetrics)
 library(RColorBrewer)
+library(scales)
 
 pal2 = brewer.pal(7,"RdBu")[c(2,6)]
 pal4 = brewer.pal(5,"RdBu")[c(1,2,4,5)]
@@ -13,7 +14,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s12" #need to do s10, s11, and s12
+setName = "s10" #need to do s10, s11, and s12
 dir.create(paste0("figs/",setName),recursive=T)
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
@@ -138,7 +139,6 @@ for(i in 1:length(pages)){
   print(base)
   dev.off()
 
-
   probs = subset(scResults$rr.summary.all,(Parameter=="Population growth rate"))
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
@@ -188,6 +188,22 @@ for(i in 1:length(pages)){
 
   probs = subset(probs,is.element(projectionTime,c(5,20)))
 
+  unique(scResults$obs.all$parameter)
+
+  #get true survey bias
+  cTrue = subset(scResults$obs.all,(type=="true")&is.element(parameter,c("Recruitment"))&
+                   (Year>(startYear+obsYears-1)))
+  cTrue$R = cTrue$Mean
+  cTrue$parameter=NULL;cTrue$type=NULL;cTrue$Mean=NULL
+  ccTrue = subset(scResults$obs.all,(type=="true")&is.element(parameter,c("Adjusted recruitment"))&
+                   (Year>(startYear+obsYears-1)))
+  ccTrue$X = ccTrue$Mean
+  ccTrue$parameter=NULL;ccTrue$type=NULL;ccTrue$Mean=NULL
+  cTrue = merge(cTrue, ccTrue)
+  ccTrue = NULL
+  cTrue$c = cTrue$X*2/cTrue$R
+  cTrue$startYear=cTrue$startYear+cTrue$preYears
+
   #plot probability of making an error about true population state
   statusTrue = subset(scResults$obs.all,(type=="true")&(parameter=="Population growth rate")&(Year>(startYear+obsYears-1)))
   statusTrue$startYear=statusTrue$startYear+statusTrue$preYears
@@ -205,6 +221,9 @@ for(i in 1:length(pages)){
 
   probs = merge(probs,statusTrue)
   probs = merge(probs,sizeTrue)
+  probs = merge(probs,cTrue)
+  nrow(probs)
+  statusTrue=NULL;sizeTrue=NULL;cTrue=NULL
   #probs = merge(probs,sizeProj)
   probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
   probs$predChange = probs$Mean#probs$projSize/probs$N0
@@ -246,7 +265,6 @@ for(i in 1:length(pages)){
 
   }
 
-
   probs$pageLab = batchStrip(probs$pageLab)
   pagesCa = unique(probs$pageLab)
   probs$RenewalInterval=as.factor(probs$ltyVariable)
@@ -258,6 +276,10 @@ for(i in 1:length(pages)){
     #pp=pagesCa[1]
     base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
       geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
+      stat_summary(fun = "mean",
+                   geom = "crossbar",
+                   size = 0.3,
+                   position = position_dodge(width = 0.9))+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
       theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
       scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
@@ -271,12 +293,38 @@ for(i in 1:length(pages)){
         height = 4, width = 7.48)
     print(base)
     dev.off()
+
+    #for low anthro, lots of collars, lots of monitoring, 5 yrs projection, look at effects of rQuantile, sQuantile (panels) and c
+    probf = subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])&(AnthroScn=="low")&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==5))
+
+    base=ggplot(probf,aes(x=trueMean,y=LambdaDiff,col=c))+
+      geom_point()+scale_colour_gradient2(
+        low = muted("red"),
+        mid = "white",
+        high = muted("blue"),
+        midpoint = 1,
+      )+xlab("True population growth rate")+ylab("Difference between true growth rate & posterior mean")
+
+    png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
+        height = 4, width = 5.51, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    pdf(here::here(paste0("figs/",setName,"/diffsFocus",pp,".pdf")),
+        height = 4, width = 5.51)
+    print(base)
+    dev.off()
+
   }
 
   #######################
   #EVSI calculations. See Dunham et al and references therein, and EVPIFromNationalSims.R
 
-  groupVars = c("Anthro","AnthroScn","YearsOfProjection",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
+  probs$cBin = cut_width(pmax(0.94,pmin(1.06,probs$c)), width=0.1,center=1)
+  table(probs$cBin)
+  levels(probs$cBin)=c("<0.95","mid",">1.05")
+  #RESUME HERE
+  groupVars = c("Anthro","AnthroScn","YearsOfProjection","cBin",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
 
   #Step 1: get posterior belief that true state is s p0_sd
   p1 = probs
@@ -322,8 +370,6 @@ for(i in 1:length(pages)){
     summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
               propViablePosterior=mean(probViable))
 
-
-
   probsSum = merge(probsSum,EVsample)
   probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
 
@@ -349,7 +395,7 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
-      scale_color_discrete(type=(pal4))
+      scale_color_discrete(type=(pal4)) + scale_x_continuous(breaks=c(0,5,10,15,20))
 
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
         height = 4, width = 7.48, units = "in",res=600)
@@ -366,7 +412,7 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
-      scale_color_discrete(type=(pal4))
+      scale_color_discrete(type=(pal4))+ scale_x_continuous(breaks=c(0,5,10,15,20))
     print(base)
     dev.off()
 
@@ -375,7 +421,7 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
-      scale_color_discrete(type=(pal4))
+      scale_color_discrete(type=(pal4))+ scale_x_continuous(breaks=c(0,5,10,15,20))
     print(base)
     dev.off()
 

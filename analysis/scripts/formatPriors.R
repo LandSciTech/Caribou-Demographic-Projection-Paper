@@ -32,3 +32,7 @@ pars<-rbind(pars,data.frame(name="beta.Saf",Parameter="$\\beta^S_a$",Description
 
 tbl<-merge(pars,tbl);tbl$name=NULL
 
+
+
+
+
