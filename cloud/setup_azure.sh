@@ -15,7 +15,6 @@ state:state, enableAutoScale:enableAutoScale,
 allocState:allocationState}" \
 --output table
 
-
 #### Move files to container ##############
 end=`date -u -d "7 days" '+%Y-%m-%dT%H:%MZ'`
 sastoken=`az storage container generate-sas --account-name ecdcwls --expiry $end --name jhughes --permissions racwdli -o tsv --auth-mode login --as-user`

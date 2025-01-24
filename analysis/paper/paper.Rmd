@@ -262,7 +262,7 @@ runScenarios = F #To do: set up to run full analysis from within this document.
 
 resultScenario = "S10"
 resultSet ="cmult6ay1aSf1"
-figSet = c("diffs","distScns","EVSI","power","EVPIall")
+figSet = c("diffslow","distScns","EVSI","power","EVPIall")
 
 if(runScenarios){
     source(here::here("analysis/scripts/0_nationalModelTrajectories.R"))
@@ -692,8 +692,7 @@ effort in each year (i.e. number of collars) or the number of years of
 monitoring (Figure \@ref(fig:figDiffs)) increase. Interannual variation makes reducing uncertainty challenging, and insufficiently informative priors can yield predictions that are both imprecise and inaccurate even in a case where there is 16 years of local monitoring data (Figure \@ref(fig:examplePredictions)). Increasing the forecast horizon [@petchey_ecological_2015] does not increase uncertainty about expected population growth (compare 5 and 20 year projections in
 Figure \@ref(fig:figDiffs)) in these scenarios.  
 
-Examining the probability of
-correctly assessing population status (Figure \@ref(fig:figStatusErrors))
+Examining the probability of correctly assessing population status (Figure \@ref(fig:figStatusErrors))
 and the expected value of information (Figures \@ref(fig:figEVSI) and E.1) helps clarify how the need for monitoring varies with landscape condition.
 When anthropogenic disturbance is high (right panels of Figures
 \@ref(fig:figStatusErrors), \@ref(fig:figEVSI), and E.1)), projections
@@ -706,18 +705,19 @@ disturbance is high, we see a negative EVSI (lower right panel of Figure
 probability of correctly assessing population status (lower right panel
 of Figure \@ref(fig:figStatusErrors)). This means that the long-term
 projections informed by local monitoring data are less
-precise but not less accurate, which can happen if the prior viability predictions are more certain than the posterior predictions (e.g 
-left side of right panels in Figure \@ref(fig:examplePredictions)). At
-lower levels of disturbance, local monitoring can reduce uncertainty, but
+precise but not less accurate, which can happen if the prior viability predictions are more certain than the posterior predictions (e.g left side of right panels in Figure \@ref(fig:examplePredictions)). At
+lower levels of disturbance, local monitoring can increase accuracy, but
 there are diminishing returns as the number of years of monitoring increases (Figures
-\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). Reducing uncertainty is more difficult when interannual variation is high (Figures
-\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)).The shapes of the
+\@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)). Increasing accuracy is more difficult when interannual variation is high (Figures \@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)).The shapes of the
 relationships between monitoring effort and the probability of correct
 status assessment depend on how anthropogenic disturbance is changing
 over time, but there are diminishing benefits of increased monitoring
 regardless of whether disturbance is increasing or decreasing
 (Supplement D). Acknowledging the possibility of composition survey errors increases uncertainty, but these increases are not large for the set of parameters we investigate
 (Supplement F).
+
+Averaging over the full set of example trajectories for each scenario (Figures \@ref(fig:figStatusErrors) and \@ref(fig:figEVSI)) obscures variation among them that is important for monitoring decisions. For example, where disturbance is low but increasing, in the near-term monitoring is most valuable for identifying populations with lower than expected population growth rates (row 1 of Figure \@(fig:figStatusErrorsLow)), but refining knowledge of the current population state also helps identify populations that are likely to remain viable as disturbance increases (row 3 of Figure \@(fig:figStatusErrorsLow)). Status assessment accuracy is much higher among examples where the 95% credible interval for expected population growth rate does not include one (xx %) than among examples where it does (xx %), and this information could be used to guide monitoring. A more nuanced option is to recognize that the posterior probability that the population is viable ($P(\psi|x,\tau)$ in eq \@ref(eq:EVSI)) is an indicator of error probability (Figure \@ref(fig:figProbViability)). One could inform a decision about whether more information is needed for a particular population by selecting an error tolerance (e.g. the probability of correct status assessment should be >0.98) and using that threshold to distinguish cases where the posterior probability of viability is sufficiently certain (i.e. near enough to 0 or 1) from cases where more information is needed (Figure \@ref(fig:figProbViability)). 
+
 
 
 # Discussion
@@ -988,9 +988,9 @@ file.rename(here::here("analysis/paper/figs_submit/bayesianModelExamplesLowEffor
 ```
 
 ```{r figDiffs, fig.cap=".", cache=TRUE}
-knitr::include_graphics(here::here("figs/forPaper/diffscmult6ay1aSf1.png"))
-file.rename(here::here("analysis/paper/figs_submit/diffscmult6ay1aSf1.pdf"), 
-            here::here("analysis/paper/figs_submit/Figure4_diffscmult6ay1aSf1.pdf"))
+knitr::include_graphics(here::here("figs/forPaper/diffslowcmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/diffslowcmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure4_diffslowcmult6ay1aSf1.pdf"))
 ```
 
 ```{r figStatusErrors, fig.cap=".", cache=TRUE}

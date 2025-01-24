@@ -16,13 +16,16 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 #sensitivity
 setName = "s14" #need to do s13, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
+dir.create(paste0("tabs/",setName),recursive=T)
+
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
+
 
 numBatches= max(scns$repBatch)
 str(scns)
 table(scns$pageId)
 
-nrow(scns)
+1942/(nrow(scns)/60)
 pagesa=unique(scns$pageId)
 
 pages = pagesa
@@ -121,7 +124,6 @@ for(i in 1:length(pages)){
   exResults$grp = paste(exResults$type,exResults$quantile, exResults$tA,exResults$obsYears)
   exResults$Anthro2023 = pmax(0,exResults$tA)#pmax(0,exResults$tA-2) #correcting for error - change back in round 4
 
-
   #unique(scResults$obs.all$collarCount)
   #unique(scResults$obs.all$ltyVariable)
   pars = unique(scResults$obs.all$parameter)
@@ -147,7 +149,7 @@ for(i in 1:length(pages)){
   names(probs)= gsub("_Population growth rate","",names(probs),fixed=T)
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
-  probs$Anthro2023 = pmax(0,probs$tA)#pmax(0,probs$tA-2) #correcting for error - change back in round 4
+  probs$Anthro2023 = probs$tA
   probs$YearsOfProjection = probs$projectionTime
 
   #See disturbance scenarios
@@ -195,21 +197,15 @@ for(i in 1:length(pages)){
   #make wide obs table
   obsWide <- subset(scResults$obs.all,(type=="true"))%>%
     pivot_wider(names_from = parameter, values_from = Mean)
-    str(obsWide)
   obsWide$startYear=obsWide$startYear+obsWide$preYears
-
-  check = subset(obsWide,is.na(interannualVar))
-  check$expLambda = check[["Adult female survival"]]*(1+check[["Adjusted recruitment"]])
-  range(check$expLambda-check[["Population growth rate"]])
-  check=NULL
-
   obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
 
   #now combine and make small
   names(obsWide)[names(obsWide)=="Population growth rate"]= "trueMean"
   names(obsWide)[names(obsWide)=="Female population size"]= "trueSize"
-  probs = subset(probs,is.element(projectionTime,c(5,20)))
-  obsWide=subset(obsWide, (Year>(startYear+obsYears-1)&(type=="true")))
+
+  probs = subset(probs,is.element(projectionTime,c(0,5,20)))
+  obsWide=subset(obsWide, is.element(Year,2023+c(0,5,20))&(type=="true"))
 
   nrow(probs)
   intersect(names(probs),names(obsWide))
@@ -217,35 +213,20 @@ for(i in 1:length(pages)){
   nrow(probs)
   obsWide=NULL
 
-  check=subset(probs,is.na(interannualVar))
-
-  hist(check$Mean_Recruitment-check$Recruitment)
-  mean(check$Mean_Recruitment-check$Recruitment)
-  hist(check[["Mean_Adult female survival"]]-check[["Adult female survival"]])
-  mean(check[["Mean_Adult female survival"]]-check[["Adult female survival"]])
-  hist(check[["Mean_Adjusted recruitment"]]-check[["Adjusted recruitment"]])
-  mean(check[["Mean_Adjusted recruitment"]]-check[["Adjusted recruitment"]])
-  hist(check[["Mean"]]-check[["trueMean"]])
-  mean(check[["Mean"]]-check[["trueMean"]])
-
   probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
   probs$predChange = probs$Mean#probs$projSize/probs$N0
-
   probs$viableTrue = (probs$trueChange>0.99)#&(probs$trueSize>10)
-
   probs$viablePred = (probs$predChange>0.99)#&(probs$projSize>10)
-
   probs$wrong = probs$viableTrue != probs$viablePred
-
   probs$CorrectStatus[probs$wrong]="no"
   probs$CorrectStatus[!probs$wrong]="yes"
   probs$LambdaDiff = probs$trueChange-probs$predChange
-  #probs$LambdaDiff[(probs$projSize<=10)]=NA
 
   probs$pageLabB = paste0(batchStrip(probs$pageLab),"st",probs$collarCount,"ri",probs$ltyVariable)
   pagesB=unique(probs$pageLabB)
 
   probs$AnthroScn=as.factor(probs$Anthro2023)
+
 
   if(is.element(0,levels(probs$AnthroScn))){
     levels(probs$AnthroScn) = c("low","low-med","med-high","high")
@@ -253,24 +234,26 @@ for(i in 1:length(pages)){
     levels(probs$AnthroScn) = c("low-med","med-high","high")
   }
 
-  for(pp in pagesB){
-    #pp=pagesB[3]
-    png(here::here(paste0("figs/",setName,"/bands",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
-    base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-      theme_bw()+xlab("Years of monitoring")+ylab("Estimated mean population growth rate")
-    print(base)
-    dev.off()
+  if(0){
+    for(pp in pagesB){
+      #pp=pagesB[3]
+      png(here::here(paste0("figs/",setName,"/bands",pp,".png")),
+          height = 4, width = 7.48, units = "in",res=600)
+      base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
+        facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
+        theme_bw()+xlab("Years of monitoring")+ylab("Estimated mean population growth rate")
+      print(base)
+      dev.off()
 
-    png(here::here(paste0("figs/",setName,"/bandsTrue",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
-    base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-      theme_bw()+xlab("Years of monitoring")+ylab("True population growth rate")
-    print(base)
-    dev.off()
+      png(here::here(paste0("figs/",setName,"/bandsTrue",pp,".png")),
+          height = 4, width = 7.48, units = "in",res=600)
+      base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
+        facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
+        theme_bw()+xlab("Years of monitoring")+ylab("True population growth rate")
+      print(base)
+      dev.off()
 
+    }
   }
 
   probs$pageLab = batchStrip(probs$pageLab)
@@ -282,48 +265,100 @@ for(i in 1:length(pages)){
   probs$CollarYrs = as.numeric(as.character(probs$NumCollars))*probs$obsYears
   for(pp in pagesCa){
     #pp=pagesCa[1]
-    base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==scns$ltyVariable[nrow(scns)])),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
-      geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
-      stat_summary(fun = "mean",
-                   geom = "crossbar",
-                   size = 0.3,
-                   position = position_dodge(width = 0.9))+
-      facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
-      theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
-      scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
+    probs$Sdiff = probs[["Adult female survival"]]-probs[["Mean_Adult female survival"]]
+    probs$Rdiff = probs[["Adjusted recruitment"]]-probs[["Mean_Adjusted recruitment"]]
 
-    png(here::here(paste0("figs/",setName,"/diffs",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
-    print(base)
-    dev.off()
+    for (ltyS in unique(probs$ltyVariable)){
+      #ltyS="none"
+      base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
+        geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
+        stat_summary(fun = "mean",
+                     geom = "crossbar",
+                     size = 0.3,
+                     position = position_dodge(width = 0.9))+
+        facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
+        theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
+        scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
 
-    pdf(here::here(paste0("figs/",setName,"/diffs",pp,".pdf")),
-        height = 4, width = 7.48)
-    print(base)
-    dev.off()
+      png(here::here(paste0("figs/",setName,"/diffs",ltyS,pp,".png")),
+          height = 5, width = 7.48, units = "in",res=600)
+      print(base)
+      dev.off()
+
+      pdf(here::here(paste0("figs/",setName,"/diffs",ltyS,pp,".pdf")),
+          height = 5, width = 7.48)
+      print(base)
+      dev.off()
+
+      base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=Sdiff,col=NumCollars,fill=NumCollars,group=grp))+
+        geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
+        stat_summary(fun = "mean",
+                     geom = "crossbar",
+                     size = 0.3,
+                     position = position_dodge(width = 0.9))+
+        facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
+        theme_bw()+xlab("Years of monitoring")+ylab("Difference between true survival and posterior mean")+
+        scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
+
+      png(here::here(paste0("figs/",setName,"/diffsS",ltyS,pp,".png")),
+          height = 5, width = 7.48, units = "in",res=600)
+      print(base)
+      dev.off()
+
+      pdf(here::here(paste0("figs/",setName,"/diffsS",ltyS,pp,".pdf")),
+          height = 5, width = 7.48)
+      print(base)
+      dev.off()
+
+      base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=Rdiff,col=NumCollars,fill=NumCollars,group=grp))+
+        geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
+        stat_summary(fun = "mean",
+                     geom = "crossbar",
+                     size = 0.3,
+                     position = position_dodge(width = 0.9))+
+        facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
+        theme_bw()+xlab("Years of monitoring")+ylab("Difference between true survival and posterior mean")+
+        scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
+
+      png(here::here(paste0("figs/",setName,"/diffsR",ltyS,pp,".png")),
+          height = 5, width = 7.48, units = "in",res=600)
+      print(base)
+      dev.off()
+
+      pdf(here::here(paste0("figs/",setName,"/diffsR",ltyS,pp,".pdf")),
+          height = 5, width = 7.48)
+      print(base)
+      dev.off()
+
+    }
 
     #for low anthro, lots of collars, lots of monitoring, 5 yrs projection, look at effects of rQuantile, sQuantile (panels) and c
     probf = subset(probs,(pageLab==pp)&(AnthroScn=="low")&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==5))
-    probf$Sdiff = probf[["Adult female survival"]]-probf[["Mean_Adult female survival"]]
+    probf$Interannual = probf$ltyVariable
+
     probf$Sdot = probf[["Adult female survival"]]
     probf$S = probf[["Mean_Adult female survival"]]
     #probf = subset(probf,Sdot>0.85)
 
     base=ggplot(probf,aes(x=Sdot,y=S,col=c))+
-      geom_point()+scale_colour_gradient2(
+      geom_point(alpha=0.2)+scale_colour_gradient2(
         low = muted("red"),
         mid = "grey",
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
-      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)
+      facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
+      xlab("True survival")+ylab("Posterior mean survival")
 
     png(here::here(paste0("figs/",setName,"/diffsSFocus",pp,".png")),
-        height = 4, width = 5.51, units = "in",res=600)
+        height = 3, width = 5.51, units = "in",res=600)
+    print(base)
+    dev.off()
+    pdf(here::here(paste0("figs/",setName,"/diffsSFocus",pp,".pdf")),
+        height = 3, width = 5.51)
     print(base)
     dev.off()
 
-    probf$Rdiff = probf[["Adjusted recruitment"]]-probf[["Mean_Adjusted recruitment"]]
     probf$Rdot = probf[["Adjusted recruitment"]]
     probf$R = probf[["Mean_Adjusted recruitment"]]
     base=ggplot(probf,aes(x=Rdot,y=R,col=c))+
@@ -333,12 +368,19 @@ for(i in 1:length(pages)){
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
-      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)
+      facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
+      xlab("True adjusted recruitment")+ylab("Posterior mean adjusted recruitment")
 
     png(here::here(paste0("figs/",setName,"/diffsRFocus",pp,".png")),
-        height = 4, width = 5.51, units = "in",res=600)
+        height = 3, width = 5.51, units = "in",res=600)
     print(base)
     dev.off()
+
+    pdf(here::here(paste0("figs/",setName,"/diffsRFocus",pp,".pdf")),
+        height = 3, width = 5.51)
+    print(base)
+    dev.off()
+
 
     base=ggplot(probf,aes(x=trueMean,y=Mean,col=c))+
       geom_point()+scale_colour_gradient2(
@@ -347,16 +389,16 @@ for(i in 1:length(pages)){
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
-      facet_wrap(~ltyVariable)+geom_abline(slope=1,linetype=2)+
+      facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
     xlab("True population growth rate")+ylab("Posterior mean growth rate")
 
     png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
-        height = 4, width = 5.51, units = "in",res=600)
+        height = 3, width = 5.51, units = "in",res=600)
     print(base)
     dev.off()
 
     pdf(here::here(paste0("figs/",setName,"/diffsFocus",pp,".pdf")),
-        height = 4, width = 5.51)
+        height = 3, width = 5.51)
     print(base)
     dev.off()
 
@@ -368,8 +410,11 @@ for(i in 1:length(pages)){
   probs$cBin = cut_width(pmax(0.94,pmin(1.06,probs$c)), width=0.1,center=1)
   table(probs$cBin)
   levels(probs$cBin)=c("<0.95","mid",">1.05")
-  #RESUME HERE
-  groupVars = c("Anthro","AnthroScn","YearsOfProjection","cBin",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
+
+  hist(probs$Mean)
+
+  #all results together
+  groupVars = c("Anthro","AnthroScn","YearsOfProjection",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
 
   #Step 1: get posterior belief that true state is s p0_sd
   p1 = probs
@@ -443,17 +488,17 @@ for(i in 1:length(pages)){
       scale_color_discrete(type=(pal4)) + scale_x_continuous(breaks=c(0,5,10,15,20))
 
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
+        height = 5, width = 7.48, units = "in",res=600)
     print(base)
     dev.off()
 
     pdf(here::here(paste0("figs/",setName,"/power",pp,".pdf")),
-        height = 4, width = 7.48)
+        height = 5, width = 7.48)
     print(base)
     dev.off()
 
     png(here::here(paste0("figs/",setName,"/EVsample",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
+        height = 5, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
@@ -462,7 +507,7 @@ for(i in 1:length(pages)){
     dev.off()
 
     png(here::here(paste0("figs/",setName,"/probChecks",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
+        height = 5, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
@@ -472,7 +517,7 @@ for(i in 1:length(pages)){
 
 
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
-        height = 4, width = 7.48, units = "in",res=600)
+        height = 5, width = 7.48, units = "in",res=600)
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
@@ -481,6 +526,74 @@ for(i in 1:length(pages)){
     dev.off()
 
   }
+
+  ####################################
+  #risk of error in cases where predictive interval does not include 1?
+  probs$BandWidth1 = (probs[["Lower 95% CRI"]]<1)&(probs[["Upper 95% CRI"]]>=1)
+  errorsByBand <- probs %>% group_by(BandWidth1) %>%
+    summarize(probWrong = 100*mean(wrong))
+
+  write.csv(errorsByBand,here::here(paste0("tabs/",setName,"/ErrorsByBand",batchStrip(p),".csv")),row.names=F)
+
+  probErrorPlot = ggplot(probs,aes(x=probViable,y=1-as.numeric(wrong)))+geom_smooth(col="black")+
+    theme_bw()+xlab("Posterior probability of viability")+ylab("Probability of correct status assessment")+
+    geom_abline(intercept=0.98,slope=0,linetype=2)
+
+  png(here::here(paste0("figs/",setName,"/probViability",batchStrip(p),".png")),
+      height = 3.5, width =3.543, units = "in",res=600)
+  print(probErrorPlot)
+  dev.off()
+
+  pdf(here::here(paste0("figs/",setName,"/probViability",batchStrip(p),".pdf")),
+      height = 3.5, width = 3.543)
+  print(probErrorPlot)
+  dev.off()
+
+  ####################################
+  #grouped by lambda - omit voi, focus on low scenario
+  probsLow = subset(probs,AnthroScn=="low")
+
+  hist(probsLow$trueMean)
+  probsLow$GrowthRate = cut_width(pmax(0.97,pmin(1.04,probsLow$trueMean)), width=0.02,center=1)
+  table(probsLow$GrowthRate)
+  levels(probsLow$GrowthRate)[1]="<=0.97"
+  levels(probsLow$GrowthRate)[length(levels(probsLow$GrowthRate))]=">1.03"
+  levels(probsLow$GrowthRate)
+
+  groupVars = c("Anthro","AnthroScn","YearsOfProjection","GrowthRate",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
+
+  probsSum <- probsLow %>% group_by(across(groupVars)) %>%
+    summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
+              propViablePosterior=mean(probViable))
+
+  probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
+  probsSum$pageLabC = batchStrip(probsSum$pageLab)
+  pagesC=unique(probsSum$pageLabC)
+  probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
+  probsSum$NumCollars = as.factor(probsSum$collarCount)
+  probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
+  probsSum <- subset(probsSum,collarCount>0)
+
+  for(pp in pagesC){
+    #pp=pagesC[1]
+    probsSum$Growth=probsSum$GrowthRate
+    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+      facet_grid(YearsOfProjection~Growth,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
+      theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
+      scale_color_discrete(type=(pal4)) + scale_x_continuous(breaks=c(0,5,10,15,20))
+
+    png(here::here(paste0("figs/",setName,"/powerLam",pp,".png")),
+        height = 5, width = 7.48, units = "in",res=600)
+    print(base)
+    dev.off()
+
+    pdf(here::here(paste0("figs/",setName,"/powerLam",pp,".pdf")),
+        height = 5, width = 7.48)
+    print(base)
+    dev.off()
+
+  }
+
 }
 
 write.csv(EVout,here::here(paste0("tabs/EVsample",setName,".csv")),row.names=F)
