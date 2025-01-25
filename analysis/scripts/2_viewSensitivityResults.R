@@ -14,7 +14,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s14" #need to do s13, s14, and s15
+setName = "s16" #need to do s13, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 dir.create(paste0("tabs/",setName),recursive=T)
 
@@ -97,7 +97,8 @@ for(i in 1:length(pages)){
     scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
   }
 
-  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=numBatches)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
+  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=numBatches)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])==1)){#<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
+    #print(p,nextP)
     combine=F
   }else{combine=T;next}
 
@@ -108,7 +109,7 @@ for(i in 1:length(pages)){
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(Parameter=="Population growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable=="none")&(Parameter=="Population growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
@@ -127,7 +128,7 @@ for(i in 1:length(pages)){
   #unique(scResults$obs.all$collarCount)
   #unique(scResults$obs.all$ltyVariable)
   pars = unique(scResults$obs.all$parameter)
-  obs = subset(scResults$obs.all,(collarCount==30)&(ltyVariable==scns$ltyVariable[1])&(parameter=="Population growth rate"))
+  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable=="none")&(parameter=="Population growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -215,9 +216,15 @@ for(i in 1:length(pages)){
 
   probs$trueChange = probs$trueMean#probs$trueSize/probs$N0
   probs$predChange = probs$Mean#probs$projSize/probs$N0
+
   probs$viableTrue = (probs$trueChange>0.99)#&(probs$trueSize>10)
   probs$viablePred = (probs$predChange>0.99)#&(probs$projSize>10)
+
+  probs$viableTrueB = cut_width(pmax(0.98,pmin(1.02,probs$trueChange)), width=0.02,center=1)
+  probs$viablePredB = cut_width(pmax(0.98,pmin(1.02,probs$predChange)), width=0.02,center=1)
+
   probs$wrong = probs$viableTrue != probs$viablePred
+
   probs$CorrectStatus[probs$wrong]="no"
   probs$CorrectStatus[!probs$wrong]="yes"
   probs$LambdaDiff = probs$trueChange-probs$predChange
@@ -272,10 +279,10 @@ for(i in 1:length(pages)){
       #ltyS="none"
       base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
         geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
-        stat_summary(fun = "mean",
-                     geom = "crossbar",
-                     size = 0.3,
-                     position = position_dodge(width = 0.9))+
+        #stat_summary(fun = "mean",
+        #             geom = "crossbar",
+        #             size = 0.3,
+        #             position = position_dodge(width = 0.9))+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
         theme_bw()+xlab("Years of monitoring")+ylab("Difference between true growth rate and posterior mean")+
         scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
@@ -292,10 +299,10 @@ for(i in 1:length(pages)){
 
       base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=Sdiff,col=NumCollars,fill=NumCollars,group=grp))+
         geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
-        stat_summary(fun = "mean",
-                     geom = "crossbar",
-                     size = 0.3,
-                     position = position_dodge(width = 0.9))+
+        #stat_summary(fun = "mean",
+        #             geom = "crossbar",
+        #             size = 0.3,
+        #             position = position_dodge(width = 0.9))+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
         theme_bw()+xlab("Years of monitoring")+ylab("Difference between true survival and posterior mean")+
         scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
@@ -312,10 +319,10 @@ for(i in 1:length(pages)){
 
       base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=Rdiff,col=NumCollars,fill=NumCollars,group=grp))+
         geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
-        stat_summary(fun = "mean",
-                     geom = "crossbar",
-                     size = 0.3,
-                     position = position_dodge(width = 0.9))+
+        #stat_summary(fun = "mean",
+        #             geom = "crossbar",
+        #             size = 0.3,
+        #             position = position_dodge(width = 0.9))+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars",fill="Number of\ncollars")+
         theme_bw()+xlab("Years of monitoring")+ylab("Difference between true survival and posterior mean")+
         scale_color_discrete(type=(pal4))+scale_fill_discrete(type=(pal4))
@@ -341,14 +348,14 @@ for(i in 1:length(pages)){
     #probf = subset(probf,Sdot>0.85)
 
     base=ggplot(probf,aes(x=Sdot,y=S,col=c))+
-      geom_point(alpha=0.2)+scale_colour_gradient2(
+      geom_point(alpha=0.3)+scale_colour_gradient2(
         low = muted("red"),
         mid = "grey",
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
       facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
-      xlab("True survival")+ylab("Posterior mean survival")
+      xlab("True survival")+ylab("Posterior mean survival")+theme_bw()
 
     png(here::here(paste0("figs/",setName,"/diffsSFocus",pp,".png")),
         height = 3, width = 5.51, units = "in",res=600)
@@ -362,14 +369,14 @@ for(i in 1:length(pages)){
     probf$Rdot = probf[["Adjusted recruitment"]]
     probf$R = probf[["Mean_Adjusted recruitment"]]
     base=ggplot(probf,aes(x=Rdot,y=R,col=c))+
-      geom_point()+scale_colour_gradient2(
+      geom_point(alpha=0.3)+scale_colour_gradient2(
         low = muted("red"),
         mid = "grey",
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
       facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
-      xlab("True adjusted recruitment")+ylab("Posterior mean adjusted recruitment")
+      xlab("True adjusted recruitment")+ylab("Posterior mean adjusted recruitment")+theme_bw()
 
     png(here::here(paste0("figs/",setName,"/diffsRFocus",pp,".png")),
         height = 3, width = 5.51, units = "in",res=600)
@@ -383,14 +390,14 @@ for(i in 1:length(pages)){
 
 
     base=ggplot(probf,aes(x=trueMean,y=Mean,col=c))+
-      geom_point()+scale_colour_gradient2(
+      geom_point(alpha=0.3)+scale_colour_gradient2(
         low = muted("red"),
         mid = "grey",
         high = muted("blue"),
         midpoint = 1,
       )+geom_smooth(col="black")+
       facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
-    xlab("True population growth rate")+ylab("Posterior mean growth rate")
+    xlab("True population growth rate")+ylab("Posterior mean growth rate")+theme_bw()
 
     png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
         height = 3, width = 5.51, units = "in",res=600)
@@ -554,10 +561,10 @@ for(i in 1:length(pages)){
   probsLow = subset(probs,AnthroScn=="low")
 
   hist(probsLow$trueMean)
-  probsLow$GrowthRate = cut_width(pmax(0.97,pmin(1.04,probsLow$trueMean)), width=0.02,center=1)
+  probsLow$GrowthRate = cut_width(pmax(0.96,pmin(1.03,probsLow$trueMean)), width=0.02,center=1)
   table(probsLow$GrowthRate)
   levels(probsLow$GrowthRate)[1]="<=0.97"
-  levels(probsLow$GrowthRate)[length(levels(probsLow$GrowthRate))]=">1.03"
+  levels(probsLow$GrowthRate)[length(levels(probsLow$GrowthRate))]=">1.01"
   levels(probsLow$GrowthRate)
 
   groupVars = c("Anthro","AnthroScn","YearsOfProjection","GrowthRate",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))

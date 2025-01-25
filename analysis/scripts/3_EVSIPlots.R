@@ -21,7 +21,7 @@ batchStrip<-function(l,batches=c(10,seq(1:9))){
   return(l)
 }
 
-setName = "s10"
+setName = "s16"
 probsSum = read.csv(here::here(paste0("tabs/EVsample",setName,".csv")),stringsAsFactors = F)
 
 probsSum$pageLabC = batchStrip(probsSum$pageLab)

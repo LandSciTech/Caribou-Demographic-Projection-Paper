@@ -13,7 +13,7 @@ stateScns = data.frame(tA=c(0,20,40,60),
                        obsAnthroSlope=c(0,1,1,1),
                        projAnthroSlope=c(1,1,1,1)
                        )
-stateScns = merge(stateScns,data.frame(rep=seq(1:600)))
+stateScns = merge(stateScns,data.frame(rep=seq(1:500)))
 stateScns = merge(stateScns,data.frame(interannualVar=c(NA,"list(R_CV=0.46,S_CV=0.087)","list(R_CV=0.23,S_CV=0.0435)")))
 stateScns$sQuantile=runif(nrow(stateScns),min=0.01,max=0.99)
 stateScns$rQuantile = runif(nrow(stateScns),min=0.01,max=0.99)
@@ -40,7 +40,7 @@ pages=unique(scns$pageLab)
 
 ###################
 #Without bias
-setName = "s16" #14 is the same, just bigger batches.
+setName = "s14" #14 is the same, just bigger batches.
 scns$qMax = 0;scns$uMax=0;scns$zMax=0
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)

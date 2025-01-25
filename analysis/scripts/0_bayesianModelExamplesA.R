@@ -13,6 +13,7 @@ stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
 stateScns = merge(stateScns,data.frame(rep=seq(1:1)))
 #stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)")))
 stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.23,S_CV=0.0435)")))
+#stateScns = merge(stateScns,data.frame(interannualVar=c(NA)))
 stateScns = merge(stateScns,data.frame(survivalModelNumber = c("M1","M0"), recruitmentModelNumber=c("M4","M0"),
                                        rAnthroSlopeSE = c(0.006,0.06),rFireSlopeSE = c(0.002,0.02),
                                        sAnthroSlopeSE = c(0.0005,0.005),sIntSE = c(0.06,0.6),
