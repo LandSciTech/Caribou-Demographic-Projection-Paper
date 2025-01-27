@@ -2,7 +2,7 @@
 #############################################
 
 #### Parameters to change
-setName="s13"
+setName="s15"
 
 #####Login etc##################
 # Accept the default tenant by pressing enter when prompted

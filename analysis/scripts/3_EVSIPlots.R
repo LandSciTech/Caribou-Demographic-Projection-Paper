@@ -21,7 +21,7 @@ batchStrip<-function(l,batches=c(10,seq(1:9))){
   return(l)
 }
 
-setName = "s16"
+setName = "s14"
 probsSum = read.csv(here::here(paste0("tabs/EVsample",setName,".csv")),stringsAsFactors = F)
 
 probsSum$pageLabC = batchStrip(probsSum$pageLab)
@@ -96,12 +96,12 @@ for(pp in pagesC){
     scale_color_discrete(type=(pal4))
 
   png(here::here(paste0("figs/",setName,"/EVSI",pp,".png")),
-      height = 3.7, width = 7.48, units = "in",res=600)
+      height = 5, width = 7.48, units = "in",res=600)
   print(base)
   dev.off()
 
   pdf(here::here(paste0("figs/",setName,"/EVSI",pp,".pdf")),
-      height = 3.7, width = 7.48)
+      height = 5, width = 7.48)
   print(base)
   dev.off()
 

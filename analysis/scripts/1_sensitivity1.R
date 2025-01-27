@@ -27,6 +27,7 @@ scns$projYears = 20
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/10)
 table(scns$repBatch)
+
 scns$N0 = 5000
 
 scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
@@ -56,7 +57,7 @@ monitoringScns = subset(monitoringScns, !((obsYears>1)&(collarCount==0))&!((coll
 stateScns = data.frame(tA=c(0,20,40,60,0,20,40,60,60,40,20),
                        obsAnthroSlope=c(0,1,1,1,0,0,0,0,0,0,0),
                        projAnthroSlope=c(1,1,1,1,0,0,0,0,-1,-1,-1))
-stateScns = merge(stateScns,data.frame(rep=seq(1:500)))
+stateScns = merge(stateScns,data.frame(rep=seq(1:400)))
 
 stateScns$sQuantile=runif(nrow(stateScns),min=0.01,max=0.99)
 stateScns$rQuantile = runif(nrow(stateScns),min=0.01,max=0.99)
@@ -68,7 +69,7 @@ scns$preYears = max(scns$obsYears)-scns$obsYears
 scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
 scns$projYears = 20
 unique(scns$iAnthro)
-scns$repBatch = ceiling(scns$rep/10)
+scns$repBatch = ceiling(scns$rep/2)
 table(scns$repBatch)
 scns$N0 = 5000
 
