@@ -50,7 +50,7 @@ pages=unique(scns$pageLab)
 #Different anthropogenic disturbance scenarios, collar intervals. With bias and default interannual variability.
 setName = "s15" #formerly s11
 monitoringScns = expand.grid(obsYears=c(1,2,4,8,16,24),collarCount=c(0,15,30,60),
-                             cowMult=c(3,6,9),collarInterval=c(1,4),
+                             cowMult=c(3,9),collarInterval=c(1,4),
                              assessmentYrs=c(1))
 #TO DO - in next iteration, remove multiple years of one collar
 monitoringScns = subset(monitoringScns, !((obsYears>1)&(collarCount==0))&!((collarCount==1)&(cowMult>3))&!((collarCount==0)&(collarInterval>1)))
@@ -69,7 +69,7 @@ scns$preYears = max(scns$obsYears)-scns$obsYears
 scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
 scns$projYears = 20
 unique(scns$iAnthro)
-scns$repBatch = ceiling(scns$rep/4)
+scns$repBatch = ceiling(scns$rep/12)
 table(scns$repBatch)
 scns$N0 = 5000
 

@@ -70,10 +70,8 @@ Table A1. Variables and parameters in the Bayesian population model and the nati
 |$F_t$|%|Fire disturbance.| 
 |$\hat{J}_t$|animals|Calves observed in calf:cow survey.|
 |$\hat{W}_t$|animals|Cows observed in calf:cow survey.|
-|$\hat{T}_t$|animals|Number of collared cows.|
-|$\hat{S}_t$|probability|Kaplan-Meier estimate of observed adult female survival.|
-|$\tau_t$||Precision of Kaplan-Meier survival estimate.|
-|$\hat{I}_{i,t,m}$|0 or 1|Indicator of whether animal $i$ is dead or alive.|
+|$\hat{T}_t$|animals|Number of collared cows at end of year.|
+|$\hat{I}_{t}$|animals|Number of collared cows at beginning of year.|
 |**Parameters estimated in the Bayesian model**|
 |$R_t$|rate|Recruitment (calves per cow).|
 |$S_t$|probability|Adult female survival.|
@@ -296,10 +294,23 @@ knitr::include_graphics(here::here(paste0("figs/",resultScenario,"/EVPIall.png")
 
 # Sensitivity to unknown bias in recruitment estimates from calf:cow surveys
 
-Adding unknown unknown bias does increase uncertainty, but these increases are not large (compare Figs 4 and \@ref(fig:powercmult6ay1aSf1NoBias)). A key reason for this result is that we assumed the same range of values for the probability of misclassifying adults, and the probability of missing calves (supplement B). Presuming that surveyed groups contain more cows than bulls, and that there is an equal probability of misclassifying cows and young bulls and vice versa, then misclassification errors cause high estimated recruitment. Missing calves causes low estimated recruitment, and together these errors tend to cancel one another out. 
+Adding unknown unknown bias does increase uncertainty, but these increases are not large (compare Figs 6 and \@ref(fig:figStatusErrorsNoBias)). A key reason for this result is that we assumed the same range of values for the probability of misclassifying adults, and the probability of missing calves (supplement B). Presuming that surveyed groups contain more cows than bulls, and that there is an equal probability of misclassifying cows and young bulls and vice versa, then misclassification errors cause high estimated recruitment. Missing calves causes low estimated recruitment, and together these errors tend to cancel one another out. 
 
-```{r powercmult6ay1aSf1NoBias, fig.cap="The probability of a correct status assessment with unknown bias in recruitment estimates from calf:cow surveys. In these examples there are 6 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 4 for additional details. ", cache=TRUE}
+```{r figDiffsNoBias, fig.cap="The distribution of differences between true expected population growth rates and Bayesian posterior expected growth rates without bias in recruitment estimates from calf:cow surveys. In these examples there is no interannual variation, 6 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 6 for additional details.", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/diffsnonecmult6ay1aSf1.png")))
+```
+
+
+```{r figStatusErrorsNoBias, fig.cap="The probability of a correct status assessment without bias in recruitment estimates from calf:cow surveys. In these examples there are 6 cows per collared cow in recruitment surveys, and disturbance increases over time (Figure 1). See Figure 6 for additional details. ", cache=TRUE}
 knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/powercmult6ay1aSf1.png")))
+```
+
+```{r figStatusErrorsLowNoBias, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/powerLamcmult6ay1aSf1.png")))
+```
+
+```{r figProbViabilityNoBias, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here(paste0("figs/",noBiasResultScenario,"/probViabilitycmult6ay1aSf1.png")))
 ```
 
 # Colophon

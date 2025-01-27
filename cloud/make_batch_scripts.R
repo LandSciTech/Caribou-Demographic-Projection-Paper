@@ -8,7 +8,7 @@ if(0){
   keyring::key_get("Azure_subnetId")
 }
 cargs <- commandArgs(trailingOnly = TRUE)
-#cargs=c("s14","https://ecdcwls.blob.core.windows.net/jhughes/?se=2025-01-24T17%3A50Z&sp=racwdli&sv=2022-11-02&sr=c&skoid=536c15ec-3c37-4b86-ae47-a3fefedad9c4&sktid=740c5fd3-6e8b-4176-9cc9-454dbe4e62c4&skt=2025-01-17T17%3A50%3A13Z&ske=2025-01-24T17%3A50%3A00Z&sks=b&skv=2022-11-02&sig=py82KrESgpDj/yy2aIgki%2BhfZfTKgkTYF%2BUq0muzXn4%3D")
+#cargs=c("s15","https://ecdcwls.blob.core.windows.net/jhughes/?se=2025-01-24T17%3A50Z&sp=racwdli&sv=2022-11-02&sr=c&skoid=536c15ec-3c37-4b86-ae47-a3fefedad9c4&sktid=740c5fd3-6e8b-4176-9cc9-454dbe4e62c4&skt=2025-01-17T17%3A50%3A13Z&ske=2025-01-24T17%3A50%3A00Z&sks=b&skv=2022-11-02&sig=py82KrESgpDj/yy2aIgki%2BhfZfTKgkTYF%2BUq0muzXn4%3D")
 setName = cargs[1]
 allScns = read.csv(paste0("tabs/",setName,".csv"))
 scn_nums <- unique(allScns$pageId)
@@ -22,7 +22,7 @@ sasurl <- cargs[2]
 vmSizes <- c(2,4,8,16,32)
 
 # assuming 12 is the max nodes of 27 for all LERS that we want to use at a time
-nSlotsPerNodeOpts <- nBatches/1:12
+nSlotsPerNodeOpts <- nBatches/1:16
 
 wchnSlotsPerNode <- sapply(nSlotsPerNodeOpts,
                            function(x) min((vmSizes - x)[(vmSizes - x) >= 0]))|>

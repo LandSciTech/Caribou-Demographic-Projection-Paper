@@ -260,9 +260,9 @@ fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 
 runScenarios = F #To do: set up to run full analysis from within this document.
 
-resultScenario = "S10"
+resultScenario = "S14"
 resultSet ="cmult6ay1aSf1"
-figSet = c("diffslow","distScns","EVSI","power","EVPIall")
+figSet = c("diffslow","distScns","EVSI","power","EVPIall","powerLam","probViability")
 
 if(runScenarios){
     source(here::here("analysis/scripts/0_nationalModelTrajectories.R"))
@@ -377,7 +377,7 @@ TO DO: run low initial population size scenario, put in appendix of one by one s
 ## Simulation of population dynamics and monitoring
 
 To investigate the effectiveness of various monitoring strategies, and to show how this
-varies with landscape condition, we begin by simulating example demographic trajectories and observations of those trajectories. To simulated example trajectories we use a modified version of Johnson et al's [-@johnson_science_2020] demographic model described by Dyson et al. [-@dyson_existing_2022]. For brevity, we refer to this as the "national" model. For clarity, we include a full description of the model in the following paragraphs. Together, a set of example trajectories from the national model represent alternative hypotheses about the true state of a particular caribou population. To assess the accuracy of population status assessments and the expected value of alternative monitoring strategies [@runge_which_2011; @dunham_strategic_2023] we analyze each trajectory of simulated observations using a Bayesian model (section 2.4). We also use the sets of simulated trajectories to confirm that prior predictions from our Bayesian model are consistent with knowledge of the observed distribution of outcomes for caribou across the country [@johnson_science_2020]. 
+varies with landscape condition, we begin by simulating example demographic trajectories and observations of those trajectories. To simulated example trajectories we use a modified version of Johnson et al's [-@johnson_science_2020] demographic model described by Dyson et al. [-@dyson_existing_2022]. For brevity, we refer to this as the "national" model, and for clarity we include a full description in the following paragraphs. Together, a set of example trajectories from the national model represent alternative hypotheses about the true state of a particular caribou population. To assess the accuracy of population status assessments and the expected value of alternative monitoring strategies [@runge_which_2011; @dunham_strategic_2023] we analyze each trajectory of simulated observations using a Bayesian model (section 2.4). We also use the sets of simulated trajectories to confirm that prior predictions from our Bayesian model are consistent with knowledge of the observed distribution of outcomes for caribou across the country [@johnson_science_2020]. 
 
 Given a population of post-juvenile females at the beginning of year $t$,
 $\dot{N}_t$, the number that survive to the census, $\dot{W}_t$, is
@@ -460,11 +460,9 @@ variation in recruitment and survival among example populations (Figure
 \@ref(fig:exampleTrajectories)). 
 
 In our simulated example populations, mortality risk does not vary over
-time or among individuals, so the observed state (dead or alive) of a
-collared animal $i$ in month $m$ and year $t$ depends on the true
-survival rate $\dot{S}_t$ as follows: 
+among seasons or individuals, so the number of collared cows at the time of the composition survey $\hat{T}_t$ depends on the true survival rate $\dot{S}_t$ and the number of collared cows at the beginning of the year $\hat{I}_t$ as follows:
 \begin{equation}
-\hat{I}_{i,t,m} \sim \text{Bernoulli}(\dot{S}^{1/12}_t\hat{I}_{i,t,m-1}).
+\hat{T}_t \sim \text{Binomial}(\hat{I}_t,\dot{S}_t).
   (\#eq:hatI)
 \end{equation}
 
@@ -489,8 +487,7 @@ monitoring period, all simulations are started with $N_0=5000$ animals
 ## Bayesian integration of local demographic data and national disturbance-demographic relationships
 
 Local demographic and covariate data provided as inputs to the Bayesian
-population model include the observed state (dead or alive) of each
-collared animal in each month ($\hat{I}_{i,t,m}$), the observed number
+population model include the number of collared cows at the start of the year ($\hat{I}_{t}$), the number of collared animals that survive the year ($\hat{T}_{t}$), the observed number
 of adult females and calves in the recruitment surveys
 ($\hat{W}_t, \hat{J}_t$), the apparent number of adult females per
 collared female in the composition survey $w$, and the measures of
@@ -546,17 +543,13 @@ and 0.6, the adult misidentification probability $u$ varies uniformly
 between 0 and 0.2, and the probability of missing a calf $z$ varies
 uniformly between 0 and 0.2. 
 
-Following others [@eacker_web-based_2019; @lamb_effectiveness_2024], Kaplan-Meier
-estimates [@kaplan_nonparametric_1958] of observed adult female survival probability $\hat{S}_t$ and associated precisions $\tau_t$ are estimated from known-fate radio
-collar data using the *survival* R package [@therneau_modeling_2000],
-with precisions for years with no observed mortality estimated using a
-separate Bayesian model. Observed estimated survival is modelled as a
-Gaussian distributed function of the true survival probability,
-truncated between 0 and 1:
+Survival $S_t$ is estimated from the observed number of collared cows at the beginning of each year $\hat{I}_t$ and the number of those that survive the year $\hat{T}_t$ assuming a Binomial distribution:
 \begin{equation}
-\hat{S_t} \sim \text{Normal}(S_t,1/\tau_t)T(0,1).
+\hat{T}_t \sim \text{Binomial}(\hat{I}_t,S_t).
   (\#eq:hatSEst)
 \end{equation}
+
+Note that for analysis of real known-fate radio collar data data one should use a survival analysis method that accounts for variation throughout the year in both survival rate and the number of collared animals [e.g. @dalgarno_bboutools_2024; @eacker_web-based_2019; @lamb_effectiveness_2024]. However, our implementation of a two-step non-parametric survival analysis method [following @eacker_web-based_2019] yielded slightly biased survival estimates.
 
 As done by Johnson et al. [-@johnson_science_2020], we model survival
 probability as an adjusted function of buffered anthropogenic
@@ -571,14 +564,6 @@ disturbance $A_t$ with a log link and Beta distributed interannual variation wit
 S_t \sim \text{Beta}(\tilde{S_t},\sigma_{S,t});
 \sigma_{S,t} = min(\nu_S \tilde{S_t},\sqrt{\tilde{S_t} (1-\tilde{S_t})})
 (\#eq:S)
-\end{equation}
-
-To handle cases in which there is little or no survival data, we use an alternative parametric exponential survival model,
-wherein the observed state (alive or dead, $\hat{I}_{i,t,m}$) of an
-individual animal $i$ in year $t$ and month $m$ is Bernoulli distributed: 
-\begin{equation}
-\hat{I}_{i,t,m} \sim \text{Bernoulli}(S^{1/12}_t\hat{I}_{i,t,m-1}).
-  (\#eq:hatIEst)
 \end{equation}
 
 Again assuming a simple demographic model with a
@@ -614,7 +599,7 @@ package [@curtis_mcmcplots_2018]. Code required to run analyses and
 reproduce figures in this paper is available at
 <https://github.com/LandSciTech/Caribou-Demographic-Projection-Paper>,
 and in the *caribouMetrics* R package available on GitHub at
-<https://github.com/LandSciTech/caribouMetrics>.
+<https://github.com/LandSciTech/caribouMetrics/tree/EI-paper-submission>.
 
 ## Probability of correct status assessment and expected value of information
 
@@ -984,27 +969,38 @@ file.rename(here::here("analysis/paper/figs_submit/bayesianModelExamples.pdf"),
 ```{r examplePredictionsLowEffort, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("analysis/paper/figs/bayesianModelExamplesLowEffort.png"))
 file.rename(here::here("analysis/paper/figs_submit/bayesianModelExamplesLowEffort.pdf"), 
-            here::here("analysis/paper/figs_submit/Figure3_bayesianModelExamplesLowEffort.pdf"))
+            here::here("analysis/paper/figs_submit/Figure4_bayesianModelExamplesLowEffort.pdf"))
 ```
 
 ```{r figDiffs, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/diffslowcmult6ay1aSf1.png"))
 file.rename(here::here("analysis/paper/figs_submit/diffslowcmult6ay1aSf1.pdf"), 
-            here::here("analysis/paper/figs_submit/Figure4_diffslowcmult6ay1aSf1.pdf"))
+            here::here("analysis/paper/figs_submit/Figure5_diffslowcmult6ay1aSf1.pdf"))
 ```
 
 ```{r figStatusErrors, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/powercmult6ay1aSf1.png"))
 file.rename(here::here("analysis/paper/figs_submit/powercmult6ay1aSf1.pdf"), 
-            here::here("analysis/paper/figs_submit/Figure5_powercmult6ay1aSf1.pdf"))
+            here::here("analysis/paper/figs_submit/Figure6_powercmult6ay1aSf1.pdf"))
 ```
 
 ```{r figEVSI, fig.cap=".", cache=TRUE}
 knitr::include_graphics(here::here("figs/forPaper/EVSIcmult6ay1aSf1.png"))
 file.rename(here::here("analysis/paper/figs_submit/EVSIcmult6ay1aSf1.pdf"), 
-            here::here("analysis/paper/figs_submit/Figure6_EVSIcmult6ay1aSf1.pdf"))
+            here::here("analysis/paper/figs_submit/Figure7_EVSIcmult6ay1aSf1.pdf"))
 ```
 
+```{r figStatusErrorsLow, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/powerLamcmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/powerLamcmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure8_powerLamcmult6ay1aSf1.pdf"))
+```
+
+```{r figProbViability, fig.cap=".", cache=TRUE}
+knitr::include_graphics(here::here("figs/forPaper/probViabilitycmult6ay1aSf1.png"))
+file.rename(here::here("analysis/paper/figs_submit/powerLamcmult6ay1aSf1.pdf"), 
+            here::here("analysis/paper/figs_submit/Figure9_probViabilitycmult6ay1aSf1.pdf"))
+```
 
 ## Figure Captions
 Figure 1: Anthropogenic disturbance and monitoring scenarios. Anthropogenic disturbance increases by 1% per year, and the amount of disturbance at the beginning of the projection period varies from low (0%), through low-med (20%) and med-high (40%) to high (60%). These simple hypothetical scenarios are intended to show how the need for local monitoring to reduce uncertainty varies with landscape state, and not intended to reflect real landscape change. In all scenarios, the projection period begins in 2024, and the monitoring period occurs prior to the projection period.
@@ -1013,16 +1009,17 @@ Figure 2: Examples of simulated population trajectories from a model informed on
 
 Figure 3: Prior (a) and posterior predictions from the Bayesian model for population trajectories with informative (a,b) and weakly informative (c) priors given lower interannual variation ($v_R=0.23,v_S=0.435$) and intensive monitoring. In this example scenario anthropogenic disturbance increases by 2% per year from 0 to 100%. The population is monitored for 16 years with 30 collars per year, and 6 cows per collared cow in the composition surveys. The prior means and 95% predictive intervals (a, orange lines and shading) are similar to the means and ranges between the 2.5% and 97.5% quantiles of 3000 simulated survival and recruitment trajectories from the national model (a, blue lines and shading). Local population data (open triangles) reduces uncertainty about demographic rates (b), though that is not needed to predict viability (population growth <= 0.99) of highly disturbed populations (a). With weakly informative priors the model does not provide accurate or precise predictions of future viability after 16 years of monitoring in a case where anthropogenic disturbance is increasing to 90% (c).  
 
-Figure 4: Posterior predictions from the Bayesian model for population trajectories with informative (a) and weakly informative (b) priors given higher interannual variation ($v_R=0.46,v_S=0.087$) and limited monitoring. The population is monitored for 4 years with 15 collars per year, and 3 cows per collared cow in the composition surveys. See Figure 3 for disturbance trends and other details. The limited local data (open triangles) reduces uncertainty (orange shading) about the observed current state of the population, but is not sufficient to reduce future uncertainty. Given limited data the model with informative priors (a) yields predictions (orange bands) that are consistent with knowledge of observed outcomes across the country (blue shading), and the model with weakly informative priors (b) does not.
+Figure 4: Posterior predictions from the Bayesian model for population trajectories with informative (a) and weakly informative (b) priors given higher interannual variation ($v_R=0.46,v_S=0.087$) and limited monitoring (4 years, 15 collars per year, 3 cows per collared cow in composition surveys). See Figure 3 for disturbance trends and other details. The limited local data (open triangles) reduces uncertainty (orange shading) about the observed current state of the population, but is not sufficient to reduce future uncertainty. Given limited data the model with informative priors (a) yields predictions (orange bands) that are consistent with knowledge of observed outcomes across the country (blue shading), and the model with weakly informative priors (b) does not.
 
 Figure 5: The distribution of differences between true expected population growth rates and Bayesian posterior expected growth rates varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). Differences decrease as the number of years of monitoring and the number of collars increase. In these examples the composition survey cow multiplier $w$ is 6, collars are renewed each year, and interannual variation is lower ($v_R=0.23,v_S=0.0435$).
 
-Figure 6: The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring and the number of collars reduces uncertainty, but there are diminishing returns on additional monitoring as the number of years increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).
+Figure 6: The probability of a correct status assessment varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$, none), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). When disturbance is high the probability of correct status assessment is high even without local monitoring. Where disturbance is low or moderate, increasing the number of years of monitoring increases accuracy, but there are diminishing returns on additional monitoring as the number of years increases. In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year; varying these parameters does not alter qualitative conclusions (Supplements D and E).
 
-Figure 7: The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$), and monitoring effort. When disturbance is high EVSI is low, indicating that local monitoring does not change predicted status. Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \@ref(fig:figStatusErrors) for additional scenario details.
+Figure 7: The expected value of sample information (EVSI) varies with the amount of anthropogenic disturbance (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$, none), and monitoring effort. When disturbance is high EVSI is low, indicating that local monitoring does not change predicted status. Where disturbance is lower, EVSI increases with the number of years of monitoring and the number of collars, but there are diminishing returns on additional monitoring as the number of years increases. Negative EVSI values indicate that the posterior population viability prediction is less certain than the prior prediction. See Figure \@ref(fig:figStatusErrors) for additional scenario details.
 
+Figure 8: In the low anthropogenic disturbance scenario (Figure \@ref(fig:figDisturbance)) probability of a correct status assessment varies with the true growth rate of the population (columns), the number of years projected (rows), the amount of interannual variation (high: $v_R=0.46,v_S=0.087$, low: $v_R=0.23,v_S=0.0435$, none), and monitoring effort (see Figure \@ref(fig:figDisturbance) for scenarios). When anthropogenic disturbance is low and expected to increase (Figure \@ref(fig:figDisturbance)) increasing the number of years of monitoring helps to distinguish populations with current demographic rates substantially lower than 1 (top left), and to identify populations with higher than expected growth rates that fare better as disturbance increases (lower right). Increasing the number of collars more effectively increases near-term accuracy when interannual variation is low (top left). There is little advantage to increasing the number of collars if the goal is long-term projection (bottom row). Increasing the accuracy of status assessment for populations with growth rates close to 1 is more difficult (middle columns). In these examples the composition cow multiplier $w$ is 6 and collars are renewed each year.
 
-
+Figure 9: The posterior probability that the population is viable ($P(\psi|x,\tau)$ in eq \@ref(eq:EVSI)) predicts the probability of a correct status assessment (estimated from the 114,000 example cases in Figures 5 to 7 with a generalized additive model). Status assessment accuracy increases as the probability of viability nears 0 or 1. Cases in which there is no need for additional monitoring if one is willing to accept a 2% chance of error fall above the dashed line.   
 
 ### Colophon
 
