@@ -6,7 +6,8 @@ library(RColorBrewer)
 library(scales)
 
 pal2 = brewer.pal(7,"RdBu")[c(2,6)]
-pal4 = brewer.pal(5,"RdBu")[c(1,2,4,5)]
+pal4 = brewer.pal(5,"RdBu")[c(2,1,5,4)]
+pal3 = pal4[2:4]
 
 pal4b = brewer.pal(5,"Purples")[c(2,3,4,5)]
 
@@ -14,12 +15,13 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s14" #need to do s13, s14, and s15
+setName = "s15" #need to do s13, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 dir.create(paste0("tabs/",setName),recursive=T)
 
 scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 
+scns = scns[order(scns$pageId),]
 
 numBatches= max(scns$repBatch)
 str(scns)
@@ -46,8 +48,10 @@ setLTYVar <-function(scns){
 scns = setLTYVar(scns)
 if(is.element("interannualVar",names(scns))){
   ltyLabel = "Interannual\nvariation"
+  ltySel="none"
 }else{
   ltyLabel = "Collar\nrenewal\ninterval"
+  ltySel=1
 }
 
 
@@ -71,7 +75,7 @@ addEV = F
 addProbs = F
 
 for(i in 1:length(pages)){
-  #combine=F;i=12
+  #combine=F;i=1
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -97,7 +101,7 @@ for(i in 1:length(pages)){
     scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
   }
 
-  if((as.numeric(strsplit(p,"repBatch")[[1]][2])!=numBatches)&(as.numeric(strsplit(nextP,"repBatch")[[1]][2])==1)){#<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
+  if((as.numeric(strsplit(nextP,"repBatch")[[1]][2])==1)){#<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
     #print(p,nextP)
     combine=F
   }else{combine=T;next}
@@ -109,7 +113,7 @@ for(i in 1:length(pages)){
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable=="none")&(Parameter=="Population growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Population growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
@@ -128,7 +132,8 @@ for(i in 1:length(pages)){
   #unique(scResults$obs.all$collarCount)
   #unique(scResults$obs.all$ltyVariable)
   pars = unique(scResults$obs.all$parameter)
-  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable=="none")&(parameter=="Population growth rate"))
+  unique(scResults$obs.all$ltyVariable)
+  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(parameter=="Population growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -339,8 +344,8 @@ for(i in 1:length(pages)){
 
     }
 
-    #for low anthro, lots of collars, lots of monitoring, 5 yrs projection, look at effects of rQuantile, sQuantile (panels) and c
-    probf = subset(probs,(pageLab==pp)&(AnthroScn=="low")&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==5))
+    #lots of collars, lots of monitoring, 5 yrs projection
+    probf = subset(probs,(pageLab==pp)&(NumCollars==60)&(obsYears==24)&(YearsOfProjection==0))
     probf$Interannual = probf$ltyVariable
 
     probf$Sdot = probf[["Adult female survival"]]
@@ -464,8 +469,8 @@ for(i in 1:length(pages)){
   ################
   #summarize outcome - proportion wrong
   probsSum <- probs %>% group_by(across(groupVars)) %>%
-    summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
-              propViablePosterior=mean(probViable))
+    summarize(propWrong = mean(wrong)*100,propViableTrue=mean(viableTrue)*100,propViablePred = mean(viablePred)*100,
+              propViablePosterior=mean(probViable)*100)
 
   probsSum = merge(probsSum,EVsample)
   probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
@@ -489,10 +494,10 @@ for(i in 1:length(pages)){
 
   for(pp in pagesC){
     #pp=pagesC[1]
-    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=100-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
-      scale_color_discrete(type=(pal4)) + scale_x_continuous(breaks=c(0,5,10,15,20))
+      scale_color_discrete(type=(pal3)) + scale_x_continuous(breaks=c(0,5,10,15,20))
 
     png(here::here(paste0("figs/",setName,"/power",pp,".png")),
         height = 5, width = 7.48, units = "in",res=600)
@@ -509,7 +514,7 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVsample,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("EVsample")+
-      scale_color_discrete(type=(pal4))+ scale_x_continuous(breaks=c(0,5,10,15,20))
+      scale_color_discrete(type=(pal3))+ scale_x_continuous(breaks=c(0,5,10,15,20))
     print(base)
     dev.off()
 
@@ -518,17 +523,17 @@ for(i in 1:length(pages)){
     base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=propViableTrue,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring")+ylab("propViableTrue")+
-      scale_color_discrete(type=(pal4))+ scale_x_continuous(breaks=c(0,5,10,15,20))
+      scale_color_discrete(type=(pal3))+ scale_x_continuous(breaks=c(0,5,10,15,20))
     print(base)
     dev.off()
 
 
     png(here::here(paste0("figs/",setName,"/powerEffort",pp,".png")),
         height = 5, width = 7.48, units = "in",res=600)
-    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=1-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
+    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=CollarYrs,y=100-propWrong,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
       facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
       theme_bw()+xlab("Years of monitoring * NumCollars")+ylab("Probability of correct status assessment")+
-      scale_color_discrete(type=(pal4))
+      scale_color_discrete(type=(pal3))
     print(base)
     dev.off()
 
@@ -542,9 +547,17 @@ for(i in 1:length(pages)){
 
   write.csv(errorsByBand,here::here(paste0("tabs/",setName,"/ErrorsByBand",batchStrip(p),".csv")),row.names=F)
 
-  probErrorPlot = ggplot(probs,aes(x=probViable,y=1-as.numeric(wrong)))+geom_smooth(col="black")+
+  hist(probs$c)
+  probs$cClass = cut_width(pmax(0.86,pmin(1.3,probs$c)), width=0.1,center=1)
+  table(probs$cClass)
+  levels(probs$cClass)[1]="<=0.95"
+
+  probErrorPlot = ggplot(probs,aes(x=probViable*100,y=100*(1-as.numeric(wrong)),color=cClass,fill=cClass,group=cClass))+
+    geom_smooth()+
     theme_bw()+xlab("Posterior probability of viability")+ylab("Probability of correct status assessment")+
-    geom_abline(intercept=0.98,slope=0,linetype=2)
+    geom_abline(intercept=95,slope=0,linetype=2)+labs(color="True \ncomposition \nbias",fill="True \ncomposition \nbias")+
+    scale_color_discrete(type=(pal4b))+scale_fill_discrete(type=(pal4b))+
+    scale_x_continuous(breaks=seq(0,90,by=10))
 
   png(here::here(paste0("figs/",setName,"/probViability",batchStrip(p),".png")),
       height = 3.5, width =3.543, units = "in",res=600)
@@ -560,47 +573,48 @@ for(i in 1:length(pages)){
   #grouped by lambda - omit voi, focus on low scenario
   probsLow = subset(probs,AnthroScn=="low")
 
-  hist(probsLow$trueMean)
-  probsLow$GrowthRate = cut_width(pmax(0.96,pmin(1.03,probsLow$trueMean)), width=0.02,center=1)
-  table(probsLow$GrowthRate)
-  levels(probsLow$GrowthRate)[1]="<=0.97"
-  levels(probsLow$GrowthRate)[length(levels(probsLow$GrowthRate))]=">1.01"
-  levels(probsLow$GrowthRate)
+  if(nrow(probsLow)>0){
+    hist(probsLow$trueMean)
+    probsLow$GrowthRate = cut_width(pmax(0.96,pmin(1.03,probsLow$trueMean)), width=0.02,center=1)
+    table(probsLow$GrowthRate)
+    levels(probsLow$GrowthRate)[1]="<=0.97"
+    levels(probsLow$GrowthRate)[length(levels(probsLow$GrowthRate))]=">1.01"
+    levels(probsLow$GrowthRate)
 
-  groupVars = c("Anthro","AnthroScn","YearsOfProjection","GrowthRate",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
+    groupVars = c("Anthro","AnthroScn","YearsOfProjection","GrowthRate",setdiff(names(scns),c("rQuantile","sQuantile","rep","pageId","repBatch")))
 
-  probsSum <- probsLow %>% group_by(across(groupVars)) %>%
-    summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
-              propViablePosterior=mean(probViable))
+    probsSum <- probsLow %>% group_by(across(groupVars)) %>%
+      summarize(propWrong = mean(wrong),propViableTrue=mean(viableTrue),propViablePred = mean(viablePred),
+                propViablePosterior=mean(probViable))
 
-  probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
-  probsSum$pageLabC = batchStrip(probsSum$pageLab)
-  pagesC=unique(probsSum$pageLabC)
-  probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
-  probsSum$NumCollars = as.factor(probsSum$collarCount)
-  probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
-  probsSum <- subset(probsSum,collarCount>0)
+    probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
+    probsSum$pageLabC = batchStrip(probsSum$pageLab)
+    pagesC=unique(probsSum$pageLabC)
+    probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
+    probsSum$NumCollars = as.factor(probsSum$collarCount)
+    probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
+    probsSum <- subset(probsSum,collarCount>0)
 
-  for(pp in pagesC){
-    #pp=pagesC[1]
-    probsSum$Growth=probsSum$GrowthRate
-    base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-      facet_grid(YearsOfProjection~Growth,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
-      theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
-      scale_color_discrete(type=(pal4)) + scale_x_continuous(breaks=c(0,5,10,15,20))
+    for(pp in pagesC){
+      #pp=pagesC[1]
+      probsSum$Growth=probsSum$GrowthRate
+      base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=1-propWrong,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
+        facet_grid(YearsOfProjection~Growth,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
+        theme_bw()+xlab("Years of monitoring")+ylab("Probability of correct status assessment")+
+        scale_color_discrete(type=(pal3)) + scale_x_continuous(breaks=c(0,5,10,15,20))
 
-    png(here::here(paste0("figs/",setName,"/powerLam",pp,".png")),
-        height = 5, width = 7.48, units = "in",res=600)
-    print(base)
-    dev.off()
+      png(here::here(paste0("figs/",setName,"/powerLam",pp,".png")),
+          height = 5, width = 7.48, units = "in",res=600)
+      print(base)
+      dev.off()
 
-    pdf(here::here(paste0("figs/",setName,"/powerLam",pp,".pdf")),
-        height = 5, width = 7.48)
-    print(base)
-    dev.off()
+      pdf(here::here(paste0("figs/",setName,"/powerLam",pp,".pdf")),
+          height = 5, width = 7.48)
+      print(base)
+      dev.off()
 
+    }
   }
-
 }
 
 write.csv(EVout,here::here(paste0("tabs/EVsample",setName,".csv")),row.names=F)

@@ -94,13 +94,13 @@ az batch task show --job-id $jobName \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task
-taskNum=12
+taskNum=1
 
 az batch task file download --task-id caribou-demog_sens_batch$taskNum \
 --job-id $jobName --file-path "wd/nohup_"$taskNum".out" \
 --destination "./nohup_"$taskNum".out"
 
-tail -n 20 "./nohup_"$taskNum".out"
+tail -n 30 "./nohup_"$taskNum".out"
 
 rm "./nohup_"$taskNum".out"
 
@@ -127,7 +127,6 @@ az storage remove -c jhughes --account-name ecdcwls --sas-token $sastoken --recu
 #### Delete pool and job ##########################
 az batch job delete --job-id $jobName
 az batch pool delete --pool-id $poolName
-
 
 # downloading and resizing by hand because upload failed
 for ((i=1;i<=30;i++))

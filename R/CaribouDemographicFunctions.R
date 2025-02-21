@@ -6,8 +6,7 @@
 # functions for caribou demographics paper
 
 # run scenario - temporary wrapper
-runScenario<-function(scns,quants=NULL,Anthro=NULL,survAnalysisMethod="KaplanMeier",getKSDists=T){
-  #quants=NULL;Anthro=NULL;survAnalysisMethod="Exponential";getKSDists=F
+runScenario<-function(scns,quants=NULL,Anthro=NULL,survAnalysisMethod="Binomial",getKSDists=T){
   retdir <-getwd()
 
   dir.create("figs")

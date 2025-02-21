@@ -8,7 +8,8 @@ library(caribouMetrics)
 library(RColorBrewer)
 
 pal2 = brewer.pal(7,"RdBu")[c(2,6)]
-pal4 = brewer.pal(5,"RdBu")[c(1,2,4,5)]
+pal4 = brewer.pal(5,"RdBu")[c(2,1,5,4)]
+pal3 = pal4[2:4]
 
 pal4b = brewer.pal(5,"Purples")[c(2,3,4,5)]
 
@@ -21,7 +22,7 @@ batchStrip<-function(l,batches=c(10,seq(1:9))){
   return(l)
 }
 
-setName = "s14"
+setName = "s15"
 probsSum = read.csv(here::here(paste0("tabs/EVsample",setName,".csv")),stringsAsFactors = F)
 
 probsSum$pageLabC = batchStrip(probsSum$pageLab)
@@ -85,15 +86,16 @@ probsSum$grp = paste(probsSum$collarCount,probsSum$ltyVariable)
 probsSum$RenewalInterval=as.factor(probsSum$ltyVariable)
 probsSum$NumCollars = as.factor(probsSum$collarCount)
 
+probsSum = probsSum %>% relocate(RenewalInterval,.after=NumCollars)
 
 probsSum$CollarYrs = as.numeric(as.character(probsSum$NumCollars))*probsSum$obsYears
 EVuncertainty$YearsOfProjection=as.factor(EVuncertainty$YearsOfProjection)
 for(pp in pagesC){
   #pp=pagesC[1]
-  base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVSI,col=NumCollars,linetype=RenewalInterval,group=grp))+geom_line()+
-    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\n collars", linetype=ltyLabel)+
+  base=ggplot(subset(probsSum,pageLabC==pp),aes(x=obsYears,y=EVSI,linetype=RenewalInterval,col=NumCollars,group=grp))+geom_line()+
+    facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+labs(color="Number of\ncollars", linetype=ltyLabel)+
     theme_bw()+xlab("Years of monitoring")+ylab("Expected value of sample information EVSI")+
-    scale_color_discrete(type=(pal4))
+    scale_color_discrete(type=(pal3))+ scale_x_continuous(breaks=c(0,5,10,15,20))
 
   png(here::here(paste0("figs/",setName,"/EVSI",pp,".png")),
       height = 5, width = 7.48, units = "in",res=600)

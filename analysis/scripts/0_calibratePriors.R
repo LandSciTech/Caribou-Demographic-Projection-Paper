@@ -15,7 +15,7 @@ scnsSInt=expand.grid(obsAnthroSlope = 0, projAnthroSlope = 5,sIntSE=sIntSE,
 scnsSInt$NuMin = scnsSInt$sNuMin
 scns=merge(scnsSInt,scnsApplyAll);scns=merge(scns,scnsNoData)
 scns$projYears=20
-scResults = runScenario(scns,survAnalysisMethod = "Exponential")
+scResults = runScenario(scns,survAnalysisMethod = "Binomial")
 KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Parameter=="Adult female survival"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
@@ -33,7 +33,7 @@ scnsRInt=expand.grid(obsAnthroSlope = 0, projAnthroSlope = 5,rIntSE=rIntSE,
 scnsRInt$NuMin = scnsRInt$rNuMin
 scns=merge(scnsRInt,scnsApplyAll);scns=merge(scns,scnsNoData)
 scns$projYears=20
-scResults = runScenario(scns,survAnalysisMethod = "Exponential")
+scResults = runScenario(scns,survAnalysisMethod = "Binomial")
 KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Parameter=="Recruitment"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
