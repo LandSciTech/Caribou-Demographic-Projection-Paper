@@ -262,6 +262,8 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelBiasSensitivity.png"),
 
 ###################################
 #Low effort scenario
+simBig<-getSimsNational(replicates=3000,forceUpdate=T)
+
 monitoringScns = data.frame(obsYears=c(1,4),collarCount=c(0,15),cowMult=c(3),collarInterval=c(1),
                             assessmentYrs=c(1))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
@@ -341,5 +343,5 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesLowEffort.png")
        dpi = 1200)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamplesLowEffort.pdf"),
-       width = 9.6*0.779, height = 9.2, units = "in",
+       width = 9.6*0.779, height = 9.2*2/3, units = "in",
        dpi = 1200)

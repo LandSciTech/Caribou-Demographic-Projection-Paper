@@ -10,7 +10,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# (APPENDIX) Supplementary Material for Integration of national demographic-disturbance relationships into local caribou population viability projections can reduce uncertainty and inform monitoring decisions {-}
+# (APPENDIX) Supplementary Material for Integration of national demographic-disturbance relationships and local data can improve caribou population viability projections and inform monitoring decisions {-}
 
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(
