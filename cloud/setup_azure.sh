@@ -4,6 +4,9 @@
 #### Parameters to change
 setName="s15"
 
+# Note we should have added user name as a parameter but didn't so you will need
+# to find and replace jhughes if you want to use your own username
+
 #####Login etc##################
 # Accept the default tenant by pressing enter when prompted
 az login
