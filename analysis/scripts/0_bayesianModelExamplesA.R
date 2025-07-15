@@ -1,9 +1,16 @@
 # Prior and posterior predictions from Bayesian model
-library(caribouMetrics)
+#library(caribouMetrics)
+devtools::load_all(path = "../caribouMetrics/")
+devtools::load_all(path = "../CaribouDemographyBasicApp/")
+devtools::load_all(path = "../CaribouDemographyMisc/")
+
 library(tidyverse)
 library(ggpubr)
 theme_set(theme_bw())
 library(RColorBrewer)
+
+figDir ="./analysis/paper/figs"
+dir.create(figDir,recursive=T)
 
 baseDir <- "."
 
@@ -35,26 +42,32 @@ bounds = list(recHigh=1,survLow=0,lamLow=0.4)
 
 ####################
 eParsIn = list()
-eParsIn$cowCounts <- data.frame(Year = 1981:2023,
-                                Count = 100,
-                                Class = "cow")
-eParsIn$freqStartsByYear <- data.frame(Year = 1981:2023,
-                                       numStarts = 30)
-eParsIn$collarOnTime=1
-eParsIn$collarOffTime=12
+#eParsIn$cowCounts <- data.frame(Year = 1981:2023,
+#                                Cows = 100)
+#eParsIn$freqStartsByYear <- data.frame(Year = 1981:2023,
+#                                       numStarts = 30)
+eParsIn$collarOnTime=4
+eParsIn$collarOffTime=4
 eParsIn$collarNumYears=1
 labFontSize = 10; breakInterval=5
 
 ###############################
 #With bias adjustment
-simBig<-getSimsNational(replicates=3000,forceUpdate=T)
+#devtools::load_all(path = "../caribouMetrics/")
 
-priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,getKSDists=F,printProgress=F)
-priorResult$obs.all=NULL
+simBig<-getSimsInitial(replicates=300,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
+
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
+
+niters= 100#formals(bboutools::bb_fit_survival)$niters#100
+
+#devtools::load_all(path = "../caribouMetrics/")
+priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)
+priorResult$obs.all=NULL
+
 recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = bounds$recHigh,
                     legendPosition="none",breakInterval=breakInterval,
                     labFontSize=labFontSize) +
@@ -66,14 +79,20 @@ survPrior =  plotRes(priorResult, "Adult female survival", lowBound=bounds$survL
                      labFontSize=labFontSize)+
   yr_scale1
 plot(survPrior)
-lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=bounds$lamLow,
+
+#devtools::load_all(path = "../caribouMetrics/")
+priorResultNIA = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,Rep=unique(priorResult$rr.summary.all$Replicate),
+                                            omitInterannual=T,printProgress=F,niters=niters)
+
+lambdaPrior =  plotRes(priorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize)+
   yr_scale1 +
   ylim(c(0, 1.8))
 plot(lambdaPrior)
 
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+#devtools::load_all(path = "../caribouMetrics/")
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -94,7 +113,8 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=b
   ylim(c(0, 1.8))
 plot(lambdaPosterior)
 
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
+#devtools::load_all(path = "../caribouMetrics/")
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -142,12 +162,12 @@ ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamples.pdf"),
 #Without bias adjustment
 
 biasPars = data.frame(qMax=0,uMax=0,zMax=0)
-simBig<-getSimsNational(replicates=3000,forceUpdate=T,cPars=getScenarioDefaults(paramTable=biasPars))
+simBig<-getSimsInitial(replicates=300,cPars = getScenarioDefaults(paramTable=biasPars),forceUpdate=T) #national model sims
 
 scns=merge(subset(scns,select=setdiff(names(scns),names(biasPars))),biasPars)
-priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,getKSDists=F,printProgress=F)
-head(priorResult$obs.all)
 
+#devtools::load_all(path = "../caribouMetrics/")
+priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)
 priorResult$obs.all=NULL
 
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
@@ -165,14 +185,18 @@ survPrior =  plotRes(priorResult, "Adult female survival", lowBound=bounds$survL
                      labFontSize=labFontSize)+
   yr_scale1
 plot(survPrior)
-lambdaPrior =  plotRes(priorResult, "Population growth rate", lowBound=bounds$lamLow,
+
+priorResultNIA = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,Rep=unique(priorResult$rr.summary.all$Replicate),
+                                            omitInterannual=T,printProgress=F,niters=niters)
+
+lambdaPrior =  plotRes(priorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize)+
   yr_scale1 +
   ylim(c(0, 1.8))
 plot(lambdaPrior)
 
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -191,7 +215,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=b
   ylim(c(0, 1.8))
 plot(lambdaPosterior)
 
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -262,7 +286,7 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelBiasSensitivity.png"),
 
 ###################################
 #Low effort scenario
-simBig<-getSimsNational(replicates=3000,forceUpdate=T)
+simBig<-getSimsNational(replicates=3000)
 
 monitoringScns = data.frame(obsYears=c(1,4),collarCount=c(0,15),cowMult=c(3),collarInterval=c(1),
                             assessmentYrs=c(1))
