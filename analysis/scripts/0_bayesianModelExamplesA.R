@@ -55,14 +55,14 @@ labFontSize = 10; breakInterval=5
 #With bias adjustment
 #devtools::load_all(path = "../caribouMetrics/")
 
-simBig<-getSimsInitial(replicates=30,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
+simBig<-getSimsInitial(replicates=3000,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
 
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 
-niters= 10#formals(bboutools::bb_fit_survival)$niters#100
+niters= 1000#formals(bboutools::bb_fit_survival)$niters#100
 
 #devtools::load_all(path = "../caribouMetrics/")
 priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)
@@ -82,7 +82,8 @@ plot(survPrior)
 
 #devtools::load_all(path = "../caribouMetrics/")
 priorResultNIA = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,Rep=unique(priorResult$rr.summary.all$Replicate),
-                                            omitInterannual=T,printProgress=F,niters=niters)
+                                            returnExpected=T,printProgress=F,niters=niters)
+priorResultNIA$obs.all=NULL
 
 lambdaPrior =  plotRes(priorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                        legendPosition="none",breakInterval=breakInterval,
@@ -106,7 +107,10 @@ survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=boun
                          labFontSize=labFontSize)+
   yr_scale2
 plot(survPosterior)
-lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=bounds$lamLow,
+
+posteriorResultNIA = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,Rep=unique(posteriorResult$rr.summary.all$Replicate),
+                                            returnExpected=T,printProgress=F,niters=niters)
+lambdaPosterior =  plotRes(posteriorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
@@ -131,7 +135,11 @@ survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=bo
                          labFontSize=labFontSize)+
   yr_scale2
 plot(survPosteriorB)
-lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=bounds$lamLow,
+
+posteriorResultBNIA = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,Rep=unique(posteriorResultB$rr.summary.all$Replicate),
+                                                returnExpected=T,printProgress=F,niters=niters)
+
+lambdaPosteriorB =  plotRes(posteriorResultBNIA, "Population growth rate", lowBound=bounds$lamLow,
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
@@ -187,8 +195,8 @@ survPrior =  plotRes(priorResult, "Adult female survival", lowBound=bounds$survL
 plot(survPrior)
 
 priorResultNIA = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,Rep=unique(priorResult$rr.summary.all$Replicate),
-                                            omitInterannual=T,printProgress=F,niters=niters)
-
+                                            returnExpected=T,printProgress=F,niters=niters)
+priorResultNIA$obs.all=NULL
 lambdaPrior =  plotRes(priorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize)+
@@ -208,6 +216,9 @@ survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=boun
                          labFontSize=labFontSize)+
   yr_scale2
 plot(survPosterior)
+
+posteriorResultNIA = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,Rep=unique(posteriorResult$rr.summary.all$Replicate),
+                                                returnExpected=T,printProgress=F,niters=niters)
 lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=bounds$lamLow,
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
@@ -227,6 +238,9 @@ survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=bo
                          labFontSize=labFontSize)+
   yr_scale2
 plot(survPosteriorB)
+
+posteriorResultBNIA = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,Rep=unique(posteriorResultB$rr.summary.all$Replicate),
+                                                returnExpected=T,printProgress=F,niters=niters)
 lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=bounds$lamLow,
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
@@ -263,7 +277,7 @@ biasPars = expand.grid(uMax=c(0,0.2,0.4),zMax=c(0,0.2,0.4))
 
 scnsN=merge(subset(scns[1,],select=setdiff(names(scns),names(biasPars))),biasPars)
 scnsN$projYears = 30
-priorResult = caribouMetrics:::runScnSet(scnsN,eParsIn,simBig,getKSDists=F,printProgress=F)
+priorResult = caribouMetrics:::runScnSet(scnsN,eParsIn,simBig,printProgress=F,niters=niters)
 
 priorResult$obs.all=NULL; priorResult$sim.all=NULL
 
@@ -276,7 +290,7 @@ lambdaPrior1 =  plotRes(priorResult, "Population growth rate", lowBound=0,
                        legendPosition="none",breakInterval=breakInterval,
                        labFontSize=labFontSize,facetVars=c("uMax","zMax"))+
   yr_scale1 +
-  ylim(c(0.75, 1.5))
+  ylim(c(0.4, 1.6))
 
 plot(lambdaPrior1)
 
@@ -286,7 +300,7 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelBiasSensitivity.png"),
 
 ###################################
 #Low effort scenario
-simBig<-getSimsNational(replicates=3000)
+simBig<-getSimsInitial(replicates=3000)
 
 monitoringScns = data.frame(obsYears=c(1,4),collarCount=c(0,15),cowMult=c(3),collarInterval=c(1),
                             assessmentYrs=c(1))
@@ -308,7 +322,8 @@ scns$projYears = 50-scns$obsYears
 scns$N0 = 2000
 
 scns
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,getKSDists=F,printProgress=F)
+
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -322,14 +337,18 @@ survPosterior =  plotRes(posteriorResult, "Adult female survival", lowBound=boun
                          labFontSize=labFontSize)+
   yr_scale2
 plot(survPosterior)
-lambdaPosterior =  plotRes(posteriorResult, "Population growth rate", lowBound=bounds$lamLow,
+
+posteriorResultNIA = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters,
+                                                returnExpected=T,Rep=unique(posteriorResult$rr.summary.all$Replicate))
+
+lambdaPosterior =  plotRes(posteriorResultNIA, "Population growth rate", lowBound=bounds$lamLow,
                            legendPosition="none",breakInterval=breakInterval,
                            labFontSize=labFontSize)+
   yr_scale2 +
   ylim(c(0, 1.8))
 plot(lambdaPosterior)
 
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,getKSDists=F,printProgress=F)
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                          legendPosition="none",breakInterval=breakInterval,
                          labFontSize=labFontSize)+
@@ -342,7 +361,10 @@ survPosteriorB =  plotRes(posteriorResultB, "Adult female survival", lowBound=bo
                           labFontSize=labFontSize)+
   yr_scale2
 plot(survPosteriorB)
-lambdaPosteriorB =  plotRes(posteriorResultB, "Population growth rate", lowBound=bounds$lamLow,
+posteriorResultBNIA = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters,
+                                                returnExpected=T,Rep=unique(posteriorResultB$rr.summary.all$Replicate))
+
+lambdaPosteriorB =  plotRes(posteriorResultBNIA, "Population growth rate", lowBound=bounds$lamLow,
                             legendPosition="none",breakInterval=breakInterval,
                             labFontSize=labFontSize)+
   yr_scale2 +
