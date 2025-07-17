@@ -55,14 +55,14 @@ labFontSize = 10; breakInterval=5
 #With bias adjustment
 #devtools::load_all(path = "../caribouMetrics/")
 
-simBig<-getSimsInitial(replicates=300,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
+simBig<-getSimsInitial(replicates=30,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
 
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 
-niters= 100#formals(bboutools::bb_fit_survival)$niters#100
+niters= 10#formals(bboutools::bb_fit_survival)$niters#100
 
 #devtools::load_all(path = "../caribouMetrics/")
 priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)

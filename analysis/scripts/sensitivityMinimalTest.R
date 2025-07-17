@@ -9,52 +9,48 @@ cpageId <- args[1]
 cDir = getwd()
 
 setName = args[2]
+niters = 1000
 
 library(caribouMetrics)
-# setName="s15"; cpageId <- 1;n_reps <- 1;cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
-
+# TO DO: remove dependency on CaribouDemographyBasicApp - make caribouMetrics sufficient.
+# devtools::load_all(path = "../caribouMetrics/")
+# devtools::load_all(path = "../CaribouDemographyBasicApp/")
+# setName="s1"; cpageId <- 1;n_reps <- "all";niters<-10; cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
 
 #######################
 dir.create(paste0(cDir,"/figs/",setName),recursive=T)
 dir.create(paste0(cDir,"/tabs/",setName),recursive=T)
 dir.create(paste0(cDir,"/results/",setName),recursive=T)
 
-
-simBig<-getSimsNational() #If called with default parameters, use saved object to speed things up.
+simBig<-getSimsInitial(replicates=500) #If called with default parameters, use saved object to speed things up.
 
 allScns = read.csv(paste0(cDir,"/tabs/",setName,".csv"))
+
+allScns
+
 unique(allScns$pageId)
 ####################
 eParsIn = list()
-eParsIn$cowCounts <- data.frame(Year = 1981:2023,
-                                Count = 100,
-                                Class = "cow")
-eParsIn$freqStartsByYear <- data.frame(Year = 1981:2023,
-                                       numStarts = 30)
-eParsIn$collarOnTime=1
-eParsIn$collarOffTime=12
-eParsIn$collarNumYears=6
+eParsIn$collarOnTime=4
+eParsIn$collarOffTime=4
+eParsIn$collarNumYears=1
 
 scns = subset(allScns, pageId==cpageId)
-
-str(scns)
 
 #scns$zMin= 0; scns$zMax = 0
 #scns$uMin = 0; scns$uMax = 0
 #scns$qMin = 0; scns$qMax = 0
 message("batch ", cpageId, " started")
 
-str(scns)
-#scns=subset(scns,obsYears==2)
-
 if(n_reps=="all"){
-  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,getKSDists=F,printProgress=F)
+  #devtools::load_all(path = "../caribouMetrics/")
+  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,omitInterannual=T,printProgress=T,niters=niters)
 }else{
-  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,getKSDists=F,printProgress=F)
-  # scResults = runScnSet(scns[950:950,],eParsIn,simBig,getKSDists=F,printProgress=F)
+  #devtools::load_all(path = "../caribouMetrics/")
+  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,omitInterannual=T,printProgress=T,niters=niters)
 }
 
 unique(scResults$rr.summary.all$Parameter)
-saveRDS(scResults,paste0("results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
+saveRDS(scResults,paste0(cDir,"/results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
 
 message("batch ", cpageId, " complete")
