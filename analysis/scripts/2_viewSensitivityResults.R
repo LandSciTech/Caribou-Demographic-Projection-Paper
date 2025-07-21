@@ -110,7 +110,7 @@ for(i in 1:length(pages)){
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Population growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
@@ -130,7 +130,7 @@ for(i in 1:length(pages)){
   #unique(scResults$obs.all$ltyVariable)
   pars = unique(scResults$obs.all$Parameter)
   unique(scResults$obs.all$ltyVariable)
-  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Population growth rate"))
+  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -141,7 +141,7 @@ for(i in 1:length(pages)){
     geom_ribbon(aes(ymin = lower, ymax = upper,fill=quantile),
                 show.legend = FALSE, alpha = 0.25,col=NA)+
     geom_line(data=obs,aes(x=Year,y=Mean, col=quantile,group=grp,linetype=type),show.legend=T)+
-    theme_bw()+facet_grid(obsYears~Anthro2023,labeller = "label_both")+ylab("Population growth rate")+
+    theme_bw()+facet_grid(obsYears~Anthro2023,labeller = "label_both")+ylab("Expected growth rate")+
     theme(axis.text.x = element_text(angle=90,vjust=0.5,hjust=1,size=8))+
     geom_hline(yintercept=1, color = "black",size=0.7)+scale_fill_discrete(type=pal2)+scale_color_discrete(type=pal2)
   print(base)
@@ -150,7 +150,7 @@ for(i in 1:length(pages)){
   scResults$rr.summary.all$MetricTypeID = NULL
   probs <- scResults$rr.summary.all%>%
     pivot_wider(names_from = Parameter, values_from = c("Mean","lower","upper","probViable"))
-  names(probs)= gsub("_Population growth rate","",names(probs),fixed=T)
+  names(probs)= gsub("_Expected growth rate","",names(probs),fixed=T)
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
   probs$Anthro2023 = probs$tA
@@ -208,7 +208,7 @@ for(i in 1:length(pages)){
   #obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
 
   #now combine and make small
-  names(obsWide)[names(obsWide)=="Population growth rate"]= "trueMean"
+  names(obsWide)[names(obsWide)=="Expected growth rate"]= "trueMean"
   names(obsWide)[names(obsWide)=="Female population size"]= "trueSize"
 
   probs = subset(probs,is.element(projectionTime,c(0,5,20)))
@@ -253,7 +253,7 @@ for(i in 1:length(pages)){
           height = 4, width = 7.48, units = "in",res=600)
       base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-        theme_bw()+xlab("Years of monitoring")+ylab("Estimated mean population growth rate")
+        theme_bw()+xlab("Years of monitoring")+ylab("Estimated expected growth rate")
       print(base)
       dev.off()
 
@@ -261,7 +261,7 @@ for(i in 1:length(pages)){
           height = 4, width = 7.48, units = "in",res=600)
       base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-        theme_bw()+xlab("Years of monitoring")+ylab("True population growth rate")
+        theme_bw()+xlab("Years of monitoring")+ylab("True mean growth rate")
       print(base)
       dev.off()
 
@@ -401,7 +401,7 @@ for(i in 1:length(pages)){
         midpoint = 1,
       )+geom_smooth(col="black")+
       facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
-    xlab("True population growth rate")+ylab("Posterior mean growth rate")+theme_bw()
+    xlab("True mean growth rate")+ylab("Posterior mean growth rate")+theme_bw()
 
     png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
         height = 3, width = 5.51, units = "in",res=600)

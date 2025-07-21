@@ -44,10 +44,10 @@ message("batch ", cpageId, " started")
 
 if(n_reps=="all"){
   #devtools::load_all(path = "../caribouMetrics/")
-  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,returnExpected=T,printProgress=T,niters=niters)
+  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,printProgress=T,niters=niters)
 }else{
   #devtools::load_all(path = "../caribouMetrics/")
-  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,returnExpected=T,printProgress=T,niters=niters)
+  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,printProgress=T,niters=niters)
 }
 
 unique(scResults$rr.summary.all$Parameter)
