@@ -2,7 +2,7 @@
 #############################################
 
 #### Parameters to change
-setName="s15"
+setName="s1"
 
 # Note we should have added user name as a parameter but didn't so you will need
 # to find and replace jhughes if you want to use your own username
@@ -93,7 +93,7 @@ az batch pool resize --pool-id $poolName --target-dedicated-nodes 12
 
 # details for a single task filtered by query
 az batch task show --job-id $jobName \
---task-id caribou-demog_sens_batch85 \
+--task-id caribou-demog_sens_batch1 \
 --query "{state: state, executionInfo: executionInfo}" --output yaml
 
 # download output file for a task

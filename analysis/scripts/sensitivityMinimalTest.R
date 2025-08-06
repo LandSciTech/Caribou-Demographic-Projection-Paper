@@ -24,7 +24,6 @@ allScns = read.csv(paste0(cDir,"/tabs/",setName,".csv"))
 
 simBig<-getSimsInitial(replicates=500,cPars=allScns,forceUpdate = T) #If called with default parameters, use saved object to speed things up.
 
-unique(allScns$pageId)
 ####################
 eParsIn = list()
 eParsIn$collarOnTime=4
@@ -47,8 +46,6 @@ if(n_reps=="all"){
   scResults = caribouMetrics:::runScnSet(scns[n_reps:n_reps,],simBig,eParsIn,printProgress=T,niters=niters)
 }
 
-unique(scResults$rr.summary.all$Parameter)
 saveRDS(scResults,paste0(cDir,"/results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
 
-unique(scResults$obs.all$MetricTypeID)
 message("batch ", cpageId, " complete")
