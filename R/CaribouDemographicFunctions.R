@@ -38,7 +38,7 @@ runScenario<-function(scns,quants=NULL,Anthro=NULL,survAnalysisMethod="Binomial"
     simBig<-getSimsNational(useQuantiles = quants,Anthro=Anthro)#If called with default parameters, use saved object to speed things up.
   }
 
-  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,survAnalysisMethod,getKSDists=getKSDists,printProgress=T)
+  scResults = caribouMetrics:::runScnSet(scns,simBig,eParsIn,survAnalysisMethod,getKSDists=getKSDists,printProgress=T)
   return(scResults)
 }
 

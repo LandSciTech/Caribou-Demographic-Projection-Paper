@@ -14,8 +14,8 @@ dir.create(figDir,recursive=T)
 
 baseDir <- "."
 
-niters= 20#1000#formals(bboutools::bb_fit_survival)$niters#100
-replicates = 300 #3000
+niters= 1000#formals(bboutools::bb_fit_survival)$niters#100
+replicates = 300#3000
 
 monitoringScns = data.frame(obsYears=c(1,16),collarCount=c(0,30),cowMult=c(6),collarInterval=c(1),
                             assessmentYrs=c(1))
@@ -57,16 +57,18 @@ labFontSize = 10; breakInterval=5
 ###############################
 #With bias adjustment
 #devtools::load_all(path = "../caribouMetrics/")
+simBig<-getSimsInitial(replicates=replicates,cPars = scns,forceUpdate=T) #national model sims
 
-simBig<-getSimsInitial(replicates=replicates,cPars = getScenarioDefaults(),forceUpdate=T) #national model sims
-
+str(simBig)
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 yr_scale2 <- scale_x_continuous(breaks = 2009:2058 %>% .[0:9*5+1],
                                 labels = 2009:2058 %>% .[0:9*5+1] )
 
 #devtools::load_all(path = "../caribouMetrics/")
-priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)
+priorResult = caribouMetrics::runScnSet(scns[1,],simBig,eParsIn,printProgress=F,niters=niters)
+
+unique(priorResult$obs.all$MetricTypeID)
 priorResult$obs.all=NULL
 
 recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = bounds$recHigh,
@@ -75,6 +77,7 @@ recPrior =  plotRes(priorResult, "Recruitment", lowBound=0, highBound = bounds$r
   yr_scale1 +
   labs(tag = "a")
 plot(recPrior)
+
 survPrior =  plotRes(priorResult, "Adult female survival", lowBound=bounds$survLow,
                      legendPosition="none",breakInterval=breakInterval,
                      labFontSize=labFontSize)+
@@ -89,7 +92,7 @@ lambdaPrior =  plotRes(priorResult, "Expected growth rate", lowBound=bounds$lamL
 plot(lambdaPrior)
 
 #devtools::load_all(path = "../caribouMetrics/")
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -112,7 +115,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Expected growth rate", lowBound=bou
 plot(lambdaPosterior)
 
 #devtools::load_all(path = "../caribouMetrics/")
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -160,12 +163,13 @@ ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamples.pdf"),
 #Without bias adjustment
 
 biasPars = data.frame(qMax=0,uMax=0,zMax=0)
-simBig<-getSimsInitial(replicates=replicates,cPars = getScenarioDefaults(paramTable=biasPars),forceUpdate=T) #national model sims
-
 scns=merge(subset(scns,select=setdiff(names(scns),names(biasPars))),biasPars)
 
+simBig<-getSimsInitial(replicates=replicates,cPars = scns,forceUpdate=T) #national model sims
+
+
 #devtools::load_all(path = "../caribouMetrics/")
-priorResult = caribouMetrics:::runScnSet(scns[1,],eParsIn,simBig,printProgress=F,niters=niters)
+priorResult = caribouMetrics:::runScnSet(scns[1,],simBig,eParsIn,printProgress=F,niters=niters)
 priorResult$obs.all=NULL
 
 yr_scale1 <- scale_x_continuous(breaks = 2023:2072 %>% .[0:9*5+1],
@@ -191,7 +195,7 @@ lambdaPrior =  plotRes(priorResult, "Expected growth rate", lowBound=bounds$lamL
   ylim(c(0, 1.8))
 plot(lambdaPrior)
 
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -211,7 +215,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Expected growth rate", lowBound=bou
   ylim(c(0, 1.8))
 plot(lambdaPosterior)
 
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -260,7 +264,7 @@ biasPars = expand.grid(uMax=c(0,0.2,0.4),zMax=c(0,0.2,0.4))
 
 scnsN=merge(subset(scns[1,],select=setdiff(names(scns),names(biasPars))),biasPars)
 scnsN$projYears = 30
-priorResult = caribouMetrics:::runScnSet(scnsN,eParsIn,simBig,printProgress=F,niters=niters)
+priorResult = caribouMetrics:::runScnSet(scnsN,simBig,eParsIn,printProgress=F,niters=niters)
 
 priorResult$obs.all=NULL; priorResult$sim.all=NULL
 
@@ -282,8 +286,6 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelBiasSensitivity.png"),
 
 ###################################
 #Low effort scenario
-simBig<-getSimsInitial(replicates=replicates)
-
 monitoringScns = data.frame(obsYears=c(1,4),collarCount=c(0,15),cowMult=c(3),collarInterval=c(1),
                             assessmentYrs=c(1))
 stateScns = data.frame(obsAnthroSlope=c(2),projAnthroSlope=c(2))
@@ -303,9 +305,9 @@ scns$tA = scns$iAnthro+(scns$obsYears)*scns$obsAnthroSlope
 scns$projYears = 50-scns$obsYears
 scns$N0 = 2000
 
-scns
+simBig<-getSimsInitial(replicates=replicates,cPars = scns,forceUpdate=T)
 
-posteriorResult = caribouMetrics:::runScnSet(scns[3,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResult = caribouMetrics:::runScnSet(scns[3,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosterior =  plotRes(posteriorResult, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                         legendPosition="none",breakInterval=breakInterval,
                         labFontSize=labFontSize)+
@@ -327,7 +329,7 @@ lambdaPosterior =  plotRes(posteriorResult, "Expected growth rate", lowBound=bou
   ylim(c(0, 1.8))
 plot(lambdaPosterior)
 
-posteriorResultB = caribouMetrics:::runScnSet(scns[2,],eParsIn,simBig,printProgress=F,niters=niters)
+posteriorResultB = caribouMetrics:::runScnSet(scns[2,],simBig,eParsIn,printProgress=F,niters=niters)
 recPosteriorB =  plotRes(posteriorResultB, "Recruitment", lowBound=0,highBound = bounds$recHigh,
                          legendPosition="none",breakInterval=breakInterval,
                          labFontSize=labFontSize)+

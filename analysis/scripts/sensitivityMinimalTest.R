@@ -12,9 +12,7 @@ setName = args[2]
 niters = 1000
 
 library(caribouMetrics)
-# TO DO: remove dependency on CaribouDemographyBasicApp - make caribouMetrics sufficient.
 # devtools::load_all(path = "../caribouMetrics/")
-# devtools::load_all(path = "../CaribouDemographyBasicApp/")
 # setName="s1"; cpageId <- 1;n_reps <- "all";niters<-10; cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
 
 #######################
@@ -22,11 +20,9 @@ dir.create(paste0(cDir,"/figs/",setName),recursive=T)
 dir.create(paste0(cDir,"/tabs/",setName),recursive=T)
 dir.create(paste0(cDir,"/results/",setName),recursive=T)
 
-simBig<-getSimsInitial(replicates=500) #If called with default parameters, use saved object to speed things up.
-
 allScns = read.csv(paste0(cDir,"/tabs/",setName,".csv"))
 
-allScns
+simBig<-getSimsInitial(replicates=500,cPars=allScns,forceUpdate = T) #If called with default parameters, use saved object to speed things up.
 
 unique(allScns$pageId)
 ####################
@@ -44,13 +40,15 @@ message("batch ", cpageId, " started")
 
 if(n_reps=="all"){
   #devtools::load_all(path = "../caribouMetrics/")
-  scResults = caribouMetrics:::runScnSet(scns,eParsIn,simBig,printProgress=T,niters=niters)
+  scResults = caribouMetrics:::runScnSet(scns,simBig,eParsIn,printProgress=T,niters=niters)
 }else{
   #devtools::load_all(path = "../caribouMetrics/")
-  scResults = caribouMetrics:::runScnSet(scns[1:n_reps,],eParsIn,simBig,printProgress=T,niters=niters)
+  #n_reps=37
+  scResults = caribouMetrics:::runScnSet(scns[n_reps:n_reps,],simBig,eParsIn,printProgress=T,niters=niters)
 }
 
 unique(scResults$rr.summary.all$Parameter)
 saveRDS(scResults,paste0(cDir,"/results/",setName,"/rTest",cpageId,n_reps,cpageId,".Rds"))
 
+unique(scResults$obs.all$MetricTypeID)
 message("batch ", cpageId, " complete")
