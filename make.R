@@ -24,6 +24,16 @@ message("install caribouMetrics from GitHub")
 
 # do deps separately so they can be installed from binaries
 # only do download once
+bbt_download <- remotes::remote_download(remotes::github_remote("LandSciTech/bboutoolsMultiPop"))
+
+try(remotes::install_deps(bbt_download, upgrade = "never"))
+# this should do ones that were not available from binary
+try(remotes::install_deps(bbt_download, type = "source", upgrade = "never"))
+
+try(remotes::install_local(bbt_download,
+                           type = "source", dependencies = FALSE, upgrade = "never"))
+
+
 cm_download <- remotes::remote_download(remotes::github_remote("LandSciTech/caribouMetrics",ref="BbouIntegration"))
 
 try(remotes::install_deps(cm_download, upgrade = "never"))
