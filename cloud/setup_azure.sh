@@ -4,8 +4,7 @@
 #### Parameters to change
 setName="s1"
 
-# Note we should have added user name as a parameter but didn't so you will need
-# to find and replace jhughes if you want to use your own username
+username="sendicott"
 
 #####Login etc##################
 # Accept the default tenant by pressing enter when prompted
@@ -18,7 +17,6 @@ state:state, enableAutoScale:enableAutoScale,
 allocState:allocationState}" \
 --output table
 
-username="sendicott"
 
 #### Move files to container ##############
 end=`date -u -d "7 days" '+%Y-%m-%dT%H:%MZ'`
@@ -119,19 +117,19 @@ az batch task list --job-id $jobName --query "{tasks: [?state == 'completed'].[i
 #### Download results ##########################
 
 # Check what results have been added to the storage container
-az storage blob list -c jhughes --account-name ecdcwls --sas-token $sastoken \
+az storage blob list -c $username --account-name ecdcwls --sas-token $sastoken \
 --query "[].{name:name}" --prefix $setName --output yaml
 
 #### Download results and remove from storage ################################
-az storage copy -s https://ecdcwls.blob.core.windows.net/jhughes/$setName/?$sastoken \
+az storage copy -s https://ecdcwls.blob.core.windows.net/$username/$setName/?$sastoken \
 -d results --recursive
 
 # NOTE removes ***everything*** from the storage container
 az storage remove -c $username --account-name ecdcwls --sas-token $sastoken --recursive
 
 #### Delete pool and job ##########################
-az batch job delete --job-id $jobName
-az batch pool delete --pool-id $poolName
+az batch job delete --job-id $jobName --y
+az batch pool delete --pool-id $poolName --y
 
 # downloading and resizing by hand because upload failed
 for ((i=1;i<=30;i++))
@@ -145,6 +143,6 @@ done
 az batch pool resize --pool-id $poolName --target-dedicated-nodes 1 \
 --node-deallocation-option "taskcompletion"
 
-az storage copy -d https://ecdcwls.blob.core.windows.net/jhughes/s8/?$sastoken \
+az storage copy -d https://ecdcwls.blob.core.windows.net/$username/s8/?$sastoken \
 -s results/s8 --recursive
 

@@ -13,7 +13,15 @@
 bspm::enable()
 options(pkgType="binary", install.packages.check.source = "no")
 
+cargs <- commandArgs(trailingOnly = TRUE)
+
+pat <- cargs[1]
+
+Sys.setenv(GITHUB_PAT = pat)
+
 utils::install.packages("remotes", dependencies = TRUE)
+utils::install.packages("curl", dependencies = TRUE)
+utils::install.packages("ragg", dependencies = TRUE)
 ## Install Dependencies (listed in DESCRIPTION) ----
 print("install deps")
 try(remotes::install_deps("/Caribou-Demographic-Projection-Paper", upgrade = "never"))
@@ -24,7 +32,8 @@ message("install caribouMetrics from GitHub")
 
 # do deps separately so they can be installed from binaries
 # only do download once
-bbt_download <- remotes::remote_download(remotes::github_remote("LandSciTech/bboutoolsMultiPop"))
+bbt_download <- remotes::remote_download(remotes::github_remote("LandSciTech/bboutoolsMultiPop",
+                                                                auth_token = pat))
 
 try(remotes::install_deps(bbt_download, upgrade = "never"))
 # this should do ones that were not available from binary
