@@ -6,6 +6,8 @@ setName="s1"
 
 username="sendicott"
 
+# TODO: error in caribouMetrics install spatRaster not exported by terra... but it is
+
 #####Login etc##################
 # Accept the default tenant by pressing enter when prompted
 az login
