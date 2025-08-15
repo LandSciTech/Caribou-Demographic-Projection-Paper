@@ -20,8 +20,8 @@ pat <- cargs[1]
 Sys.setenv(GITHUB_PAT = pat)
 
 utils::install.packages("remotes", dependencies = TRUE)
-utils::install.packages("curl", dependencies = TRUE)
-utils::install.packages("ragg", dependencies = TRUE)
+utils::install.packages("curl", dependencies = TRUE, type = "binary")
+utils::install.packages("ragg", dependencies = TRUE, type = "binary")
 ## Install Dependencies (listed in DESCRIPTION) ----
 print("install deps")
 try(remotes::install_deps("/Caribou-Demographic-Projection-Paper", upgrade = "never"))
