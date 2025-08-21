@@ -15,7 +15,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s1" #need to do s13, s14, and s15
+setName = "s2" #need to do s13, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 dir.create(paste0("tabs/",setName),recursive=T)
 
@@ -110,7 +110,7 @@ for(i in 1:length(pages)){
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarInterval)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==20)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2

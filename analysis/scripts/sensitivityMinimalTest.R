@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #nohup Rscript --vanilla "analysis/scripts/sensitivityMinimalTest.R" 1 &
-n_reps <- 1
+n_reps <- "all"
 
 # Run batches from Rscript that uses parallel backend and new caribouMetrics functions
 args <- commandArgs(trailingOnly = TRUE)
@@ -9,11 +9,12 @@ cpageId <- args[1]
 cDir = getwd()
 
 setName = args[2]
-niters = 1000
 
 library(caribouMetrics)
 # devtools::load_all(path = "../caribouMetrics/")
-# setName="s1"; cpageId <- 1;n_reps <- "all";niters<-10; cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
+# setName="s2"; cpageId <- 1;n_reps <- "all";niters<-10; cDir = "C:/Users/HughesJo/Documents/gitprojects/Caribou-Demographic-Projection-Paper"
+
+niters = 1000
 
 #######################
 dir.create(paste0(cDir,"/figs/",setName),recursive=T)

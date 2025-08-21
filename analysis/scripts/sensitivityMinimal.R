@@ -19,7 +19,7 @@ dir.create(paste0("results/",setName),recursive=T)
 
 allScns = read.csv(paste0("tabs/",setName,".csv"))
 
-simBig<-getSimsInitial(cPars=allScns,forceUpdate = T) #If called with default parameters, use saved object to speed things up.
+simBig<-getSimsInitial(replicates=500,cPars=allScns,forceUpdate = T)  #If called with default parameters, use saved object to speed things up.
 
 ####################
 eParsIn = list()

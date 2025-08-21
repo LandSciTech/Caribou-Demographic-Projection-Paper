@@ -159,6 +159,15 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamples.png"),
 ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamples.pdf"),
        width = 9.6*0.779, height = 9.2, units = "in",
        dpi = 1200)
+
+ggsave(paste0(baseDir,"/analysis/paper/figs/bayesianModelExamplesWide.png"),
+       width = 10, height = 9.2, units = "in",
+       dpi = 1200)
+
+ggsave(paste0(baseDir,"/analysis/paper/figs_submit/bayesianModelExamplesWide.pdf"),
+       width = 10.9, height = 9.2, units = "in",
+       dpi = 1200)
+
 ###############################
 #Without bias adjustment
 

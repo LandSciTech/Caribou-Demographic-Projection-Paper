@@ -121,14 +121,14 @@ pars2 <- cbind(pars, caribouPopGrowth(pars$N0,
 
 str(pars)
 oo <- pars2 %>%
-  select(Anthro, lambdaTrue, fullGrp, rrp) %>%
+  select(Anthro, lambdaE, fullGrp, rrp) %>%
   group_by(fullGrp, Anthro) %>%
-  summarise(lambdaTrue = median(lambdaTrue))
+  summarise(lambdaTrue = median(lambdaE))
 
 ooT <- pars1 %>%
-  select(Anthro, lambdaTrue, fullGrp, rrp) %>%
+  select(Anthro, lambdaE, fullGrp, rrp) %>%
   group_by(fullGrp, Anthro) %>%
-  summarise(lambdaTrue = median(lambdaTrue))
+  summarise(lambdaTrue = median(lambdaE))
 
 oo$lambdaH <- oo$lambdaTrue
 oo$lambdaL <- oo$lambdaTrue
@@ -140,7 +140,7 @@ plot_lambda <- ggplot(oo,
             alpha = 1) + scale_color_manual(values=pal)+
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   xlab("Anthropogenic disturbance") +
-  ylab(expression("Population growth rate " * dot(lambda)[t])) +
+  ylab(expression("Expected growth rate " * bar(lambda)[t])) +
   theme(axis.title=element_text(size=rel(0.95)),legend.position = "none", plot.margin = margin(l = 0.6, unit = "cm"))
 
 str(pars1)
@@ -153,7 +153,7 @@ plot_recruitment3 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = 0.5*R_t, group = fullGrp, color = fullGrp),
             alpha = 1) +scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare,colour = "black", size = 1.5) +
-  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
+  #geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.5), breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5)) +
   xlab("Anthropogenic disturbance") +
@@ -169,7 +169,7 @@ plot_recruitment1 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = R_t, group = fullGrp, color = fullGrp),
             alpha = 1) +scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare,colour = "black", size = 1.5) +
-  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
+  #geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
   scale_y_continuous(limits = c(0, 0.7), breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5,0.6,0.7)) +
   xlab("Anthropogenic disturbance") +
@@ -184,7 +184,7 @@ base1 <- ggplot(data = rateSummaries,
             aes(x = Anthro, y = S_t, group = rep, colour = rep)) +
   scale_color_manual(values=pal)+
   geom_line(data=johnsonCompare, colour = "black", size = 1.5) +
-  geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
+  #geom_line(colour = "#ef8a62", size = 2, linetype = "dotted") +
   xlab("Anthropogenic disturbance") +
   ylab(expression("Adult female survival " * dot(S)[t])) +
   scale_x_continuous(limits = c(-1, 90), breaks = c(0, 20, 40, 60, 80)) +
@@ -194,7 +194,7 @@ base1 <- ggplot(data = rateSummaries,
 plot(base1)
 
 # combine ggplots to one figure
-ggpubr::ggarrange(plot_recruitment3,base1,plot_lambda,labels = "",
+ggpubr::ggarrange(plot_lambda,plot_recruitment3,base1,labels = "",
                   ncol = 3, vjust = 1)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 9.6*0.779, height = 2.9*0.779, units = "in",
@@ -202,7 +202,7 @@ ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRates.png"), width = 9.6*
 ggsave(paste0(baseDir,"/analysis/paper/figs_submit/DemographicRates.pdf"), width = 9.6*0.779, height = 2.9*0.779, units = "in",
        dpi = 1200)
 
-ggpubr::ggarrange(plot_recruitment1,base1,plot_lambda,labels = "",
+ggpubr::ggarrange(plot_lambda,plot_recruitment1,base1,labels = "",
                   ncol = 3, vjust = 1)
 
 ggsave(paste0(baseDir,"/analysis/paper/figs/DemographicRatesNotAdjusted.png"), width = 9.6*0.779, height = 2.9*0.779,  units = "in",
