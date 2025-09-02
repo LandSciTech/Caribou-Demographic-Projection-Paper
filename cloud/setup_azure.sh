@@ -2,7 +2,7 @@
 #############################################
 
 #### Parameters to change
-setName="s1"
+setName="s3"
 
 username="sendicott"
 
@@ -39,7 +39,7 @@ rm -r cloud/pool_json
 # Sets PAT, sasurl, setName, nNodes, nSlots, and vmSize in files and makes a
 # separate file for each batch
 nBatches=$(Rscript --vanilla "cloud/make_batch_scripts.R" $setName $sasurl $username)
-
+nBatches=1
 # Check that container is empty
 az storage blob list -c $username --account-name ecdcwls --sas-token $sastoken \
 --query "[].{name:name}" --output yaml
