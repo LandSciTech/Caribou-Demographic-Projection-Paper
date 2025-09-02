@@ -6,6 +6,10 @@ cd /Caribou-Demographic-Projection-Paper
 git pull https://<PAT>@github.com/LandSciTech/Caribou-Demographic-Projection-Paper.git BbouIntegration
 
 apt install libcurl4-openssl-dev
+apt install libfreetype6-dev
+apt install libpng-dev
+apt install libtiff5-dev
+apt install libjpeg-dev
 
 echo "Running the scripts"
 nohup Rscript --vanilla "make.R" <PAT>
