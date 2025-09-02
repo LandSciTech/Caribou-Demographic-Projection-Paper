@@ -29,6 +29,9 @@ utils::install.packages("terra", dependencies = TRUE, type = "binary")
 # try(remotes::install_deps("/Caribou-Demographic-Projection-Paper", type = "source",
 #                           upgrade = "never"))
 
+library(terra)
+terra::rast(nrows=10, ncols=10, xmin=0, xmax=10)
+
 message("install caribouMetrics from GitHub")
 
 # do deps separately so they can be installed from binaries
