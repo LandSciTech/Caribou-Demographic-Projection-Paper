@@ -22,7 +22,7 @@ scns=merge(monitoringScns,stateScns)
 scns$preYears = max(scns$obsYears)-scns$obsYears
 
 scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
-scns$projYears = 20
+scns$projYears = 21
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/10)
 table(scns$repBatch)
@@ -40,7 +40,7 @@ pages=unique(scns$pageLab)
 
 
 ########################
-#sensitivity -rerun main
+#sensitivity -rerun main minimal
 setName = "s2"
 monitoringScns = expand.grid(obsYears=c(2,4,8,16,24),collarCount=c(0,20,60),
                              cowMult=c(6),collarInterval=c(1),
@@ -61,7 +61,7 @@ scns=merge(monitoringScns,stateScns)
 scns$preYears = max(scns$obsYears)-scns$obsYears
 
 scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
-scns$projYears = 20
+scns$projYears = 21
 unique(scns$iAnthro)
 scns$repBatch = ceiling(scns$rep/10)
 table(scns$repBatch)
@@ -79,6 +79,45 @@ length(unique(scns$pageLab))
 write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
 pages=unique(scns$pageLab)
 
+########################
+#sensitivity -rerun main larger
+setName = "s3"
+monitoringScns = expand.grid(obsYears=c(1,2,4,8,16,24),collarCount=c(0,15,30,60),
+                             cowMult=c(6),collarInterval=c(1),
+                             assessmentYrs=c(1))
+#TO DO - in next iteration, remove multiple years of one collar
+monitoringScns = subset(monitoringScns, !((obsYears>1)&(collarCount==0))&!((collarCount==1)&(cowMult>3))&!((collarCount==0)&(collarInterval>1)))
+stateScns = data.frame(tA=c(0,20,40,60),
+                       obsAnthroSlope=c(0,1,1,1),
+                       projAnthroSlope=c(1,1,1,1)
+)
+stateScns = merge(stateScns,data.frame(rep=seq(1:500)))
+stateScns = merge(stateScns,data.frame(interannualVar=c("list(R_CV=0.46,S_CV=0.087)","list(R_CV=0.23,S_CV=0.0435)")))
+stateScns$sQuantile=runif(nrow(stateScns),min=0.01,max=0.99)
+stateScns$rQuantile = runif(nrow(stateScns),min=0.01,max=0.99)
+#monitoringScns=rbind(monitoringScns,minimalScn)
+scns=merge(monitoringScns,stateScns)
+
+scns$preYears = max(scns$obsYears)-scns$obsYears
+
+scns$iAnthro = scns$tA-(scns$obsYears+scns$preYears-1)*scns$obsAnthroSlope
+scns$projYears = 21
+unique(scns$iAnthro)
+scns$repBatch = ceiling(scns$rep/10)
+table(scns$repBatch)
+
+scns$N0 = 5000
+scns$qMax = 0.6;scns$uMax=0.2;scns$zMax=0.2
+
+
+scns$pageLab = paste0("cmult",scns$cowMult,"ay",scns$assessmentYrs,"aSf",scns$projAnthroSlope,"repBatch",scns$repBatch)
+scns$pageId = as.numeric(as.factor(scns$pageLab))
+nrow(scns)
+
+length(unique(scns$pageLab))
+
+write.csv(scns,paste0("tabs/",setName,".csv"),row.names=F)
+pages=unique(scns$pageLab)
 
 ########################
 #sensitivity

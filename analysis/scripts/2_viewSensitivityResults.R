@@ -45,7 +45,7 @@ setLTYVar <-function(scns){
 scns = setLTYVar(scns)
 if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar))>1)){
   ltyLabel = "Interannual\nvariation"
-  ltySel="none"
+  ltySel="low"
 }else{
   ltyLabel = "Collar\nrenewal\ninterval"
   ltySel=1
@@ -54,7 +54,7 @@ if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar)
 
 for (p in pagesa){
   #p=pagesa[1]
-  if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
+  if(!file.exists(paste0("results/",setName,"/rTest",p,"all",p,".Rds"))){pages=pages[pages!=p]}
 }
 
 
@@ -72,7 +72,7 @@ addEV = F
 addProbs = F
 
 for(i in 1:length(pages)){
-  #combine=F;i=1
+  #combine=F;i=20
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -86,7 +86,7 @@ for(i in 1:length(pages)){
   print(paste(i,p))
 
   if(combine&(cpageId>1)){
-    scNew = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
+    scNew = readRDS(paste0("results/",setName,"/rTest",cpageId,"all",cpageId,".Rds"))
     for(n in names(scNew)){
       if(n=="errorLog"){
         scResults[[n]]=c(scResults[[n]],scNew[[n]])
@@ -95,7 +95,7 @@ for(i in 1:length(pages)){
       }
     }
   }else{
-    scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
+    scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,"all",cpageId,".Rds"))
   }
 
   if((as.numeric(strsplit(nextP,"repBatch")[[1]][2])==1)){#<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
@@ -158,13 +158,17 @@ for(i in 1:length(pages)){
 
   #See disturbance scenarios
   #distScns = subset(probs,is.element(projectionTime,c(0,5,20))|(Year==iYr))
-  distScns = unique(subset(probs,is.element(projectionTime,c(0,5,20))|(Year<2023),select=c(startYear,projectionTime,Year,obsYears,Anthro2023,Anthro,projAnthroSlope)))
+
+  if(!is.element(20,probs$projectionTime)){
+    lastTime=19
+  }else{lastTime=20}
+  distScns = unique(subset(probs,is.element(projectionTime,c(0,5,lastTime))|(Year<2023),select=c(startYear,projectionTime,Year,obsYears,Anthro2023,Anthro,projAnthroSlope)))
   distScns$grp = paste0(distScns$Anthro2023,distScns$projAnthroSlope)
 
   distScns$Timeline = NA
   distScns$Timeline[distScns$Year==2023]="Finish monitoring"
   distScns$Timeline[distScns$projectionTime==5]="End 5 yr projection (2028)"
-  distScns$Timeline[distScns$projectionTime==20]="End 20 yr projection (2043)"
+  distScns$Timeline[distScns$projectionTime==lastTime]="End 20 yr projection (2042)"
 
   Ps = unique(distScns$obsYears)
   for(s in Ps){
@@ -211,8 +215,8 @@ for(i in 1:length(pages)){
   names(obsWide)[names(obsWide)=="Expected growth rate"]= "trueMean"
   names(obsWide)[names(obsWide)=="Female population size"]= "trueSize"
 
-  probs = subset(probs,is.element(projectionTime,c(0,5,20)))
-  obsWide=subset(obsWide, is.element(Year,2023+c(0,5,20))&(Type=="true"))
+  probs = subset(probs,is.element(projectionTime,c(0,5,lastTime)))
+  obsWide=subset(obsWide, is.element(Year,2023+c(0,5,lastTime))&(Type=="true"))
 
   nrow(probs)
   intersect(names(probs),names(obsWide))
@@ -281,7 +285,7 @@ for(i in 1:length(pages)){
     probs$Rdiff = probs[["Adjusted recruitment"]]-probs[["Mean_Adjusted recruitment"]]
 
     for (ltyS in unique(probs$ltyVariable)){
-      #ltyS="none"
+      #ltyS="low"
       base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
         geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
         #stat_summary(fun = "mean",

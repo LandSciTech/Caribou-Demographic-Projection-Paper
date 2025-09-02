@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #nohup Rscript --vanilla "analysis/scripts/sensitivityMinimalTest.R" 1 &
-n_reps <- "all"
+n_reps <- 1
 
 # Run batches from Rscript that uses parallel backend and new caribouMetrics functions
 args <- commandArgs(trailingOnly = TRUE)
