@@ -20,6 +20,7 @@ pat <- cargs[1]
 Sys.setenv(GITHUB_PAT = pat)
 
 utils::install.packages("remotes", dependencies = TRUE)
+utils::install.packages("terra", dependencies = TRUE, type = "binary")
 # utils::install.packages("curl", dependencies = TRUE, type = "binary")
 # utils::install.packages("ragg", dependencies = TRUE, type = "binary")
 ## Install Dependencies (listed in DESCRIPTION) ----
