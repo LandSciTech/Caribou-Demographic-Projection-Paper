@@ -15,7 +15,7 @@ scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s2" #need to do s13, s14, and s15
+setName = "s3" #need to do s3, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 dir.create(paste0("tabs/",setName),recursive=T)
 
@@ -54,7 +54,7 @@ if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar)
 
 for (p in pagesa){
   #p=pagesa[1]
-  if(!file.exists(paste0("results/",setName,"/rTest",p,"all",p,".Rds"))){pages=pages[pages!=p]}
+  if(!file.exists(paste0("results/",setName,"/rTest",p,".Rds"))){pages=pages[pages!=p]}
 }
 
 
@@ -72,7 +72,7 @@ addEV = F
 addProbs = F
 
 for(i in 1:length(pages)){
-  #combine=F;i=20
+  #combine=F;i=1
   cpageId=pages[i]
 
   if(i==length(pages)){
@@ -86,7 +86,7 @@ for(i in 1:length(pages)){
   print(paste(i,p))
 
   if(combine&(cpageId>1)){
-    scNew = readRDS(paste0("results/",setName,"/rTest",cpageId,"all",cpageId,".Rds"))
+    scNew = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
     for(n in names(scNew)){
       if(n=="errorLog"){
         scResults[[n]]=c(scResults[[n]],scNew[[n]])
@@ -95,7 +95,7 @@ for(i in 1:length(pages)){
       }
     }
   }else{
-    scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,"all",cpageId,".Rds"))
+    scResults = readRDS(paste0("results/",setName,"/rTest",cpageId,".Rds"))
   }
 
   if((as.numeric(strsplit(nextP,"repBatch")[[1]][2])==1)){#<=as.numeric(strsplit(p,"repBatch")[[1]][2]))){
@@ -108,9 +108,9 @@ for(i in 1:length(pages)){
   scResults$obs.all = setLTYVar(scResults$obs.all)
   #figure out how to count out errors.
   head(scResults$rr.summary.all)
-  unique(scResults$rr.summary.all$collarInterval)
+  unique(scResults$rr.summary.all$collarCount)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==20)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2

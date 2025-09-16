@@ -126,7 +126,7 @@ fig_widths <- c(min = 1.18, single = 3.543, mid = 5.51, two = 7.48)
 
 runScenarios = F #To do: set up to run full analysis from within this document.
 
-resultScenario = "S13"
+resultScenario = "S3"
 resultSet ="cmult6ay1aSf1"
 figSet = c("diffslow","distScns","EVSI","power","EVPIall","powerLam","probViability")
 
