@@ -1,4 +1,5 @@
 #devtools::load_all(here::here())
+#devtools::load_all(path = "../caribouMetrics/")
 library(tidyverse)
 library(ggplot2)
 library(caribouMetrics)
@@ -8,14 +9,13 @@ library(scales)
 pal2 = brewer.pal(7,"RdBu")[c(2,6)]
 pal4 = brewer.pal(5,"RdBu")[c(2,1,5,4)]
 pal3 = pal4[2:4]
-
 pal4b = brewer.pal(5,"Purples")[c(2,3,4,5)]
 
 scn_defaults <- eval(formals(getScenarioDefaults))
 
 ########################
 #sensitivity
-setName = "s15" #need to do s13, s14, and s15
+setName = "s3" #need to do s3, s14, and s15
 dir.create(paste0("figs/",setName),recursive=T)
 dir.create(paste0("tabs/",setName),recursive=T)
 
@@ -24,15 +24,12 @@ scns = read.csv(here::here(paste0("tabs/",setName,".csv")))
 scns = scns[order(scns$pageId),]
 
 numBatches= max(scns$repBatch)
-str(scns)
 table(scns$pageId)
 
 1942/(nrow(scns)/60)
 pagesa=unique(scns$pageId)
 
 pages = pagesa
-
-str(scns)
 
 setLTYVar <-function(scns){
   if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar))>1)){
@@ -46,9 +43,9 @@ setLTYVar <-function(scns){
 }
 
 scns = setLTYVar(scns)
-if(is.element("interannualVar",names(scns))){
+if(is.element("interannualVar",names(scns))&&(length(unique(scns$interannualVar))>1)){
   ltyLabel = "Interannual\nvariation"
-  ltySel="none"
+  ltySel="low"
 }else{
   ltyLabel = "Collar\nrenewal\ninterval"
   ltySel=1
@@ -111,9 +108,9 @@ for(i in 1:length(pages)){
   scResults$obs.all = setLTYVar(scResults$obs.all)
   #figure out how to count out errors.
   head(scResults$rr.summary.all)
-  unique(scResults$rr.summary.all$collarInterval)
+  unique(scResults$rr.summary.all$collarCount)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Population growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
@@ -131,9 +128,9 @@ for(i in 1:length(pages)){
 
   #unique(scResults$obs.all$collarCount)
   #unique(scResults$obs.all$ltyVariable)
-  pars = unique(scResults$obs.all$parameter)
+  pars = unique(scResults$obs.all$Parameter)
   unique(scResults$obs.all$ltyVariable)
-  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(parameter=="Population growth rate"))
+  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -141,18 +138,19 @@ for(i in 1:length(pages)){
   png(here::here(paste0("figs/",setName,"/examples",batchStrip(p),".png")),
       height = 6, width = 10.56, units = "in",res=600)
   base=ggplot(exResults,aes(x=Year,y=Mean,col=quantile,group=grp,linetype=type))+geom_line(show.legend=T)+
-    geom_ribbon(aes(ymin = `Lower 95% CRI`, ymax = `Upper 95% CRI`,fill=quantile),
+    geom_ribbon(aes(ymin = lower, ymax = upper,fill=quantile),
                 show.legend = FALSE, alpha = 0.25,col=NA)+
     geom_line(data=obs,aes(x=Year,y=Mean, col=quantile,group=grp,linetype=type),show.legend=T)+
-    theme_bw()+facet_grid(obsYears~Anthro2023,labeller = "label_both")+ylab("Population growth rate")+
+    theme_bw()+facet_grid(obsYears~Anthro2023,labeller = "label_both")+ylab("Expected growth rate")+
     theme(axis.text.x = element_text(angle=90,vjust=0.5,hjust=1,size=8))+
     geom_hline(yintercept=1, color = "black",size=0.7)+scale_fill_discrete(type=pal2)+scale_color_discrete(type=pal2)
   print(base)
   dev.off()
 
+  scResults$rr.summary.all$MetricTypeID = NULL
   probs <- scResults$rr.summary.all%>%
-    pivot_wider(names_from = Parameter, values_from = c("Mean","SD","Lower 95% CRI","Upper 95% CRI","probViable"))
-  names(probs)= gsub("_Population growth rate","",names(probs),fixed=T)
+    pivot_wider(names_from = Parameter, values_from = c("Mean","lower","upper","probViable"))
+  names(probs)= gsub("_Expected growth rate","",names(probs),fixed=T)
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
   probs$Anthro2023 = probs$tA
@@ -160,12 +158,17 @@ for(i in 1:length(pages)){
 
   #See disturbance scenarios
   #distScns = subset(probs,is.element(projectionTime,c(0,5,20))|(Year==iYr))
-  distScns = unique(subset(probs,is.element(projectionTime,c(0,5,20))|(Year<2023),select=c(startYear,projectionTime,Year,obsYears,Anthro2023,Anthro)))
+
+  if(!is.element(20,probs$projectionTime)){
+    lastTime=19
+  }else{lastTime=20}
+  distScns = unique(subset(probs,is.element(projectionTime,c(0,5,lastTime))|(Year<2023),select=c(startYear,projectionTime,Year,obsYears,Anthro2023,Anthro,projAnthroSlope)))
   distScns$grp = paste0(distScns$Anthro2023,distScns$projAnthroSlope)
 
+  distScns$Timeline = NA
   distScns$Timeline[distScns$Year==2023]="Finish monitoring"
   distScns$Timeline[distScns$projectionTime==5]="End 5 yr projection (2028)"
-  distScns$Timeline[distScns$projectionTime==20]="End 20 yr projection (2043)"
+  distScns$Timeline[distScns$projectionTime==lastTime]="End 20 yr projection (2042)"
 
   Ps = unique(distScns$obsYears)
   for(s in Ps){
@@ -201,17 +204,19 @@ for(i in 1:length(pages)){
   dev.off()
 
   #make wide obs table
-  obsWide <- subset(scResults$obs.all,(type=="true"))%>%
-    pivot_wider(names_from = parameter, values_from = Mean)
+  scResults$obs.all$MetricTypeID= NULL
+  scResults$obs.all = subset(scResults$obs.all,!is.na(Parameter))
+  obsWide <- subset(scResults$obs.all,(Type=="true"))%>%
+    pivot_wider(names_from = Parameter, values_from = Mean)
   obsWide$startYear=obsWide$startYear+obsWide$preYears
-  obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
+  #obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
 
   #now combine and make small
-  names(obsWide)[names(obsWide)=="Population growth rate"]= "trueMean"
+  names(obsWide)[names(obsWide)=="Expected growth rate"]= "trueMean"
   names(obsWide)[names(obsWide)=="Female population size"]= "trueSize"
 
-  probs = subset(probs,is.element(projectionTime,c(0,5,20)))
-  obsWide=subset(obsWide, is.element(Year,2023+c(0,5,20))&(type=="true"))
+  probs = subset(probs,is.element(projectionTime,c(0,5,lastTime)))
+  obsWide=subset(obsWide, is.element(Year,2023+c(0,5,lastTime))&(Type=="true"))
 
   nrow(probs)
   intersect(names(probs),names(obsWide))
@@ -239,7 +244,6 @@ for(i in 1:length(pages)){
 
   probs$AnthroScn=as.factor(probs$Anthro2023)
 
-
   if(is.element(0,levels(probs$AnthroScn))){
     levels(probs$AnthroScn) = c("low","low-med","med-high","high")
   }else{
@@ -253,7 +257,7 @@ for(i in 1:length(pages)){
           height = 4, width = 7.48, units = "in",res=600)
       base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=Mean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-        theme_bw()+xlab("Years of monitoring")+ylab("Estimated mean population growth rate")
+        theme_bw()+xlab("Years of monitoring")+ylab("Estimated expected growth rate")
       print(base)
       dev.off()
 
@@ -261,7 +265,7 @@ for(i in 1:length(pages)){
           height = 4, width = 7.48, units = "in",res=600)
       base=ggplot(subset(probs,pageLabB==pp),aes(x=obsYears,y=trueMean,col=CorrectStatus))+geom_point(shape="-",size=3,alpha=0.5)+
         facet_grid(YearsOfProjection~AnthroScn,labeller="label_both")+
-        theme_bw()+xlab("Years of monitoring")+ylab("True population growth rate")
+        theme_bw()+xlab("Years of monitoring")+ylab("True mean growth rate")
       print(base)
       dev.off()
 
@@ -281,7 +285,7 @@ for(i in 1:length(pages)){
     probs$Rdiff = probs[["Adjusted recruitment"]]-probs[["Mean_Adjusted recruitment"]]
 
     for (ltyS in unique(probs$ltyVariable)){
-      #ltyS="none"
+      #ltyS="low"
       base=ggplot(subset(probs,(pageLab==pp)&(ltyVariable==ltyS)),aes(x=as.factor(obsYears),y=LambdaDiff,col=NumCollars,fill=NumCollars,group=grp))+
         geom_violin(alpha=0.5)+ylim(-0.15,0.15)+
         #stat_summary(fun = "mean",
@@ -393,7 +397,6 @@ for(i in 1:length(pages)){
     print(base)
     dev.off()
 
-
     base=ggplot(probf,aes(x=trueMean,y=Mean,col=c))+
       geom_point(alpha=0.3)+scale_colour_gradient2(
         low = muted("red"),
@@ -402,7 +405,7 @@ for(i in 1:length(pages)){
         midpoint = 1,
       )+geom_smooth(col="black")+
       facet_wrap(~Interannual,labeller=label_both)+geom_abline(slope=1,linetype=2)+
-    xlab("True population growth rate")+ylab("Posterior mean growth rate")+theme_bw()
+    xlab("True mean growth rate")+ylab("Posterior mean growth rate")+theme_bw()
 
     png(here::here(paste0("figs/",setName,"/diffsFocus",pp,".png")),
         height = 3, width = 5.51, units = "in",res=600)
@@ -413,15 +416,14 @@ for(i in 1:length(pages)){
         height = 3, width = 5.51)
     print(base)
     dev.off()
-
   }
 
   #######################
   #EVSI calculations. See Dunham et al and references therein, and EVPIFromNationalSims.R
 
-  probs$cBin = cut_width(pmax(0.94,pmin(1.06,probs$c)), width=0.1,center=1)
-  table(probs$cBin)
-  levels(probs$cBin)=c("<0.95","mid",">1.05")
+  #probs$cBin = cut_width(pmax(0.94,pmin(1.06,probs$c)), width=0.1,center=1)
+  #table(probs$cBin)
+  #levels(probs$cBin)=c("<0.95","mid",">1.05")
 
   hist(probs$Mean)
 
@@ -541,7 +543,7 @@ for(i in 1:length(pages)){
 
   ####################################
   #risk of error in cases where predictive interval does not include 1?
-  probs$BandWidth1 = (probs[["Lower 95% CRI"]]<1)&(probs[["Upper 95% CRI"]]>=1)
+  probs$BandWidth1 = (probs$lower<1)&(probs$upper>=1)
   errorsByBand <- probs %>% group_by(BandWidth1) %>%
     summarize(probWrong = 100*mean(wrong))
 

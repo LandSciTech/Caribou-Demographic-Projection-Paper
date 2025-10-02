@@ -15,6 +15,7 @@ scn_nums <- unique(allScns$pageId)
 
 nBatches <- length(scn_nums)
 sasurl <- cargs[2]
+username <- cargs[3]
 
 # Choose best vmSize and number of slots per node to avoid extra vCPUs
 
@@ -63,6 +64,7 @@ make_task <- function(batch){
   outfile <-  file(paste0("cloud/task_jsons/caribouDemo", batch, ".json"), "wb")
   readLines("cloud/caribouDemo.json") |> stringr::str_replace_all("<batch>", batch)|>
     stringr::str_replace_all("<SASURL>", sasurl)|>
+    stringr::str_replace_all("<username>", username)|>
     writeLines(con = outfile)
   close(outfile)
 }
@@ -73,7 +75,7 @@ purrr::walk(scn_nums, make_task)
 outfile <-  file(paste0("cloud/pool_json/caribou_add_pool1.json"), "wb")
 readLines("cloud/caribou_add_pool.json") |>
   stringr::str_replace_all("<subnetId>", keyring::key_get("Azure_subnetId")) |>
-  stringr::str_replace_all("<id>", paste0("jhughes_caribouDemo_", setName)) |>
+  stringr::str_replace_all("<id>", paste0(username, "_caribouDemo_", setName)) |>
   stringr::str_replace_all("<n_nodes>", as.character(nNodes)) |>
   stringr::str_replace_all("<n_slots>", as.character(nSlotsPerNode)) |>
   stringr::str_replace_all("<vmSize>", as.character(vmSizeUse)) |>
