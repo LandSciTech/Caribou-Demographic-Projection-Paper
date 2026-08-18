@@ -110,7 +110,7 @@ for(i in 1:length(pages)){
   head(scResults$rr.summary.all)
   unique(scResults$rr.summary.all$collarCount)
   #show examples projections
-  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
+  exResults = subset(scResults$rr.summary.all,(collarCount==30)&(ltyVariable==ltySel)&(Metric=="Expected growth rate"))
 
   exResults$startYear = exResults$startYear+exResults$preYears
   exResults$meanQ = (exResults$rQuantile+exResults$sQuantile)/2
@@ -128,9 +128,9 @@ for(i in 1:length(pages)){
 
   #unique(scResults$obs.all$collarCount)
   #unique(scResults$obs.all$ltyVariable)
-  pars = unique(scResults$obs.all$Parameter)
+  pars = unique(scResults$obs.all$Metric)
   unique(scResults$obs.all$ltyVariable)
-  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(Parameter=="Expected growth rate"))
+  obs = subset(scResults$obs.all,(collarCount==60)&(ltyVariable==ltySel)&(Metric=="Expected growth rate"))
   obs$startYear = obs$startYear+obs$preYears
   obs = merge(obs,unique(subset(exResults,select=c(tA,obsYears,rQuantile,sQuantile,quantile,grp,Anthro2023))))
   obs$type = "true"
@@ -149,7 +149,7 @@ for(i in 1:length(pages)){
 
   scResults$rr.summary.all$MetricTypeID = NULL
   probs <- scResults$rr.summary.all%>%
-    pivot_wider(names_from = Parameter, values_from = c("Mean","lower","upper","probViable"))
+    pivot_wider(names_from = Metric, values_from = c("Mean","lower","upper","probViable"))
   names(probs)= gsub("_Expected growth rate","",names(probs),fixed=T)
   probs$startYear = probs$startYear+probs$preYears
   probs$projectionTime = probs$Year-2023
@@ -205,9 +205,9 @@ for(i in 1:length(pages)){
 
   #make wide obs table
   scResults$obs.all$MetricTypeID= NULL
-  scResults$obs.all = subset(scResults$obs.all,!is.na(Parameter))
+  scResults$obs.all = subset(scResults$obs.all,!is.na(Metric))
   obsWide <- subset(scResults$obs.all,(Type=="true"))%>%
-    pivot_wider(names_from = Parameter, values_from = Mean)
+    pivot_wider(names_from = Metric, values_from = Mean)
   obsWide$startYear=obsWide$startYear+obsWide$preYears
   #obsWide$c = obsWide[["Adjusted recruitment"]]*2/obsWide[["Recruitment"]]
 

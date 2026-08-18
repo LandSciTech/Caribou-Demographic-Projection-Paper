@@ -20,7 +20,7 @@ johnsonCompare <- read.csv(paste0(baseDir,"/data/Johnson et al. figures5_6.csv")
 
 getAnswers <-function(scns,par,johnsonCompare,vName){
   scResults = runScenario(scns,survAnalysisMethod = "Binomial")
-  rr = subset(scResults$rr.summary.all,Parameter == par)
+  rr = subset(scResults$rr.summary.all,Metric == par)
   rr$ylow = rr[["Lower 95% CRI"]]
   rr$yhigh = rr[["Upper 95% CRI"]]
   d = unique(rr$iAnthro)

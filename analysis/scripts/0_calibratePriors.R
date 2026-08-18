@@ -16,7 +16,7 @@ scnsSInt$NuMin = scnsSInt$sNuMin
 scns=merge(scnsSInt,scnsApplyAll);scns=merge(scns,scnsNoData)
 scns$projYears=20
 scResults = runScenario(scns,survAnalysisMethod = "Binomial")
-KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Parameter=="Adult female survival"))
+KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Metric=="Adult female survival"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
 makeInterceptPlots(scResults,addBit=addBit,facetVars=c("sNuMax"),loopVars="sIntSE",whichPlots=c("Adult female survival"))
@@ -34,7 +34,7 @@ scnsRInt$NuMin = scnsRInt$rNuMin
 scns=merge(scnsRInt,scnsApplyAll);scns=merge(scns,scnsNoData)
 scns$projYears=20
 scResults = runScenario(scns,survAnalysisMethod = "Binomial")
-KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Parameter=="Recruitment"))
+KSAll = subset(scResults$ksDists,(Year==2023+scnsNoData$projYears)&(Metric=="Recruitment"))
 addBit = paste0("InterceptAll")
 scResults$obs.all = NULL
 makeInterceptPlots(scResults,addBit=addBit,facetVars=c("rNuMax"),loopVars="rIntSE",whichPlots=c("Recruitment"))
